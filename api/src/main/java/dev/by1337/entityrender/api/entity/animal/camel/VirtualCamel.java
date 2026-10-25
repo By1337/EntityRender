@@ -4,7 +4,7 @@ package dev.by1337.entityrender.api.entity.animal.camel;
  * Generated from net.minecraft.world.entity.animal.camel.Camel. Values use Bukkit types; packed flag fields remain
  * explicit.
  */
-public interface VirtualCamel extends dev.by1337.entityrender.api.entity.animal.horse.VirtualAbstractHorse {
+public interface VirtualCamel extends dev.by1337.entityrender.api.entity.animal.equine.VirtualAbstractHorse {
     /** NMS DASH; BOOLEAN. */
     boolean isDash();
 

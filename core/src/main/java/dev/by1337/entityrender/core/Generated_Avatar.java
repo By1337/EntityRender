@@ -6,13 +6,13 @@ class Generated_Avatar extends Generated_LivingEntity implements dev.by1337.enti
     }
 
     @Override
-    public byte getPlayerMainHand() {
-        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.Avatar.DATA_PLAYER_MAIN_HAND);
+    public org.bukkit.inventory.MainHand getPlayerMainHand() {
+        return org.bukkit.inventory.MainHand.valueOf(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.Avatar.DATA_PLAYER_MAIN_HAND).name());
     }
 
     @Override
-    public void setPlayerMainHand(byte value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.Avatar.DATA_PLAYER_MAIN_HAND, value);
+    public void setPlayerMainHand(org.bukkit.inventory.MainHand value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.Avatar.DATA_PLAYER_MAIN_HAND, net.minecraft.world.entity.HumanoidArm.valueOf(value.name()));
     }
 
     @Override

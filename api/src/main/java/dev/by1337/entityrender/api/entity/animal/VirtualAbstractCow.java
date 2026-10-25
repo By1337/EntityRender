@@ -1,8 +1,0 @@
-package dev.by1337.entityrender.api.entity.animal;
-
-/**
- * Generated from net.minecraft.world.entity.animal.AbstractCow. Values use Bukkit types; packed flag fields remain
- * explicit.
- */
-public interface VirtualAbstractCow extends dev.by1337.entityrender.api.entity.animal.VirtualAnimal {
-}

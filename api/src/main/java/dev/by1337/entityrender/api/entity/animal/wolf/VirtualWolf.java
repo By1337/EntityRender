@@ -5,6 +5,11 @@ package dev.by1337.entityrender.api.entity.animal.wolf;
  * explicit.
  */
 public interface VirtualWolf extends dev.by1337.entityrender.api.entity.VirtualTamableAnimal {
+    /** NMS DATA_ANGER_END_TIME; LONG. */
+    long getAngerEndTime();
+
+    void setAngerEndTime(long value);
+
     /** NMS DATA_COLLAR_COLOR; INT. */
     org.bukkit.DyeColor getCollarColor();
 
@@ -14,11 +19,6 @@ public interface VirtualWolf extends dev.by1337.entityrender.api.entity.VirtualT
     boolean isInterested();
 
     void setInterested(boolean value);
-
-    /** NMS DATA_REMAINING_ANGER_TIME; INT. */
-    int getRemainingAngerTime();
-
-    void setRemainingAngerTime(int value);
 
     /** NMS DATA_SOUND_VARIANT_ID; WOLF_SOUND_VARIANT. */
     org.bukkit.entity.Wolf.SoundVariant getSoundVariant();

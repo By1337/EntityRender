@@ -25,11 +25,12 @@ final class RuntimeExtras {
                     "set(" + key + ",(byte)((get(" + key + ") & ~15) | net.minecraft.world.item.DyeColor.valueOf(value.name()).getId()));");
         }
         if (simple.equals("Horse")) {
+            String horsePackage = entity.name().substring(0, entity.name().lastIndexOf('.'));
             String key = namespace + ".DATA_ID_TYPE_VARIANT";
-            method(api, impl, "org.bukkit.entity.Horse.Color", "Color", "org.bukkit.entity.Horse.Color.valueOf(net.minecraft.world.entity.animal.horse.Variant.byId(get(" + key + ") & 255).name())",
-                    "set(" + key + ",(get(" + key + ") & ~255) | net.minecraft.world.entity.animal.horse.Variant.valueOf(value.name()).getId());");
-            method(api, impl, "org.bukkit.entity.Horse.Style", "Style", "org.bukkit.entity.Horse.Style.valueOf(net.minecraft.world.entity.animal.horse.Markings.byId((get(" + key + ") >> 8) & 255).name().replace(\"WHITE_FIELD\",\"WHITEFIELD\"))",
-                    "set(" + key + ",(get(" + key + ") & ~65280) | net.minecraft.world.entity.animal.horse.Markings.valueOf(value.name().replace(\"WHITEFIELD\",\"WHITE_FIELD\")).getId() << 8);");
+            method(api, impl, "org.bukkit.entity.Horse.Color", "Color", "org.bukkit.entity.Horse.Color.valueOf(" + horsePackage + ".Variant.byId(get(" + key + ") & 255).name())",
+                    "set(" + key + ",(get(" + key + ") & ~255) | " + horsePackage + ".Variant.valueOf(value.name()).getId());");
+            method(api, impl, "org.bukkit.entity.Horse.Style", "Style", "org.bukkit.entity.Horse.Style.valueOf(" + horsePackage + ".Markings.byId((get(" + key + ") >> 8) & 255).name().replace(\"WHITE_FIELD\",\"WHITEFIELD\"))",
+                    "set(" + key + ",(get(" + key + ") & ~65280) | " + horsePackage + ".Markings.valueOf(value.name().replace(\"WHITEFIELD\",\"WHITE_FIELD\")).getId() << 8);");
         }
         if (simple.equals("FallingBlockEntity")) {
             method(api, impl, "org.bukkit.block.data.BlockData", "BlockData", "ValueConversions.block(net.minecraft.world.level.block.Block.stateById(getSpawnData()))",

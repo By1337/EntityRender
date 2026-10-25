@@ -98,11 +98,17 @@ def main():
     rotations = javap('net.minecraft.core.Rotations')
     record_rotations = 'float x()' in rotations
     with zipfile.ZipFile(next(max(api_dirs,key=natural).glob('*.jar'))) as api_jar:
-        copper_state = 'org/bukkit/entity/CopperGolem$State.class' in api_jar.namelist()
-    state_property = ('enumeration("org.bukkit.entity.CopperGolem.State", nms)' if copper_state
-                      else 'new Property("String", "", "$.name()", nms + ".valueOf(java.util.Objects.requireNonNull($))")')
-    replace('dumper/src/main/java/dev/by1337/entityrender/dumper/RuntimeGenerator.java', lambda s:
-            re.sub(r'case "COPPER_GOLEM_STATE" -> .*?;', 'case "COPPER_GOLEM_STATE" -> '+state_property+';', s))
+        api_entries = set(api_jar.namelist())
+    enum_properties = {
+        'ARMADILLO_STATE': ('org.bukkit.entity.Armadillo.State', 'org/bukkit/entity/Armadillo$State.class'),
+        'COPPER_GOLEM_STATE': ('org.bukkit.entity.CopperGolem.State', 'org/bukkit/entity/CopperGolem$State.class'),
+        'WEATHERING_COPPER_STATE': ('io.papermc.paper.world.WeatheringCopperState', 'io/papermc/paper/world/WeatheringCopperState.class'),
+    }
+    for serializer, (public_type, entry) in enum_properties.items():
+        state_property = ('enumeration("'+public_type+'", nms)' if entry in api_entries
+                          else 'new Property("String", "", "$.name()", nms + ".valueOf(java.util.Objects.requireNonNull($))")')
+        replace('dumper/src/main/java/dev/by1337/entityrender/dumper/RuntimeGenerator.java', lambda s:
+                re.sub(r'case "'+serializer+r'" -> .*?;', 'case "'+serializer+'" -> '+state_property+';', s))
     unsafe = subprocess.check_output([str(jdk / 'bin/javap'), '-classpath', str(next(max(api_dirs,key=natural).glob('*.jar'))), 'org.bukkit.UnsafeValues'], text=True)
     world_ids = 'nextEntityId(org.bukkit.World)' in unsafe
     for path in core.rglob('*.java'):

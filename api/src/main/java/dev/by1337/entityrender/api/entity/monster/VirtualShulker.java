@@ -4,7 +4,7 @@ package dev.by1337.entityrender.api.entity.monster;
  * Generated from net.minecraft.world.entity.monster.Shulker. Values use Bukkit types; packed flag fields remain
  * explicit.
  */
-public interface VirtualShulker extends dev.by1337.entityrender.api.entity.animal.VirtualAbstractGolem {
+public interface VirtualShulker extends dev.by1337.entityrender.api.entity.animal.golem.VirtualAbstractGolem {
     /** NMS DATA_ATTACH_FACE_ID; DIRECTION. */
     org.bukkit.block.BlockFace getAttachFace();
 

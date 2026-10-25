@@ -5,7 +5,7 @@ import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.*;
-import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.villager.VillagerData;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftRegistry;

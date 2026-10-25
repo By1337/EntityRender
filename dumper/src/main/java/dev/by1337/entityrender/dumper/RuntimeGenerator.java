@@ -136,7 +136,7 @@ final class RuntimeGenerator {
             case "PARTICLES" -> new Property("java.util.List<String>", "Snbt", "$.stream().map(value -> ValueConversions.encode(net.minecraft.core.particles.ParticleTypes.CODEC,value,registries())).toList()", "$.stream().map(element -> ValueConversions.decode(net.minecraft.core.particles.ParticleTypes.CODEC,element,registries())).toList()");
             default -> {
                 if (nms.startsWith("net.minecraft.core.Holder<")) yield new Property("org.bukkit.NamespacedKey", "", "org.bukkit.NamespacedKey.fromString($.unwrapKey().orElseThrow().location().toString())",
-                        "registries().lookupOrThrow(net.minecraft.core.registries.Registries." + field.serializer() + ").getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries." + field.serializer() + ",net.minecraft.resources.ResourceLocation.parse($.toString())))");
+                        "registries().lookupOrThrow(net.minecraft.core.registries.Registries." + field.serializer() + ").getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries." + field.serializer() + ",net.minecraft.resources.Identifier.parse($.toString())))");
                 throw new IllegalArgumentException("No public API conversion for " + field);
             }
         };

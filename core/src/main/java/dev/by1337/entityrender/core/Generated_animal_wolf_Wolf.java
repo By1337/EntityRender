@@ -6,6 +6,16 @@ class Generated_animal_wolf_Wolf extends Generated_TamableAnimal implements dev.
     }
 
     @Override
+    public long getAngerEndTime() {
+        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_ANGER_END_TIME);
+    }
+
+    @Override
+    public void setAngerEndTime(long value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_ANGER_END_TIME, value);
+    }
+
+    @Override
     public org.bukkit.DyeColor getCollarColor() {
         return org.bukkit.DyeColor.valueOf(net.minecraft.world.item.DyeColor.byId(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_COLLAR_COLOR)).name());
     }
@@ -23,16 +33,6 @@ class Generated_animal_wolf_Wolf extends Generated_TamableAnimal implements dev.
     @Override
     public void setInterested(boolean value) {
         set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_INTERESTED_ID, value);
-    }
-
-    @Override
-    public int getRemainingAngerTime() {
-        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_REMAINING_ANGER_TIME);
-    }
-
-    @Override
-    public void setRemainingAngerTime(int value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_REMAINING_ANGER_TIME, value);
     }
 
     @Override
