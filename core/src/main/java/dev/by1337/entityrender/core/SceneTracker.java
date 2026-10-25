@@ -19,6 +19,7 @@ final class SceneTracker implements ViewerTracker {
     private final Map<Integer, BaseVirtualEntity> members = new ConcurrentHashMap<>();
     private final AtomicReference<Settings> settings;
     private volatile Set<Player> viewers = Set.of();
+    private Snapshot publishedMembership;
     private final AtomicBoolean closed = new AtomicBoolean();
 
     SceneTracker(PaperEntityRenderer owner, Location center, double range) {
@@ -38,11 +39,11 @@ final class SceneTracker implements ViewerTracker {
         checkOpen();
         if (!(entity instanceof BaseVirtualEntity base) || base.owner != owner || getCenter().getWorld() != entity.getWorld() || entity.isClosed()) throw new IllegalArgumentException("Tracker requires an open entity from the same renderer and world");
         owner.attachTracker(base, this);
-        members.put(entity.getId(), base);
+        if (members.put(entity.getId(), base) == null) publishedMembership = null;
         base.clearRequested();
         // Close racing registration must not leave a closed member behind.
         if (base.isClosed()) {
-            members.remove(base.getId());
+            if (members.remove(base.getId()) != null) publishedMembership = null;
             owner.detachTracker(base, this);
         }
     }
@@ -52,17 +53,21 @@ final class SceneTracker implements ViewerTracker {
         checkOpen();
         var base = members.remove(entity.getId());
         if (base != null) {
+            publishedMembership = null;
             owner.detachTracker(base, this);
             base.clearRequested();
         }
     }
 
     synchronized void detachClosedEntity(int id) {
-        members.remove(id);
+        if (members.remove(id) != null) publishedMembership = null;
     }
 
-    Snapshot snapshot() {
-        return new Snapshot(this, settings.get(), Set.copyOf(members.keySet()));
+    synchronized Snapshot snapshot() {
+        var current = settings.get();
+        if (publishedMembership == null) publishedMembership = new Snapshot(this, current, Set.copyOf(members.keySet()));
+        else if (publishedMembership.settings() != current) publishedMembership = new Snapshot(this, current, publishedMembership.members());
+        return publishedMembership;
     }
 
     @Override
@@ -70,8 +75,9 @@ final class SceneTracker implements ViewerTracker {
         return viewers;
     }
 
+    // The transport consumer supplies an owned immutable snapshot only when membership changes.
     synchronized void viewers(Set<Player> value) {
-        if (!closed.get() && !viewers.equals(value)) viewers = Set.copyOf(value);
+        if (!closed.get()) viewers = value;
     }
 
     @Override
@@ -120,6 +126,7 @@ final class SceneTracker implements ViewerTracker {
             base.clearRequested();
         }
         members.clear();
+        publishedMembership = null;
         viewers = Set.of();
         owner.forgetTracker(this);
     }

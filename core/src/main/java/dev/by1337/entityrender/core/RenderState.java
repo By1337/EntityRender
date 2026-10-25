@@ -11,12 +11,38 @@ final class RenderState {
     private final PaperEntityRenderer owner;
     private final Map<Integer, Entry> entities = new HashMap<>();
     private List<SceneTracker.Snapshot> scenes = List.of();
+    private final Map<SceneTracker, SceneRoute> audiences = new IdentityHashMap<>();
+    private boolean scenePass;
+    private final Map<Integer, SceneAudience> automatic = new HashMap<>();
 
     RenderState(PaperEntityRenderer owner) {
         this.owner = owner;
     }
 
     void accept(List<PublishedEntity> frames, List<SceneTracker.Snapshot> scenes) {
+        // Remove old routes before adding new ones: an entity may transfer between scenes.
+        scenePass = !scenePass;
+        for (var scene : scenes) {
+            var route = audiences.computeIfAbsent(scene.tracker(), ignored -> new SceneRoute());
+            route.seen = scenePass;
+            route.changed = route.members != scene.members();
+            if (route.changed) {
+                for (var id : route.members) automatic.remove(id, route.audience);
+                route.members = scene.members();
+            }
+        }
+        var removed = audiences.values().iterator();
+        while (removed.hasNext()) {
+            var route = removed.next();
+            if (route.seen != scenePass) {
+                for (var id : route.members) automatic.remove(id, route.audience);
+                removed.remove();
+            }
+        }
+        for (var scene : scenes) {
+            var route = audiences.get(scene.tracker());
+            if (route.changed) for (var id : route.members) automatic.put(id, route.audience);
+        }
         this.scenes = scenes;
         for (var frame : frames) {
             var entry = entities.computeIfAbsent(frame.id(), ignored -> new Entry());
@@ -27,29 +53,15 @@ final class RenderState {
     }
 
     void render(PlayerDirectory directory) {
-        var automatic = new HashMap<Integer, Set<UUID>>();
-        for (var scene : scenes) {
-            var settings = scene.settings();
-            var center = settings.center();
-            var index = directory.index(center.getWorld());
-            var viewers = new HashSet<UUID>();
-            var players = new HashSet<org.bukkit.entity.Player>();
-            if (index != null) for (var sample : index.nearby(center, settings.range())) {
-                if (sample.valid().get() && Math.hypot(Math.hypot(sample.x() - center.getX(), sample.z() - center.getZ()), sample.y() - center.getY()) <= settings.range()) {
-                    viewers.add(sample.id());
-                    players.add(sample.player());
-                }
-            }
-            scene.tracker().viewers(players);
-            for (int member : scene.members()) automatic.put(member, viewers);
-        }
+        for (var scene : scenes) audiences.get(scene.tracker()).audience.update(scene, directory);
         RuntimeException failure = null;
         var iterator = entities.entrySet().iterator();
         while (iterator.hasNext()) {
             var entry = iterator.next().getValue();
             var frame = entry.current;
             try {
-                Set<UUID> desired = frame.closed() ? Set.of() : automatic.getOrDefault(frame.id(), frame.requested().keySet());
+                var audience = automatic.get(frame.id());
+                Set<UUID> desired = frame.closed() ? Set.of() : audience == null ? frame.requested().keySet() : audience.ids();
                 var oldIterator = entry.viewers.entrySet().iterator();
                 while (oldIterator.hasNext()) {
                     var old = oldIterator.next();
@@ -141,9 +153,17 @@ final class RenderState {
             entry.current.handle().viewers(Set.of());
         }
         entities.clear();
+        audiences.clear();
+        automatic.clear();
         scenes = List.of();
         owner.spawnPackets.close();
         if (failure != null) throw failure;
+    }
+
+    private static final class SceneRoute {
+        final SceneAudience audience = new SceneAudience();
+        Set<Integer> members = Set.of();
+        boolean seen, changed;
     }
 
     private static final class Entry {

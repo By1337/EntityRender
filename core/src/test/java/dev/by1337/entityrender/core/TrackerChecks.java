@@ -48,6 +48,16 @@ final class TrackerChecks {
             packets.clear();
             renderer.flush();
             require(packets.isEmpty(), "Idle tracker repeats snapshots");
+            require(tracker.getViewers() == savedViewers, "Idle tracker replaces its player snapshot");
+            var membership = ((SceneTracker) tracker).snapshot();
+            require(((SceneTracker) tracker).snapshot() == membership, "Idle tracker copies membership");
+            position.set(new Location(world, 2, 64, 0));
+            renderer.flush();
+            require(tracker.getViewers() == savedViewers, "Moving within range replaces player snapshot");
+            tracker.setRange(31);
+            renderer.flush();
+            require(((SceneTracker) tracker).snapshot().members() == membership.members(), "Settings change copies unchanged entity membership");
+            require(tracker.getViewers() == savedViewers, "Unchanged audience replaces player snapshot after settings change");
             position.set(new Location(world, 100, 64, 0));
             renderer.flush();
             require(first.getViewers().isEmpty() && packets.size() == 2, "Out-of-range viewers remain");
@@ -85,8 +95,82 @@ final class TrackerChecks {
             require(tracker.getViewers().isEmpty(), "Tracker close must clear player snapshot immediately");
             renderer.flush();
             require(second.getViewers().isEmpty(), "Tracker close did not hide members");
+            // The transport must remove old routes before assigning an entity to its new scene.
+            other.add(second);
+            renderer.flush();
+            require(second.getViewers().size() == 1, "Transferred entity lost its new scene route");
+            other.remove(second);
+            var distant = renderer.createTracker(new Location(world, 100, 64, 0), 5);
+            distant.add(second);
+            renderer.flush();
+            require(second.getViewers().isEmpty(), "Transferred entity retained the previous scene audience");
+            audienceSnapshots(renderer, world, viewer);
         }
         Bukkit.getLogger().info("ENTITY_RENDER_TRACKERS_PASS");
+    }
+
+    private static void audienceSnapshots(PaperEntityRenderer renderer, World world, Player first) {
+        var tracker = (SceneTracker) renderer.createTracker(new Location(world, 0, 64, 0), 32);
+        var audience = new SceneAudience();
+        var directory = new PlayerDirectory();
+        var id = first.getUniqueId();
+        directory.replace(List.of(new PlayerDirectory.Sample(first, id, world, 1, 64, 0, 1, Set.of())));
+        audience.update(tracker.snapshot(), directory);
+        var original = tracker.getViewers();
+        require(original.contains(first), "Effects audience incorrectly requires an entity chunk");
+        directory.replace(List.of(new PlayerDirectory.Sample(first, id, world, 2, 64, 0, 1, Set.of())));
+        audience.update(tracker.snapshot(), directory);
+        require(tracker.getViewers() == original, "Unchanged session/membership allocates a snapshot");
+        directory.replace(List.of(new PlayerDirectory.Sample(first, id, world, 2, 64, 0, 2, Set.of())));
+        audience.update(tracker.snapshot(), directory);
+        require(tracker.getViewers() != original, "Session replacement does not publish a new snapshot");
+        Player replacement = (Player) Proxy.newProxyInstance(Player.class.getClassLoader(), new Class<?>[]{ Player.class }, (proxy, method, args) -> switch (method.getName()) {
+            case "getUniqueId" -> id;
+            case "hashCode" -> 3;
+            case "equals" -> proxy == args[0];
+            case "toString" -> "Replacement tracker viewer";
+            default -> throw new UnsupportedOperationException(method.toString());
+        });
+        directory.replace(List.of(new PlayerDirectory.Sample(replacement, id, world, 2, 64, 0, 3, Set.of())));
+        audience.update(tracker.snapshot(), directory);
+        require(tracker.getViewers().equals(Set.of(replacement)) && original.equals(Set.of(first)), "Reconnect mutated an old snapshot or retained the old Player");
+        var failure = new AtomicReference<Throwable>();
+        var running = new java.util.concurrent.atomic.AtomicBoolean(true);
+        var reader = Thread.ofVirtual().start(() -> {
+            try {
+                while (running.get()) {
+                    var snapshot = tracker.getViewers();
+                    var before = snapshot.toArray();
+                    Thread.yield();
+                    require(Arrays.equals(before, snapshot.toArray()), "Concurrent publication mutated a reader's snapshot");
+                    for (var player : tracker) require(player == first || player == replacement, "Unexpected published viewer");
+                }
+            } catch (Throwable error) {
+                failure.set(error);
+            }
+        });
+        try {
+            for (int i = 0; i < 2000; i++) {
+                var sample = new PlayerDirectory.Sample((i & 1) == 0 ? first : replacement, id, world, 2, 64, 0, i + 4, Set.of());
+                sample.valid().set(i % 3 != 0);
+                directory.replace(List.of(sample));
+                audience.update(tracker.snapshot(), directory);
+                require(tracker.getViewers().isEmpty() == !sample.valid().get(), "Invalid session remains in scene audience");
+            }
+        } finally {
+            running.set(false);
+            try {
+                reader.join(10000);
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+                throw new AssertionError(error);
+            }
+        }
+        require(!reader.isAlive() && failure.get() == null, "Concurrent audience reader failed: " + failure.get());
+        directory.replace(List.of());
+        audience.update(tracker.snapshot(), directory);
+        require(tracker.getViewers().isEmpty() && audience.ids().isEmpty(), "Departed player retained by scene");
+        tracker.close();
     }
 
     private static void require(boolean condition, String message) {
