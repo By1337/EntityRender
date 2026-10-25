@@ -70,13 +70,18 @@ def main():
     def property_value(text, key, value):
         return re.sub(r'(<'+re.escape(key)+r'>)[^<]*(</'+re.escape(key)+r'>)', lambda m: m[1]+str(value)+m[2], text)
 
+    with zipfile.ZipFile(next(server.glob('paper*.jar'))) as bundle:
+        coordinates = [row.split('\t')[1].split(':') for row in bundle.read('META-INF/libraries.list').decode().splitlines() if row.strip()]
+    server_dependencies = {artifact: version for group, artifact, version in coordinates}
+
     for file in ['pom.xml', 'api/pom.xml', 'core/pom.xml', 'dumper/pom.xml']:
         text = (ROOT / file).read_text()
         text = re.sub(r'2\.0\.0(?:\+[^<]+)?-SNAPSHOT', '2.0.0+'+args.version+'-SNAPSHOT', text)
         text = property_value(text, 'maven.compiler.release', 21 if file == 'dumper/pom.xml' else release)
         if file == 'pom.xml':
             for key, value in {'paper.version': api_version, 'paper.nms.version': sdk_dir.name,
-                               'minecraft.version': args.version, 'minecraft.protocol': version['protocol']}.items():
+                               'minecraft.version': args.version, 'minecraft.protocol': version['protocol'],
+                               'netty.version': server_dependencies['netty-buffer'], 'datafixerupper.version': server_dependencies['datafixerupper']}.items():
                 text = property_value(text, key, value)
         (ROOT / file).write_text(text)
 

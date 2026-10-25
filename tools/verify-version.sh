@@ -15,7 +15,7 @@ if len(bundles) != 1:
 print(bundles[0])
 PY
 )"
-mvn -o -q package
+mvn -o -q clean package
 sh test.sh "$server_dir/versions/$target_version/paper-$target_version.jar" --bundle "$bundle" --libraries "$server_dir/libraries" --java "$JAVA_HOME/bin/java"
 sh test-paper.sh "$server_dir"
 mkdir -p "dist/$target_version"
