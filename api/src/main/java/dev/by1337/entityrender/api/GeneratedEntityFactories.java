@@ -59,6 +59,10 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.animal.VirtualFox) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:fox"))), location);
     }
 
+    default dev.by1337.entityrender.api.entity.animal.VirtualHappyGhast createHappyGhast(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.animal.VirtualHappyGhast) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:happy_ghast"))), location);
+    }
+
     default dev.by1337.entityrender.api.entity.animal.VirtualIronGolem createIronGolem(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.animal.VirtualIronGolem) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:iron_golem"))), location);
     }

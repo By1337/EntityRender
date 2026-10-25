@@ -17,12 +17,13 @@ class Generated_decoration_Painting extends Generated_decoration_HangingEntity i
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
-        return ValueConversions.direction(net.minecraft.core.Direction.from3DDataValue(getSpawnData()));
+        return getDirection();
     }
 
     @Override
     public void setFacing(org.bukkit.block.BlockFace value) {
         if (value == org.bukkit.block.BlockFace.UP || value == org.bukkit.block.BlockFace.DOWN) throw new IllegalArgumentException("Painting requires a horizontal face");
+        setDirection(value);
         setSpawnData(ValueConversions.direction(value).get3DDataValue());
     }
 }

@@ -55,7 +55,7 @@ final class RuntimeGenerator {
                         .append(property.type().equals("float") ? "finite(value); " : "")
                         .append("set(").append(key).append(", ").append(property.write().replace("$", "value")).append("); }\n");
             }
-            RuntimeExtras.append(entity, own.getOrDefault(entity.name(), List.of()), api, impl);
+            RuntimeExtras.append(entity, own.getOrDefault(entity.name(), List.of()), fields.stream().anyMatch(f -> f.owner().endsWith(".HangingEntity") && f.name().equals("DATA_DIRECTION")), api, impl);
             if (relative.equals("LivingEntity")) api.append("    org.bukkit.inventory.ItemStack getEquipment(org.bukkit.inventory.EquipmentSlot slot);\n    void setEquipment(org.bukkit.inventory.EquipmentSlot slot, org.bukkit.inventory.ItemStack item);\n");
             api.append("}\n");
             impl.append("}\n");

@@ -4,7 +4,7 @@ import java.util.List;
 
 /** Semantic helpers for packed fields and spawn-only state, using Bukkit-facing contracts. */
 final class RuntimeExtras {
-    static void append(Schema.Entity entity, List<Schema.Field> own, StringBuilder api, StringBuilder impl) {
+    static void append(Schema.Entity entity, List<Schema.Field> own, boolean hangingDirection, StringBuilder api, StringBuilder impl) {
         String simple = entity.name().substring(entity.name().lastIndexOf('.') + 1);
         String namespace = "dev.by1337.entityrender.core.metadata.GeneratedMetadata." + entity.name().substring("net.minecraft.world.entity.".length()).replace('$', '.');
         String flags = own.stream().filter(f -> f.serializer().equals("BYTE") && f.name().contains("FLAGS")).map(f -> namespace + "." + f.name()).findFirst().orElse(null);
@@ -39,9 +39,9 @@ final class RuntimeExtras {
             method(api, impl, "int", "ExperienceValue", "getSpawnData()", "if (value < 0 || value > 32767) throw new IllegalArgumentException(\"Experience value must be 0..32767\"); setSpawnData(value);");
         }
         if (simple.equals("ItemFrame") || simple.equals("Painting")) {
-            method(api, impl, "org.bukkit.block.BlockFace", "Facing", "ValueConversions.direction(net.minecraft.core.Direction.from3DDataValue(getSpawnData()))",
+            method(api, impl, "org.bukkit.block.BlockFace", "Facing", hangingDirection ? "getDirection()" : "ValueConversions.direction(net.minecraft.core.Direction.from3DDataValue(getSpawnData()))",
                     (simple.equals("Painting") ? "if (value == org.bukkit.block.BlockFace.UP || value == org.bukkit.block.BlockFace.DOWN) throw new IllegalArgumentException(\"Painting requires a horizontal face\"); " : "")
-                            + "setSpawnData(ValueConversions.direction(value).get3DDataValue());");
+                            + (hangingDirection ? "setDirection(value); " : "") + "setSpawnData(ValueConversions.direction(value).get3DDataValue());");
         }
     }
 

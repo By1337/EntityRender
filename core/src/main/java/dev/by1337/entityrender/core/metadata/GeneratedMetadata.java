@@ -136,14 +136,6 @@ public final class GeneratedMetadata {
         public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Entity.LAYOUT, DATA_VALUE);
     }
 
-    public static final class FlyingMob {
-        private FlyingMob() {
-        }
-
-        // NMS: net.minecraft.world.entity.FlyingMob
-        public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Mob.LAYOUT);
-    }
-
     public static final class GlowSquid {
         private GlowSquid() {
         }
@@ -381,6 +373,16 @@ public final class GeneratedMetadata {
             public static final MetadataKey<java.util.Optional<net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity>>> DATA_TRUSTED_ID_1 = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
             public static final MetadataKey<java.lang.Integer> DATA_TYPE_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.INT);
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_FLAGS_ID, DATA_TRUSTED_ID_0, DATA_TRUSTED_ID_1, DATA_TYPE_ID);
+        }
+
+        public static final class HappyGhast {
+            private HappyGhast() {
+            }
+
+            // NMS: net.minecraft.world.entity.animal.HappyGhast
+            public static final MetadataKey<java.lang.Boolean> IS_LEASH_HOLDER = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+            public static final MetadataKey<java.lang.Boolean> STAYS_STILL = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, IS_LEASH_HOLDER, STAYS_STILL);
         }
 
         public static final class IronGolem {
@@ -854,7 +856,8 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.decoration.HangingEntity
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.decoration.BlockAttachedEntity.LAYOUT);
+            public static final MetadataKey<net.minecraft.core.Direction> DATA_DIRECTION = new MetadataKey<>(8, net.minecraft.network.syncher.EntityDataSerializers.DIRECTION);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.decoration.BlockAttachedEntity.LAYOUT, DATA_DIRECTION);
         }
 
         public static final class ItemFrame {
@@ -862,8 +865,8 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.decoration.ItemFrame
-            public static final MetadataKey<net.minecraft.world.item.ItemStack> DATA_ITEM = new MetadataKey<>(8, net.minecraft.network.syncher.EntityDataSerializers.ITEM_STACK);
-            public static final MetadataKey<java.lang.Integer> DATA_ROTATION = new MetadataKey<>(9, net.minecraft.network.syncher.EntityDataSerializers.INT);
+            public static final MetadataKey<net.minecraft.world.item.ItemStack> DATA_ITEM = new MetadataKey<>(9, net.minecraft.network.syncher.EntityDataSerializers.ITEM_STACK);
+            public static final MetadataKey<java.lang.Integer> DATA_ROTATION = new MetadataKey<>(10, net.minecraft.network.syncher.EntityDataSerializers.INT);
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.decoration.HangingEntity.LAYOUT, DATA_ITEM, DATA_ROTATION);
         }
 
@@ -880,7 +883,7 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.decoration.Painting
-            public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.decoration.PaintingVariant>> DATA_PAINTING_VARIANT_ID = new MetadataKey<>(8, net.minecraft.network.syncher.EntityDataSerializers.PAINTING_VARIANT);
+            public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.decoration.PaintingVariant>> DATA_PAINTING_VARIANT_ID = new MetadataKey<>(9, net.minecraft.network.syncher.EntityDataSerializers.PAINTING_VARIANT);
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.decoration.HangingEntity.LAYOUT, DATA_PAINTING_VARIANT_ID);
         }
     }
@@ -1024,7 +1027,7 @@ public final class GeneratedMetadata {
 
             // NMS: net.minecraft.world.entity.monster.Ghast
             public static final MetadataKey<java.lang.Boolean> DATA_IS_CHARGING = new MetadataKey<>(16, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.FlyingMob.LAYOUT, DATA_IS_CHARGING);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Mob.LAYOUT, DATA_IS_CHARGING);
         }
 
         public static final class Giant {
@@ -1091,7 +1094,7 @@ public final class GeneratedMetadata {
 
             // NMS: net.minecraft.world.entity.monster.Phantom
             public static final MetadataKey<java.lang.Integer> ID_SIZE = new MetadataKey<>(16, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.FlyingMob.LAYOUT, ID_SIZE);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Mob.LAYOUT, ID_SIZE);
         }
 
         public static final class Pillager {

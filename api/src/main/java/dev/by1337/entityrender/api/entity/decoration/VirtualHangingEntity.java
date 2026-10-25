@@ -5,4 +5,8 @@ package dev.by1337.entityrender.api.entity.decoration;
  * remain explicit.
  */
 public interface VirtualHangingEntity extends dev.by1337.entityrender.api.entity.decoration.VirtualBlockAttachedEntity {
+    /** NMS DATA_DIRECTION; DIRECTION. */
+    org.bukkit.block.BlockFace getDirection();
+
+    void setDirection(org.bukkit.block.BlockFace value);
 }

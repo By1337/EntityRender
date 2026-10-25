@@ -62,6 +62,11 @@ final class AllEntitiesChecks {
                 }
             }
             if (world.getEntities().size() != before) throw new AssertionError("Prototype sweep registered entities in the world");
+            var frame = renderer.createItemFrame(new Location(world, 3, 70, 3));
+            frame.setFacing(org.bukkit.block.BlockFace.EAST);
+            if (frame.getFacing() != org.bukkit.block.BlockFace.EAST) throw new AssertionError("Item-frame facing roundtrip failed");
+            var direction = frame.getClass().getMethod("getDirection");
+            if (direction.invoke(frame) != org.bukkit.block.BlockFace.EAST) throw new AssertionError("Item-frame spawn facing disagrees with metadata direction");
             var falling = renderer.createFallingBlock(new Location(world, 4, 70, 4));
             falling.show(viewer);
             packets.clear();

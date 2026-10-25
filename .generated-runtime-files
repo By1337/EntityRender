@@ -2,7 +2,6 @@ api/src/main/java/dev/by1337/entityrender/api/GeneratedEntityFactories.java
 api/src/main/java/dev/by1337/entityrender/api/entity/VirtualAgeableMob.java
 api/src/main/java/dev/by1337/entityrender/api/entity/VirtualAreaEffectCloud.java
 api/src/main/java/dev/by1337/entityrender/api/entity/VirtualExperienceOrb.java
-api/src/main/java/dev/by1337/entityrender/api/entity/VirtualFlyingMob.java
 api/src/main/java/dev/by1337/entityrender/api/entity/VirtualGlowSquid.java
 api/src/main/java/dev/by1337/entityrender/api/entity/VirtualInteraction.java
 api/src/main/java/dev/by1337/entityrender/api/entity/VirtualLightningBolt.java
@@ -27,6 +26,7 @@ api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualCod.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualCow.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualDolphin.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualFox.java
+api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualHappyGhast.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualIronGolem.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualMushroomCow.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualOcelot.java
@@ -173,7 +173,6 @@ core/src/main/java/dev/by1337/entityrender/core/GeneratedEntityFactory.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_AgeableMob.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_AreaEffectCloud.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_ExperienceOrb.java
-core/src/main/java/dev/by1337/entityrender/core/Generated_FlyingMob.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_GlowSquid.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_Interaction.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_LightningBolt.java
@@ -198,6 +197,7 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Cod.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Cow.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Dolphin.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Fox.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_animal_HappyGhast.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_IronGolem.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_MushroomCow.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Ocelot.java

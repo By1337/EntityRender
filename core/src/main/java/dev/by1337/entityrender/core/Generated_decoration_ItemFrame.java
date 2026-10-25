@@ -27,11 +27,12 @@ class Generated_decoration_ItemFrame extends Generated_decoration_HangingEntity 
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
-        return ValueConversions.direction(net.minecraft.core.Direction.from3DDataValue(getSpawnData()));
+        return getDirection();
     }
 
     @Override
     public void setFacing(org.bukkit.block.BlockFace value) {
+        setDirection(value);
         setSpawnData(ValueConversions.direction(value).get3DDataValue());
     }
 }
