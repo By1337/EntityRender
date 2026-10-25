@@ -26,17 +26,33 @@ final class TrackerChecks {
             var second = renderer.createArmorStand(new Location(world, 0, 65, 0));
             var center = new Location(world, 0, 64, 0);
             var tracker = renderer.createTracker(center, 32);
+            require(tracker.getViewers().isEmpty() && !tracker.iterator().hasNext(), "Tracker viewers must start empty");
             center.setX(1000);
             tracker.add(first);
             tracker.add(second);
             renderer.flush();
             require(packets.size() == 4 && first.getViewers().size() == 1 && second.getViewers().size() == 1, "Group visibility failed");
+            require(tracker.getViewers().equals(Set.of(viewer)), "Tracker player snapshot missing");
+            var savedViewers = tracker.getViewers();
+            var savedIterator = tracker.iterator();
+            var visited = new ArrayList<Player>();
+            tracker.forEach(visited::add);
+            require(visited.equals(List.of(viewer)), "Tracker forEach missing viewer");
+            boolean immutable = false;
+            try {
+                tracker.getViewers().clear();
+            } catch (UnsupportedOperationException expected) {
+                immutable = true;
+            }
+            require(immutable, "Tracker snapshot is mutable");
             packets.clear();
             renderer.flush();
             require(packets.isEmpty(), "Idle tracker repeats snapshots");
             position.set(new Location(world, 100, 64, 0));
             renderer.flush();
             require(first.getViewers().isEmpty() && packets.size() == 2, "Out-of-range viewers remain");
+            require(tracker.getViewers().isEmpty(), "Out-of-range tracker viewer retained");
+            require(savedViewers.equals(Set.of(viewer)) && savedIterator.next() == viewer && !savedIterator.hasNext(), "Published snapshot or iterator changed during refresh");
             first.close();
             require(tracker.size() == 1, "Closed entity retained by tracker");
             position.set(new Location(world, 1, 64, 0));
@@ -53,7 +69,20 @@ final class TrackerChecks {
             require(rejected, "Two trackers can fight over one entity");
             tracker.getCenter().setX(999);
             require(tracker.getCenter().getX() == 0, "Tracker center alias");
+            var effects = renderer.createTracker(new Location(world, 0, 64, 0), 32);
+            renderer.flush();
+            require(effects.size() == 0 && effects.getViewers().equals(Set.of(viewer)), "Empty effects-only tracker has no viewers");
+            effects.setRange(0);
+            renderer.flush();
+            require(effects.getViewers().isEmpty(), "Effects-only tracker ignores range changes");
+            effects.setRange(32);
+            renderer.flush();
+            effects.close();
+            require(effects.getViewers().isEmpty(), "Closed tracker retains players");
+            ((SceneTracker) effects).viewers(Set.of(viewer));
+            require(effects.getViewers().isEmpty(), "Late transport snapshot resurrected a closed tracker");
             tracker.close();
+            require(tracker.getViewers().isEmpty(), "Tracker close must clear player snapshot immediately");
             renderer.flush();
             require(second.getViewers().isEmpty(), "Tracker close did not hide members");
         }

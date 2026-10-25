@@ -33,9 +33,14 @@ final class RenderState {
             var center = settings.center();
             var index = directory.index(center.getWorld());
             var viewers = new HashSet<UUID>();
+            var players = new HashSet<org.bukkit.entity.Player>();
             if (index != null) for (var sample : index.nearby(center, settings.range())) {
-                if (Math.hypot(Math.hypot(sample.x() - center.getX(), sample.z() - center.getZ()), sample.y() - center.getY()) <= settings.range()) viewers.add(sample.id());
+                if (sample.valid().get() && Math.hypot(Math.hypot(sample.x() - center.getX(), sample.z() - center.getZ()), sample.y() - center.getY()) <= settings.range()) {
+                    viewers.add(sample.id());
+                    players.add(sample.player());
+                }
             }
+            scene.tracker().viewers(players);
             for (int member : scene.members()) automatic.put(member, viewers);
         }
         RuntimeException failure = null;

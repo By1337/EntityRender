@@ -3,6 +3,7 @@ package dev.by1337.entityrender.core;
 import dev.by1337.entityrender.api.ViewerTracker;
 import dev.by1337.entityrender.api.entity.VirtualEntity;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
@@ -11,12 +12,13 @@ final class SceneTracker implements ViewerTracker {
     record Settings(Location center, double range) {
     }
 
-    record Snapshot(Settings settings, Set<Integer> members) {
+    record Snapshot(SceneTracker tracker, Settings settings, Set<Integer> members) {
     }
 
     private final PaperEntityRenderer owner;
     private final Map<Integer, BaseVirtualEntity> members = new ConcurrentHashMap<>();
     private final AtomicReference<Settings> settings;
+    private volatile Set<Player> viewers = Set.of();
     private final AtomicBoolean closed = new AtomicBoolean();
 
     SceneTracker(PaperEntityRenderer owner, Location center, double range) {
@@ -60,7 +62,16 @@ final class SceneTracker implements ViewerTracker {
     }
 
     Snapshot snapshot() {
-        return new Snapshot(settings.get(), Set.copyOf(members.keySet()));
+        return new Snapshot(this, settings.get(), Set.copyOf(members.keySet()));
+    }
+
+    @Override
+    public Set<Player> getViewers() {
+        return viewers;
+    }
+
+    synchronized void viewers(Set<Player> value) {
+        if (!closed.get() && !viewers.equals(value)) viewers = Set.copyOf(value);
     }
 
     @Override
@@ -109,6 +120,7 @@ final class SceneTracker implements ViewerTracker {
             base.clearRequested();
         }
         members.clear();
+        viewers = Set.of();
         owner.forgetTracker(this);
     }
 }
