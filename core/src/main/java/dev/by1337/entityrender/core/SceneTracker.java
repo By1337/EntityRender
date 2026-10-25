@@ -3,127 +3,112 @@ package dev.by1337.entityrender.core;
 import dev.by1337.entityrender.api.ViewerTracker;
 import dev.by1337.entityrender.api.entity.VirtualEntity;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 
 final class SceneTracker implements ViewerTracker {
+    record Settings(Location center, double range) {
+    }
+
+    record Snapshot(Settings settings, Set<Integer> members) {
+    }
+
     private final PaperEntityRenderer owner;
-    private final Map<Integer, BaseVirtualEntity> members = new HashMap<>();
-    private Map<UUID, Player> seen = new HashMap<>(), next = new HashMap<>();
-    private Location center;
-    private double range;
-    private boolean closed;
+    private final Map<Integer, BaseVirtualEntity> members = new ConcurrentHashMap<>();
+    private final AtomicReference<Settings> settings;
+    private final AtomicBoolean closed = new AtomicBoolean();
 
     SceneTracker(PaperEntityRenderer owner, Location center, double range) {
         this.owner = owner;
         BaseVirtualEntity.validateLocation(center);
-        this.center = center.clone();
-        setRange(range);
+        validateRange(range);
+        settings = new AtomicReference<>(new Settings(center.clone(), range));
     }
 
     private void checkOpen() {
         owner.checkOpen();
-        if (closed) throw new IllegalStateException("Tracker is closed");
+        if (closed.get()) throw new IllegalStateException("Tracker is closed");
     }
 
     @Override
-    public void add(VirtualEntity entity) {
+    public synchronized void add(VirtualEntity entity) {
         checkOpen();
-        if (!(entity instanceof BaseVirtualEntity base) || base.owner != owner || !center.getWorld().equals(entity.getWorld()) || entity.isClosed()) throw new IllegalArgumentException("Tracker requires an open entity from the same renderer and world");
+        if (!(entity instanceof BaseVirtualEntity base) || base.owner != owner || getCenter().getWorld() != entity.getWorld() || entity.isClosed()) throw new IllegalArgumentException("Tracker requires an open entity from the same renderer and world");
         owner.attachTracker(base, this);
-        members.putIfAbsent(entity.getId(), base);
+        members.put(entity.getId(), base);
+        base.clearRequested();
+        // Close racing registration must not leave a closed member behind.
+        if (base.isClosed()) {
+            members.remove(base.getId());
+            owner.detachTracker(base, this);
+        }
     }
 
     @Override
-    public void remove(VirtualEntity entity) {
+    public synchronized void remove(VirtualEntity entity) {
         checkOpen();
         var base = members.remove(entity.getId());
-        if (base == null) return;
-        owner.detachTracker(base, this);
-        for (var player : seen.values()) base.hide(player);
+        if (base != null) {
+            owner.detachTracker(base, this);
+            base.clearRequested();
+        }
     }
 
-    void detachClosedEntity(int id) {
+    synchronized void detachClosedEntity(int id) {
         members.remove(id);
     }
 
-    void forgetViewer(UUID id) {
-        seen.remove(id);
-        next.remove(id);
-    }
-
-    World world() {
-        return center.getWorld();
-    }
-
-    void update(ViewerIndex index) {
-        next.clear();
-        double squared = range * range;
-        for (var player : index.nearby(center, range)) {
-            double x = player.x() - center.getX(), y = player.y() - center.getY(), z = player.z() - center.getZ();
-            double distance = x * x + y * y + z * z;
-            boolean inside = Double.isInfinite(distance) || Double.isInfinite(squared) ? Math.hypot(Math.hypot(x, z), y) <= range : distance <= squared;
-            if (inside) next.put(player.id(), player.player());
-        }
-        for (var old : seen.entrySet()) if (!next.containsKey(old.getKey())) for (var entity : members.values()) entity.hide(old.getValue());
-        for (var current : next.entrySet()) for (var entity : members.values()) if (!entity.hasViewer(current.getKey())) entity.show(current.getValue());
-        var previous = seen;
-        seen = next;
-        next = previous;
+    Snapshot snapshot() {
+        return new Snapshot(settings.get(), Set.copyOf(members.keySet()));
     }
 
     @Override
     public Location getCenter() {
         checkOpen();
-        return center.clone();
+        return settings.get().center().clone();
     }
 
     @Override
-    public void setCenter(Location value) {
+    public void setCenter(Location center) {
         checkOpen();
-        BaseVirtualEntity.validateLocation(value);
-        if (!center.getWorld().equals(value.getWorld())) throw new IllegalArgumentException("Tracker center must remain in its world");
-        center = value.clone();
+        BaseVirtualEntity.validateLocation(center);
+        settings.updateAndGet(old -> {
+            if (old.center().getWorld() != center.getWorld()) throw new IllegalArgumentException("Tracker must stay in its world");
+            return new Settings(center.clone(), old.range());
+        });
     }
 
     @Override
     public double getRange() {
         checkOpen();
-        return range;
+        return settings.get().range();
     }
 
     @Override
     public void setRange(double value) {
         checkOpen();
+        validateRange(value);
+        settings.updateAndGet(old -> new Settings(old.center(), value));
+    }
+
+    private static void validateRange(double value) {
         if (!Double.isFinite(value) || value < 0) throw new IllegalArgumentException("Range must be finite and nonnegative");
-        range = value;
     }
 
     @Override
     public int size() {
-        checkOpen();
         return members.size();
     }
 
     @Override
-    public void close() {
-        owner.checkThread();
-        if (closed) return;
-        closed = true;
-        RuntimeException failure = null;
-        for (var entity : members.values()) {
-            owner.detachTracker(entity, this);
-            if (!owner.isClosed()) for (var player : seen.values()) try {
-                entity.hide(player);
-            } catch (RuntimeException e) {
-                if (failure == null) failure = e;
-                else failure.addSuppressed(e);
-            }
+    public synchronized void close() {
+        if (!closed.compareAndSet(false, true)) return;
+        for (var base : members.values()) {
+            owner.detachTracker(base, this);
+            base.clearRequested();
         }
         members.clear();
-        seen.clear();
-        next.clear();
         owner.forgetTracker(this);
-        if (failure != null) throw failure;
     }
 }

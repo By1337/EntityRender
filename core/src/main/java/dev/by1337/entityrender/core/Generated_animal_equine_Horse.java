@@ -22,7 +22,7 @@ class Generated_animal_equine_Horse extends Generated_animal_equine_AbstractHors
 
     @Override
     public void setColor(org.bukkit.entity.Horse.Color value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.equine.Horse.DATA_ID_TYPE_VARIANT, (get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.equine.Horse.DATA_ID_TYPE_VARIANT) & ~255) | net.minecraft.world.entity.animal.equine.Variant.valueOf(value.name()).getId());
+        update(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.equine.Horse.DATA_ID_TYPE_VARIANT, current -> (current & ~255) | net.minecraft.world.entity.animal.equine.Variant.valueOf(value.name()).getId());
     }
 
     @Override
@@ -32,6 +32,6 @@ class Generated_animal_equine_Horse extends Generated_animal_equine_AbstractHors
 
     @Override
     public void setStyle(org.bukkit.entity.Horse.Style value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.equine.Horse.DATA_ID_TYPE_VARIANT, (get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.equine.Horse.DATA_ID_TYPE_VARIANT) & ~65280) | net.minecraft.world.entity.animal.equine.Markings.valueOf(value.name().replace("WHITEFIELD", "WHITE_FIELD")).getId() << 8);
+        update(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.equine.Horse.DATA_ID_TYPE_VARIANT, current -> (current & ~65280) | net.minecraft.world.entity.animal.equine.Markings.valueOf(value.name().replace("WHITEFIELD", "WHITE_FIELD")).getId() << 8);
     }
 }

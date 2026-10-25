@@ -4,10 +4,6 @@ import dev.by1337.entityrender.api.entity.VirtualEntity;
 import dev.by1337.entityrender.core.metadata.*;
 import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.*;
-import net.minecraft.world.entity.PositionPath;
-import net.minecraft.world.phys.Vec3;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
@@ -22,17 +18,21 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     private final World world;
     private final EntityType type;
     private final net.minecraft.world.entity.EntityType<?> nmsType;
-    private int spawnData;
-    private boolean respawnDirty;
-    private boolean headDirty;
+    private volatile int spawnData;
+    private final java.util.concurrent.atomic.AtomicLong respawn = new java.util.concurrent.atomic.AtomicLong();
+    private final java.util.concurrent.atomic.AtomicReference<PublishedEntity.Position> position;
+    private final java.util.concurrent.atomic.AtomicBoolean closed = new java.util.concurrent.atomic.AtomicBoolean();
+    final java.util.concurrent.atomic.AtomicBoolean queued = new java.util.concurrent.atomic.AtomicBoolean();
+    private final Map<UUID, Player> requested = new java.util.concurrent.ConcurrentHashMap<>();
+    private volatile Set<UUID> actualViewers = Set.of();
     private final boolean living;
-    private final Map<UUID, Player> viewers = new HashMap<>();
-    private double x, y, z;
-    private float yaw, pitch;
-    private boolean onGround, positionDirty, closed;
-    boolean queued;
-    private EquipmentState equipment;
-    private java.util.function.Consumer<dev.by1337.entityrender.api.EntityInteraction> interactionHandler;
+    private volatile EquipmentState equipment;
+    private volatile java.util.function.Consumer<dev.by1337.entityrender.api.EntityInteraction> interactionHandler;
+    private final net.minecraft.core.RegistryAccess registryAccess;
+    // Only the renderer's serialized publication boundary accesses these fields.
+    private List<net.minecraft.network.syncher.SynchedEntityData.DataValue<?>> publishedMetadata;
+    private List<com.mojang.datafixers.util.Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> publishedEquipment = List.of();
+    private PublishedEntity.Position publishedPosition;
 
     BaseVirtualEntity(PaperEntityRenderer owner, int id, Location location, EntityType type,
         net.minecraft.world.entity.EntityType<?> nmsType, MetadataLayout layout) {
@@ -43,11 +43,8 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         living = type.getEntityClass() != null && LivingEntity.class.isAssignableFrom(type.getEntityClass());
         this.nmsType = nmsType;
         world = location.getWorld();
-        x = location.getX();
-        y = location.getY();
-        z = location.getZ();
-        yaw = location.getYaw();
-        pitch = Math.clamp(location.getPitch(), -90f, 90f);
+        position = new java.util.concurrent.atomic.AtomicReference<>(new PublishedEntity.Position(location.getX(), location.getY(), location.getZ(), location.getYaw(), Math.clamp(location.getPitch(), -90f, 90f), false));
+        registryAccess = owner.registries(world);
         metadata = new MetadataState(layout);
     }
 
@@ -67,11 +64,11 @@ abstract class BaseVirtualEntity implements VirtualEntity {
 
     protected void checkOpen() {
         owner.checkOpen();
-        if (closed) throw new IllegalStateException("Entity is closed");
+        if (closed.get()) throw new IllegalStateException("Entity is closed");
     }
 
     protected final net.minecraft.core.RegistryAccess registries() {
-        return ((org.bukkit.craftbukkit.CraftWorld) getWorld()).getHandle().registryAccess();
+        return registryAccess;
     }
 
     final void initializeSpawnData(int data) {
@@ -94,13 +91,13 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     @Override
     public final void respawn() {
         checkOpen();
-        respawnDirty = true;
+        respawn.incrementAndGet();
         owner.enqueue(this);
     }
 
     protected <T> T get(MetadataKey<T> key) {
         checkOpen();
-        return metadata.get(key);
+        return metadata.getOwned(key);
     }
 
     @Override
@@ -110,13 +107,14 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     }
 
     final void interact(Player player, dev.by1337.entityrender.api.EntityInteraction.Type type, org.bukkit.inventory.EquipmentSlot hand, Vector hit, boolean secondary) {
-        if (closed || !viewers.containsKey(player.getUniqueId()) || !world.equals(player.getWorld()) || interactionHandler == null) return;
-        interactionHandler.accept(new dev.by1337.entityrender.api.EntityInteraction(this, player, type, hand, hit, secondary));
+        var handler = interactionHandler;
+        if (closed.get() || !actualViewers.contains(player.getUniqueId()) || !world.equals(player.getWorld()) || handler == null) return;
+        handler.accept(new dev.by1337.entityrender.api.EntityInteraction(this, player, type, hand, hit, secondary));
     }
 
     protected <T> void set(MetadataKey<T> key, T value) {
         checkOpen();
-        if (metadata.set(key, value)) owner.enqueue(this);
+        if (metadata.setOwned(key, value, false)) owner.enqueue(this);
     }
 
     protected boolean flag(MetadataKey<Byte> key, int mask) {
@@ -124,44 +122,46 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     }
 
     protected void flag(MetadataKey<Byte> key, int mask, boolean enabled) {
-        byte current = get(key);
-        set(key, (byte) (enabled ? current | mask : current & ~mask));
+        update(key, current -> (byte) (enabled ? current | mask : current & ~mask));
+    }
+
+    protected <T> void update(MetadataKey<T> key, java.util.function.UnaryOperator<T> operation) {
+        checkOpen();
+        if (metadata.update(key, operation)) owner.enqueue(this);
     }
 
     @Override
     public int getId() {
-        owner.checkThread();
         return id;
     }
 
     @Override
     public UUID getUniqueId() {
-        owner.checkThread();
         return uuid;
     }
 
     @Override
     public EntityType getType() {
-        owner.checkThread();
         return type;
     }
 
     @Override
     public World getWorld() {
-        owner.checkThread();
         return world;
     }
 
     @Override
     public Location getLocation() {
         checkOpen();
-        return new Location(world, x, y, z, yaw, pitch);
+        var p = position.get();
+        return new Location(world, p.x(), p.y(), p.z(), p.yaw(), p.pitch());
     }
 
     @Override
     public Vector getPosition() {
         checkOpen();
-        return new Vector(x, y, z);
+        var p = position.get();
+        return new Vector(p.x(), p.y(), p.z());
     }
 
     @Override
@@ -176,11 +176,8 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         finite(x);
         finite(y);
         finite(z);
-        if (this.x == x && this.y == y && this.z == z) return;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        positionChanged();
+        position.updateAndGet(p -> new PublishedEntity.Position(x, y, z, p.yaw(), p.pitch(), p.onGround()));
+        owner.enqueue(this);
     }
 
     @Override
@@ -188,8 +185,8 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         checkOpen();
         validateLocation(location);
         if (!world.equals(location.getWorld())) throw new IllegalArgumentException("Virtual entity teleports must stay in the same world");
-        setPosition(location.getX(), location.getY(), location.getZ());
-        setRotation(location.getYaw(), location.getPitch());
+        position.updateAndGet(p -> new PublishedEntity.Position(location.getX(), location.getY(), location.getZ(), location.getYaw(), Math.clamp(location.getPitch(), -90f, 90f), p.onGround()));
+        owner.enqueue(this);
     }
 
     @Override
@@ -197,32 +194,22 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         checkOpen();
         finite(yaw);
         finite(pitch);
-        pitch = Math.clamp(pitch, -90f, 90f);
-        if (this.yaw == yaw && this.pitch == pitch) return;
-        if (this.yaw != yaw && living) headDirty = true;
-        this.yaw = yaw;
-        this.pitch = pitch;
-        positionChanged();
-    }
-
-    private void positionChanged() {
-        positionDirty = true;
+        float limited = Math.clamp(pitch, -90f, 90f);
+        position.updateAndGet(p -> new PublishedEntity.Position(p.x(), p.y(), p.z(), yaw, limited, p.onGround()));
         owner.enqueue(this);
     }
 
     @Override
     public boolean isOnGround() {
         checkOpen();
-        return onGround;
+        return position.get().onGround();
     }
 
     @Override
     public void setOnGround(boolean value) {
         checkOpen();
-        if (onGround != value) {
-            onGround = value;
-            positionChanged();
-        }
+        position.updateAndGet(p -> new PublishedEntity.Position(p.x(), p.y(), p.z(), p.yaw(), p.pitch(), value));
+        owner.enqueue(this);
     }
 
     @Override
@@ -301,139 +288,87 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     public void show(Player player) {
         checkOpen();
         Objects.requireNonNull(player);
-        if (!player.isOnline()) throw new IllegalArgumentException("Viewer is offline");
-        if (!world.equals(player.getWorld())) throw new IllegalArgumentException("Viewer must be in the entity's world");
-        if (viewers.containsKey(player.getUniqueId())) return;
-        try {
-            owner.send(player, owner.spawnPackets.create(type, nmsType, id, uuid, x, y, z, pitch, yaw, spawnData));
-            owner.send(player, new ClientboundSetEntityDataPacket(id, metadata.fullSnapshot()));
-            sendAdditionalSnapshot(player);
-            viewers.put(player.getUniqueId(), player);
-        } catch (RuntimeException failure) {
-            try {
-                owner.send(player, new ClientboundRemoveEntitiesPacket(id));
-            } catch (RuntimeException cleanup) {
-                failure.addSuppressed(cleanup);
-            }
-            throw failure;
-        }
+        requested.put(player.getUniqueId(), player);
+        owner.enqueue(this);
     }
 
     @Override
     public void hide(Player player) {
         checkOpen();
         Objects.requireNonNull(player);
-        if (viewers.containsKey(player.getUniqueId())) {
-            owner.send(player, new ClientboundRemoveEntitiesPacket(id));
-            viewers.remove(player.getUniqueId());
-        }
-    }
-
-    void forgetViewer(UUID player) {
-        viewers.remove(player);
-    }
-
-    final boolean hasViewer(UUID player) {
-        return viewers.containsKey(player);
+        requested.remove(player.getUniqueId());
+        owner.enqueue(this);
     }
 
     @Override
     public Set<UUID> getViewers() {
-        owner.checkThread();
-        return Set.copyOf(viewers.keySet());
+        return actualViewers;
+    }
+
+    final Map<UUID, Player> requestedViewers() {
+        return Map.copyOf(requested);
+    }
+
+    final void clearRequested() {
+        requested.clear();
+        owner.enqueue(this);
+    }
+
+    final boolean hasViewer(UUID id) {
+        return actualViewers.contains(id);
+    }
+
+    final void viewers(Set<UUID> value) {
+        if (!actualViewers.equals(value)) actualViewers = Set.copyOf(value);
     }
 
     @Override
     public boolean isClosed() {
-        owner.checkThread();
-        return closed;
+        return closed.get();
     }
 
-    void flushChanges() {
-        checkOpen();
-        if (!viewers.isEmpty()) {
-            if (respawnDirty) {
-                broadcast(new ClientboundRemoveEntitiesPacket(id));
-                var spawn = owner.spawnPackets.create(type, nmsType, id, uuid, x, y, z, pitch, yaw, spawnData);
-                var full = new ClientboundSetEntityDataPacket(id, metadata.fullSnapshot());
-                for (var player : viewers.values()) {
-                    owner.send(player, spawn);
-                    owner.send(player, full);
-                    sendAdditionalSnapshot(player);
-                }
-                metadata.acknowledge();
-                headDirty = false;
-                positionDirty = false;
-                respawnDirty = false;
-                acknowledgeAdditional();
-                return;
-            }
-            if (positionDirty) broadcast(new ClientboundEntityPositionSyncPacket(id, PositionPath.of(new Vec3(x, y, z)), yaw, pitch, onGround));
-            if (headDirty) broadcast(owner.spawnPackets.head(id, yaw));
-            if (metadata.isDirty()) broadcast(new ClientboundSetEntityDataPacket(id, metadata.dirtySnapshot()));
-            flushAdditional();
+    PublishedEntity publish() {
+        var changed = metadata.drainOwned();
+        if (publishedMetadata == null) publishedMetadata = metadata.fullOwnedSnapshot();
+        else if (!changed.isEmpty()) {
+            var next = new ArrayList<>(publishedMetadata);
+            for (var value : changed) next.set(value.id(), value);
+            publishedMetadata = List.copyOf(next);
         }
-        metadata.acknowledge();
-        headDirty = false;
-        positionDirty = false;
-        respawnDirty = false;
-        acknowledgeAdditional();
-    }
-
-    protected void sendAdditionalSnapshot(Player player) {
-        if (equipment != null) {
-            var packet = equipment.packet(id, true);
-            if (packet != null) owner.send(player, packet);
-        }
-    }
-
-    protected void flushAdditional() {
-        if (equipment != null) {
-            var packet = equipment.packet(id, false);
-            if (packet != null) broadcast(packet);
-        }
-    }
-
-    protected void acknowledgeAdditional() {
-        if (equipment != null) equipment.acknowledge();
+        var state = equipment;
+        boolean equipmentChanged = state != null && state.drain();
+        if (equipmentChanged) publishedEquipment = state.snapshot();
+        var p = position.get();
+        boolean headChanged = living && publishedPosition != null && p.yaw() != publishedPosition.yaw();
+        publishedPosition = p;
+        return new PublishedEntity(this, id, uuid, world, type, nmsType, p, spawnData, respawn.get(), headChanged,
+                publishedMetadata, changed, publishedEquipment, equipmentChanged, Map.copyOf(requested), closed.get());
     }
 
     public org.bukkit.inventory.ItemStack getEquipment(org.bukkit.inventory.EquipmentSlot slot) {
         checkOpen();
         Objects.requireNonNull(slot);
-        return equipment == null ? null : equipment.get(slot);
+        var state = equipment;
+        return state == null ? null : state.get(slot);
     }
 
     public void setEquipment(org.bukkit.inventory.EquipmentSlot slot, org.bukkit.inventory.ItemStack item) {
         checkOpen();
-        if (equipment == null) equipment = new EquipmentState();
-        if (equipment.set(slot, item)) owner.enqueue(this);
-    }
-
-    protected final void broadcast(Packet<?> packet) {
-        RuntimeException failure = null;
-        for (Player player : viewers.values()) {
-            try {
-                owner.send(player, packet);
-            } catch (RuntimeException e) {
-                if (failure == null) failure = e;
-                else failure.addSuppressed(e);
-            }
+        var state = equipment;
+        if (state == null) synchronized (this) {
+            if (equipment == null) equipment = new EquipmentState();
+            state = equipment;
         }
-        if (failure != null) throw failure;
+        if (state.set(slot, item)) owner.enqueue(this);
     }
 
     @Override
     public void close() {
-        owner.checkThread();
-        if (closed) return;
-        try {
-            if (!viewers.isEmpty()) broadcast(new ClientboundRemoveEntitiesPacket(id));
-        } finally {
-            closed = true;
+        if (closed.compareAndSet(false, true)) {
             interactionHandler = null;
-            viewers.clear();
-            owner.forget(this);
+            requested.clear();
+            owner.entityClosed(this);
+            owner.enqueue(this);
         }
     }
 }

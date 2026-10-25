@@ -3,7 +3,10 @@ package dev.by1337.entityrender.api;
 import dev.by1337.entityrender.api.entity.*;
 import org.bukkit.Location;
 
-/** One owner for virtual entities. All operations are confined to its server thread. */
+/**
+ * Concurrent editing context for virtual entities. Initialize through EntityRender on main;
+ * creation, mutation, visibility requests and publication may run on arbitrary threads.
+ */
 public interface EntityRenderer extends AutoCloseable, GeneratedEntityFactories {
     ViewerTracker createTracker(Location center, double range);
 
@@ -15,7 +18,11 @@ public interface EntityRenderer extends AutoCloseable, GeneratedEntityFactories 
 
     VirtualBlockDisplay createBlockDisplay(Location location);
 
-    /** Sends accumulated changes once per entity. Also called by the optional automatic ticker. */
+    /**
+     * Publishes accumulated changes and visibility requests to the shared transport worker.
+     * Does not wait for packet delivery. Automatic renderers publish once per server tick.
+     * Concurrent writers may be observed in adjacent publications; this is not a scene transaction.
+     */
     void flush();
 
     int size();

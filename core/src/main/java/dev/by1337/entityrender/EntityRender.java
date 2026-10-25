@@ -9,12 +9,12 @@ public final class EntityRender {
     private EntityRender() {
     }
 
-    /** One scheduled flush per tick, with automatic cleanup on plugin disable. */
+    /** Initialize on main; edits may run asynchronously and publish automatically each tick. */
     public static EntityRenderer create(Plugin owner) {
         return PaperEntityRenderer.create(owner, true);
     }
 
-    /** Caller controls flush timing. Cleanup on plugin disable is still automatic. */
+    /** Initialize on main; caller may publish from any thread. Cleanup on disable is automatic. */
     public static EntityRenderer createManual(Plugin owner) {
         return PaperEntityRenderer.create(owner, false);
     }

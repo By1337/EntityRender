@@ -54,6 +54,7 @@ final class TrackerChecks {
             tracker.getCenter().setX(999);
             require(tracker.getCenter().getX() == 0, "Tracker center alias");
             tracker.close();
+            renderer.flush();
             require(second.getViewers().isEmpty(), "Tracker close did not hide members");
         }
         Bukkit.getLogger().info("ENTITY_RENDER_TRACKERS_PASS");

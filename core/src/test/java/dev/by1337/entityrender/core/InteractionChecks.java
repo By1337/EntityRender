@@ -26,13 +26,15 @@ final class InteractionChecks {
             case "toString" -> "Interaction viewer";
             default -> throw new UnsupportedOperationException(method.toString());
         });
+        var validSession = new java.util.concurrent.atomic.AtomicBoolean(true);
         var scheduled = new ArrayDeque<Runnable>();
         var callbacks = new ArrayList<EntityInteraction>();
         var channel = new EmbeddedChannel();
         channel.pipeline().addLast("packet_handler", new ChannelInboundHandlerAdapter());
-        try (renderer; var hooks = new InteractionHooks(renderer, scheduled::addLast)) {
+        try (renderer; var hooks = new InteractionHooks(renderer, scheduled::addLast, player -> validSession::get)) {
             var entity = renderer.createArmorStand(new Location(world, 0, 64, 0));
             entity.show(viewer);
+            renderer.flush();
             entity.setInteractionHandler(callbacks::add);
             var nativeTarget = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityTypes.ARMOR_STAND, ((org.bukkit.craftbukkit.CraftWorld) world).getHandle());
             nativeTarget.setId(entity.getId());
@@ -50,7 +52,13 @@ final class InteractionChecks {
             channel.writeInbound(new ServerboundAttackPacket(nativeTarget.getId()));
             while (!scheduled.isEmpty()) scheduled.removeFirst().run();
             require(callbacks.size() == 2 && callbacks.getLast().type() == EntityInteraction.Type.ATTACK && callbacks.getLast().secondaryAction(), "Attack packet lost its server-side sneaking state");
+            channel.writeInbound(new ServerboundAttackPacket(nativeTarget.getId()));
+            validSession.set(false);
+            while (!scheduled.isEmpty()) scheduled.removeFirst().run();
+            require(callbacks.size() == 2, "Old-session click delivered after respawn/disconnect");
+            validSession.set(true);
             entity.hide(viewer);
+            renderer.flush();
             channel.writeInbound(new ServerboundAttackPacket(nativeTarget.getId()));
             while (!scheduled.isEmpty()) scheduled.removeFirst().run();
             require(callbacks.size() == 2, "Non-viewer interaction accepted");
@@ -58,6 +66,23 @@ final class InteractionChecks {
             var unrelated = new ServerboundAttackPacket(nativeTarget.getId());
             channel.writeInbound(unrelated);
             require(channel.readInbound() == unrelated, "Unrelated server interaction consumed");
+            entity.setInteractionHandler(ignored -> {
+            });
+            entity.show(viewer);
+            renderer.flush();
+            var toggler = Thread.ofVirtual().start(() -> {
+                for (int i = 0; i < 100000; i++) {
+                    entity.setInteractionHandler(null);
+                    entity.setInteractionHandler(ignored -> {
+                    });
+                }
+            });
+            for (int i = 0; i < 100000; i++) renderer.dispatchInteraction(viewer, entity.getId(), EntityInteraction.Type.ATTACK, null, null, false);
+            try {
+                toggler.join();
+            } catch (InterruptedException interrupted) {
+                throw new AssertionError(interrupted);
+            }
             hooks.close();
             channel.runPendingTasks();
             nativeTarget.setId(entity.getId());

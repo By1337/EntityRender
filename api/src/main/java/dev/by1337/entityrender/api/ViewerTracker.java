@@ -3,7 +3,11 @@ package dev.by1337.entityrender.api;
 import dev.by1337.entityrender.api.entity.VirtualEntity;
 import org.bukkit.Location;
 
-/** One scene/group shares a visibility calculation. An entity belongs to at most one tracker. */
+/**
+ * One scene/group shares a visibility calculation. Methods may run asynchronously;
+ * membership and settings are applied when the owning renderer publishes.
+ * An entity belongs to at most one tracker. Closing a tracker does not close its entities.
+ */
 public interface ViewerTracker extends AutoCloseable {
     void add(VirtualEntity entity);
 

@@ -32,6 +32,17 @@
 - Различия native конструкторов, пакетных протоколов, registry-конвертеров и пакетов
   взаимодействий остаются в соответствующих версиях core; API не зависит от BLib.
 
+## Async-прототип в main (26.3)
+
+- API создания/изменения/видимости доступен из async/virtual threads; инициализация сервиса — main.
+- Atomic metadata words, CAS packed helpers, публикация owned-снимков и отдельный transport state.
+- Общие на plugin owner sampler игроков, chunk deltas, spatial index, session guards и worker.
+- Персональные голограммы через ручные show/hide, без обязательного автоматического tracker.
+- Main-thread ID reservation по 4096, асинхронная выдача и непрерывные девять ID для дракона.
+- Проверки: 6000 concurrent create/close, dirty-drain races, packed helpers, close/publication,
+  персональные snapshots, chunks/respawn и legacy automatic flush. Клиентская картинка и benchmarks — далее.
+- Старые ветки пока сохраняют прежнюю потоковую модель. Портировать после оценки main.
+
 ## Дальше
 
 1. Загрузить полный vanilla registry / item component context в дампере, закрыть

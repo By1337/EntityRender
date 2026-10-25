@@ -47,6 +47,7 @@ final class AllEntitiesChecks {
                     if (!Arrays.equals(expected, metadata(entity, world))) throw new AssertionError("Public property roundtrip changed native bytes: " + type);
                     packets.clear();
                     entity.show(viewer);
+                    renderer.flush();
                     if (packets.size() < 2 || !(packets.get(1) instanceof ClientboundSetEntityDataPacket)) throw new AssertionError("Missing entity snapshot: " + type);
                     packets.clear();
                     entity.setRotation(90, 20);
@@ -56,6 +57,7 @@ final class AllEntitiesChecks {
                         throw new AssertionError("Living entity head rotation missing: " + type);
                     entity.hide(viewer);
                     entity.close();
+                    renderer.flush();
                     types++;
                 } catch (Throwable failure) {
                     throw new AssertionError("Entity coverage failed for " + type, failure);
@@ -69,6 +71,7 @@ final class AllEntitiesChecks {
             if (direction.invoke(frame) != org.bukkit.block.BlockFace.EAST) throw new AssertionError("Item-frame spawn facing disagrees with metadata direction");
             var falling = renderer.createFallingBlock(new Location(world, 4, 70, 4));
             falling.show(viewer);
+            renderer.flush();
             packets.clear();
             falling.setBlockData(Bukkit.createBlockData(Material.STONE));
             renderer.flush();
@@ -80,6 +83,7 @@ final class AllEntitiesChecks {
             orb.setValue(17);
             packets.clear();
             orb.show(viewer);
+            renderer.flush();
             if (!(packets.getFirst() instanceof ClientboundAddEntityPacket)) throw new AssertionError("Missing native orb spawn packet");
         }
         Bukkit.getLogger().info("ENTITY_RENDER_COVERAGE types=" + types + " properties=" + properties);

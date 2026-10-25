@@ -32,6 +32,6 @@ class Generated_animal_sheep_Sheep extends Generated_animal_Animal implements de
 
     @Override
     public void setColor(org.bukkit.DyeColor value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.sheep.Sheep.DATA_WOOL_ID, (byte) ((get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.sheep.Sheep.DATA_WOOL_ID) & ~15) | net.minecraft.world.item.DyeColor.valueOf(value.name()).getId()));
+        update(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.sheep.Sheep.DATA_WOOL_ID, current -> (byte) ((current & ~15) | net.minecraft.world.item.DyeColor.valueOf(value.name()).getId()));
     }
 }

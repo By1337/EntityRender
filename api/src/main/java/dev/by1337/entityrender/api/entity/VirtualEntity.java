@@ -6,7 +6,11 @@ import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
 import java.util.*;
 
-/** Client-only entity: no AI, physics, world registration or server-side collision. */
+/**
+ * Client-only entity: no AI, physics, world registration or server-side collision.
+ * Methods may be called asynchronously. Editing does not imply network delivery: publish
+ * through the owning renderer. Concurrent changes to different fields need not form one frame.
+ */
 public interface VirtualEntity extends AutoCloseable {
     int getId();
 
@@ -63,9 +67,13 @@ public interface VirtualEntity extends AutoCloseable {
 
     void setPose(Pose pose);
 
-    /** Idempotent. A new viewer receives a full snapshot without consuming pending changes. */
+    /**
+     * Requests visibility for this player. Applied after publication, while the player's session,
+     * world and received chunks allow it. The intent survives chunk reloads and respawn.
+     */
     void show(Player player);
 
+    /** Removes the manual visibility intent; applied on publication. */
     void hide(Player player);
 
     /** Recreates the client representation using the current complete state. */
@@ -74,11 +82,12 @@ public interface VirtualEntity extends AutoCloseable {
     /** Replaces the interaction handler; null clears it. Invoked on the owning server thread. */
     void setInteractionHandler(java.util.function.Consumer<dev.by1337.entityrender.api.EntityInteraction> handler);
 
+    /** Immutable snapshot of transport-admitted viewers, which can lag visibility requests. */
     Set<UUID> getViewers();
 
     boolean isClosed();
 
-    /** Idempotent. Removes this entity from all viewers and its owning renderer. */
+    /** Idempotent. Closes local state; client removal is delivered at the next publication. */
     @Override
     void close();
 }

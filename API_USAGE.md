@@ -1,0 +1,196 @@
+# EntityRender: быстрый старт
+
+Примеры — для `main` (**Paper 26.3 / Java 25**). Для другого сервера бери
+соответствующую [версионную ветку](VERSIONS.md) и её пару `api` + `core`.
+
+## Подключение
+
+Это библиотека внутри твоего плагина. Включи **оба JAR** (`entity-render-api`
+и `entity-render-core`) через shading либо свой загрузчик. `dumper` на сервере
+не нужен; отдельного плагина EntityRender и `depend: [EntityRender]` нет.
+
+Если используешь Maven, установи артефакты нужной ветки через `mvn install`
+из корня EntityRender и добавь зависимость:
+
+```xml
+<dependency>
+    <groupId>dev.by1337.entityrender</groupId>
+    <artifactId>entity-render-core</artifactId>
+    <version>2.0.0+26.3-SNAPSHOT</version>
+</dependency>
+```
+
+`core` подтянет `api` транзитивно. В итоговый плагин включай их оба;
+Paper API, NMS и серверные библиотеки остаются `provided`.
+
+## Создать и показать
+
+Создай один renderer на плагин или владельца сцен, например в `onEnable()`:
+
+```java
+import dev.by1337.entityrender.EntityRender;
+import dev.by1337.entityrender.api.EntityRenderer;
+
+EntityRenderer renderer = EntityRender.create(this);
+```
+
+Дальше `renderer` — этот экземпляр, `location` — Bukkit `Location` с миром,
+`player` — зритель в том же мире. Только `EntityRender.create/createManual` вызывай на main, например из `onEnable`.
+Создавать и менять сущности, управлять сценами и вызывать `flush` можно из виртуального
+потока или другой async-задачи.
+
+```java
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+
+var stand = renderer.createArmorStand(location);
+stand.setInvisible(true);
+stand.setGravity(false);
+stand.setSmall(true);
+stand.setEquipment(EquipmentSlot.HEAD, new ItemStack(Material.DIAMOND));
+stand.setCustomName(Component.text("Приз"));
+stand.setCustomNameVisible(true);
+stand.show(player);
+
+// Передвижение и metadata обновляются у всех текущих зрителей.
+stand.teleport(location.clone().add(0, 1, 0));
+stand.setRotation(90, 0); // yaw / pitch в градусах
+stand.setGlowing(true);
+
+```
+
+Сначала настрой сущность, затем вызывай `show`: после публикации игрок получит готовый снимок.
+Изменения после показа накапливаются и публикуются общей задачей раз в серверный тик.
+`show/hide/close` тоже проходят через публикацию. `getViewers()` возвращает снимок
+допущенных отправкой зрителей, поэтому сразу после `show()` он ещё может быть пустым.
+`stand.hide(player)` снимает запрос показа одному игроку; `stand.close()` удаляет её
+у всех зрителей после ближайшей публикации и освобождает. Повторный `show(player)` отправляет текущее полное состояние.
+
+## Текст, предметы и мобы
+
+```java
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
+
+var text = renderer.createTextDisplay(location.clone().add(0, 2, 0));
+text.setText(Component.text("Нажми, чтобы открыть кейс"));
+text.setBillboard(Display.Billboard.CENTER);
+text.setShadowed(true);
+text.show(player);
+
+var item = renderer.createItemDisplay(location);
+item.setItemStack(new ItemStack(Material.DIAMOND));
+item.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+item.show(player);
+
+var creeper = renderer.createCreeper(location.clone().add(2, 0, 0));
+creeper.setPowered(true);
+creeper.setCustomName(Component.text("Виртуальный крипер"));
+creeper.setCustomNameVisible(true);
+creeper.show(player);
+```
+
+Есть фабрики `createWolf`, `createZombie`, `createBlockDisplay` и остальные.
+Для динамического типа — `renderer.create(EntityType.ZOMBIE, location)`;
+результат имеет общий интерфейс `VirtualEntity`. Специфичные методы удобнее получать
+через типизированную фабрику и `var`. Полный список — в [GeneratedEntityFactories](api/src/main/java/dev/by1337/entityrender/api/GeneratedEntityFactories.java).
+
+Это клиентские сущности: AI, физики, серверных коллизий и настоящего урона нет.
+Игроки, FishingHook и серверный Marker исключены из общей фабрики.
+
+## Клики
+
+```java
+import dev.by1337.entityrender.api.EntityInteraction;
+
+creeper.setInteractionHandler(event -> {
+    if (event.type() == EntityInteraction.Type.ATTACK) {
+        event.player().sendMessage(Component.text("Ударил виртуального крипера"));
+    } else {
+        event.player().sendMessage(Component.text("Нажал на крипера"));
+    }
+});
+```
+
+Callback приходит на серверном потоке только для текущего зрителя.
+`event.entity()` — сущность, `hand()` — рука, `hitPosition()` — локальная точка
+попадания; последние два значения могут быть `null`. `secondaryAction()` означает
+вторичное действие/sneaking. В 26.x атака передаётся отдельным пакетом: для неё
+sneaking берётся из серверного состояния игрока. Правый клик приходит как `INTERACT_AT`;
+в старых версиях также встречается `INTERACT`. `setInteractionHandler(null)` снимает обработчик.
+
+## Автоматические зрители для сцены
+
+Вместо ручных `show/hide` можно передать сущности tracker:
+
+```java
+var scene = renderer.createTracker(location, 32); // радиус в блоках от центра сцены
+scene.add(text);
+scene.add(item);
+scene.add(creeper);
+
+scene.setCenter(location.clone().add(5, 0, 0));
+// Это меняет область видимости; сами сущности не перемещаются.
+
+scene.remove(creeper); // скрыть от зрителей tracker, но оставить сущность живой
+scene.close();         // снять управление видимостью; сущности остаются живыми
+```
+
+Tracker обновляется вместе с renderer каждый тик и показывает сцену игрокам
+в радиусе в том же мире. Для управляемых им сущностей используй tracker как владельца
+видимости: ручной `hide` он может отменить на следующем обновлении.
+Одна сущность может состоять только в одном tracker того же renderer и мира.
+
+## Обновление и очистка
+
+`EntityRender.create(plugin)` автоматически отправляет изменения каждый тик
+и закрывает renderer при disable плагина. При удалении отдельной сцены закрой её
+сущности через `close()`; при завершении работы владельца можно вызвать `renderer.close()`.
+
+Если анимационный движок сам управляет моментом отправки:
+
+```java
+EntityRenderer manual = EntityRender.createManual(this);
+// Создание сущностей и обновления через manual...
+manual.flush(); // опубликовать после обновлений; можно вызывать из async/virtual thread
+manual.close(); // при завершении работы владельца
+```
+
+`flush()` передаёт накопленные изменения общему worker и не ждёт доставки пакетов.
+Netty-канал флушит сам сервер. Для автоматического renderer не нужна своя flush-задача.
+
+```java
+Thread.ofVirtual().start(() -> {
+    var hologram = manualRenderer.createTextDisplay(location);
+    hologram.setText(Component.text("Личный текст"));
+    hologram.show(player);
+    manualRenderer.flush();
+    try {
+        Thread.sleep(1000);
+        hologram.setText(Component.text("Обновлено"));
+        manualRenderer.flush();
+    } catch (InterruptedException interrupted) {
+        Thread.currentThread().interrupt();
+    } finally {
+        hologram.close();
+        manualRenderer.flush();
+    }
+});
+```
+
+Здесь `manualRenderer` заранее создан через `EntityRender.createManual(this)` на main.
+Данные Bukkit для анимации подготовь в допустимом для них потоке: возможность менять
+виртуальную сущность async не делает произвольные Bukkit-вызовы потокобезопасными.
+Первое создание редкого типа может ожидать подготовку NMS defaults на main.
+Main не должен ждать завершения такого виртуального потока через `join()`.
+
+Рабочие поля атомарны; одновременные изменения разных полей могут попасть в разные
+публикации. Публикация сериализована, но целая сцена не является транзакцией.
+Предметы отделяются от входа при установке и далее переиспользуются как owned-значения;
+внутренний массив metadata не копирует ItemStack повторно на каждом этапе.
+
+`Location`, `Vector`, `ItemStack`, `BlockData` и `Transformation` возвращаются копиями:
+после изменения результата геттера передай его обратно в setter. Между мирами сущность
+не телепортируется — создай другую. Углы поз ArmorStand (`EulerAngle`) задаются в радианах.

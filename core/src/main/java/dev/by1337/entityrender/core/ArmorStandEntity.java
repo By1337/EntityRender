@@ -1,12 +1,9 @@
 package dev.by1337.entityrender.core;
 
-import com.mojang.datafixers.util.Pair;
 import dev.by1337.entityrender.api.entity.VirtualArmorStand;
 import dev.by1337.entityrender.core.metadata.MetadataKey;
 import net.minecraft.core.Rotations;
-import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.*;
 import org.bukkit.util.EulerAngle;
@@ -14,16 +11,9 @@ import java.util.*;
 import dev.by1337.entityrender.core.metadata.GeneratedMetadata;
 
 final class ArmorStandEntity extends BaseVirtualEntity implements VirtualArmorStand {
-    private static final net.minecraft.world.entity.EquipmentSlot[] SLOTS = {
-            net.minecraft.world.entity.EquipmentSlot.MAINHAND, net.minecraft.world.entity.EquipmentSlot.OFFHAND,
-            net.minecraft.world.entity.EquipmentSlot.FEET, net.minecraft.world.entity.EquipmentSlot.LEGS,
-            net.minecraft.world.entity.EquipmentSlot.CHEST, net.minecraft.world.entity.EquipmentSlot.HEAD };
-    private final net.minecraft.world.item.ItemStack[] equipment = new net.minecraft.world.item.ItemStack[6];
-    private int equipmentDirty;
 
     ArmorStandEntity(PaperEntityRenderer owner, int id, Location location) {
         super(owner, id, location, EntityType.ARMOR_STAND, net.minecraft.world.entity.EntityTypes.ARMOR_STAND, GeneratedMetadata.decoration.ArmorStand.LAYOUT);
-        Arrays.fill(equipment, net.minecraft.world.item.ItemStack.EMPTY);
     }
 
     @Override
@@ -143,56 +133,23 @@ final class ArmorStandEntity extends BaseVirtualEntity implements VirtualArmorSt
         pose(GeneratedMetadata.decoration.ArmorStand.DATA_RIGHT_LEG_POSE, pose);
     }
 
-    private int slot(EquipmentSlot slot) {
-        return switch (Objects.requireNonNull(slot)) {
-            case HAND -> 0;
-            case OFF_HAND -> 1;
-            case FEET -> 2;
-            case LEGS -> 3;
-            case CHEST -> 4;
-            case HEAD -> 5;
+    private static void validateSlot(EquipmentSlot slot) {
+        switch (Objects.requireNonNull(slot)) {
+            case HAND, OFF_HAND, FEET, LEGS, CHEST, HEAD -> {
+            }
             default -> throw new IllegalArgumentException("Unsupported armor stand equipment slot: " + slot);
-        };
+        }
     }
 
     @Override
     public ItemStack getEquipment(EquipmentSlot slot) {
-        checkOpen();
-        var item = equipment[slot(slot)];
-        return item.isEmpty() ? null : CraftItemStack.asBukkitCopy(item);
+        validateSlot(slot);
+        return super.getEquipment(slot);
     }
 
     @Override
     public void setEquipment(EquipmentSlot slot, ItemStack item) {
-        checkOpen();
-        int index = slot(slot);
-        var snapshot = item == null ? net.minecraft.world.item.ItemStack.EMPTY : CraftItemStack.asNMSCopy(item);
-        if (net.minecraft.world.item.ItemStack.matches(equipment[index], snapshot)) return;
-        equipment[index] = snapshot;
-        equipmentDirty |= 1 << index;
-        owner.enqueue(this);
-    }
-
-    private ClientboundSetEquipmentPacket equipmentPacket(int mask) {
-        var values = new ArrayList<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>>();
-        for (int i = 0; i < equipment.length; i++) if ((mask & 1 << i) != 0) values.add(Pair.of(SLOTS[i], equipment[i].copy()));
-        return new ClientboundSetEquipmentPacket(getId(), List.copyOf(values));
-    }
-
-    @Override
-    protected void sendAdditionalSnapshot(Player player) {
-        int mask = 0;
-        for (int i = 0; i < equipment.length; i++) if (!equipment[i].isEmpty()) mask |= 1 << i;
-        if (mask != 0) owner.send(player, equipmentPacket(mask));
-    }
-
-    @Override
-    protected void flushAdditional() {
-        if (equipmentDirty != 0) broadcast(equipmentPacket(equipmentDirty));
-    }
-
-    @Override
-    protected void acknowledgeAdditional() {
-        equipmentDirty = 0;
+        validateSlot(slot);
+        super.setEquipment(slot, item);
     }
 }

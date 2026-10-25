@@ -18,19 +18,29 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
             try {
                 RuntimeChecks.main(new String[0]);
                 live();
-                Files.writeString(Path.of("entityrender-test.result"), "PASS\n");
-                getLogger().info("ENTITY_RENDER_PAPER_TEST_PASS");
+                AsyncChecks.run(this).whenComplete((ignored, error) -> {
+                    getServer().getScheduler().runTask(this, () -> finish(error));
+                });
             } catch (Throwable failure) {
-                getLogger().log(java.util.logging.Level.SEVERE, "EntityRender Paper integration failed", failure);
-                try {
-                    Files.writeString(Path.of("entityrender-test.result"), "FAIL " + failure + "\n");
-                } catch (Exception e) {
-                    failure.addSuppressed(e);
-                }
-            } finally {
-                getServer().shutdown();
+                finish(failure);
             }
         });
+    }
+
+    private void finish(Throwable failure) {
+        try {
+            if (failure == null) {
+                Files.writeString(Path.of("entityrender-test.result"), "PASS\n");
+                getLogger().info("ENTITY_RENDER_PAPER_TEST_PASS");
+            } else {
+                getLogger().log(java.util.logging.Level.SEVERE, "EntityRender Paper integration failed", failure);
+                Files.writeString(Path.of("entityrender-test.result"), "FAIL " + failure + "\n");
+            }
+        } catch (Exception error) {
+            getLogger().log(java.util.logging.Level.SEVERE, "Cannot write integration result", error);
+        } finally {
+            getServer().shutdown();
+        }
     }
 
     private static void require(boolean condition, String message) {

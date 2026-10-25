@@ -137,18 +137,21 @@ public final class RuntimeChecks {
         input.setX(999);
         require(stand.getPosition().getX() == 1, "Location alias");
         stand.show(first);
+        renderer.flush();
         require(sent.size() == 2, "Expected spawn + full metadata");
         require(sent.getFirst().packet() instanceof ClientboundAddEntityPacket spawn && spawn.getYRot() != 0, "Spawn rotation missing");
         stand.show(first);
+        renderer.flush();
         require(sent.size() == 2, "Duplicate show");
+        sent.clear();
+        stand.show(second);
+        renderer.flush();
+        require(sent.size() == 2, "New viewer did not receive full snapshot");
         sent.clear();
         stand.setInvisible(true);
         stand.setGlowing(true);
         stand.setSmall(true);
         stand.setArms(true);
-        stand.show(second);
-        require(sent.size() == 2, "New viewer did not receive full snapshot");
-        sent.clear();
         renderer.flush();
         require(sent.size() == 2 && sent.get(0).packet() == sent.get(1).packet(), "Metadata packet not shared across viewers");
         var update = (ClientboundSetEntityDataPacket) sent.getFirst().packet();
@@ -183,7 +186,7 @@ public final class RuntimeChecks {
         require(failed, "Injected failure not observed");
         sent.clear();
         renderer.flush();
-        require(sent.size() == 2, "Failed broadcast was not retried");
+        require(sent.size() == 6, "Failed broadcast was not repaired with full snapshots");
         sent.clear();
         var display = renderer.createTextDisplay(new Location(world, 0, 0, 0));
         var transform = new Transformation(new Vector3f(1, 2, 3), new Quaternionf(), new Vector3f(2), new Quaternionf());
@@ -216,7 +219,7 @@ public final class RuntimeChecks {
         });
         thread.start();
         thread.join();
-        require(asyncError.get() instanceof IllegalStateException, "Async mutation accepted");
+        require(asyncError.get() == null, "Async mutation rejected");
         boolean invalid = false;
         try {
             stand.setPosition(Double.NaN, 0, 0);
@@ -226,6 +229,7 @@ public final class RuntimeChecks {
         require(invalid, "Non-finite position accepted");
         stand.hide(first);
         stand.hide(first);
+        renderer.flush();
         require(stand.getViewers().size() == 1, "Hide not idempotent");
         renderer.close();
         renderer.close();
