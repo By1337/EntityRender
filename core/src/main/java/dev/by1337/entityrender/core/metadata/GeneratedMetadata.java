@@ -988,6 +988,15 @@ public final class GeneratedMetadata {
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Entity.LAYOUT);
         }
 
+        public static final class Cushion {
+            private Cushion() {
+            }
+
+            // NMS: net.minecraft.world.entity.decoration.Cushion
+            public static final MetadataKey<net.minecraft.world.item.DyeColor> DATA_COLOR = new MetadataKey<>(8, net.minecraft.network.syncher.EntityDataSerializers.DYE_COLOR);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.decoration.BlockAttachedEntity.LAYOUT, DATA_COLOR);
+        }
+
         public static final class GlowItemFrame {
             private GlowItemFrame() {
             }
@@ -1114,11 +1123,11 @@ public final class GeneratedMetadata {
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.Guardian.LAYOUT);
         }
 
-        public static final class EnderMan {
-            private EnderMan() {
+        public static final class Enderman {
+            private Enderman() {
             }
 
-            // NMS: net.minecraft.world.entity.monster.EnderMan
+            // NMS: net.minecraft.world.entity.monster.Enderman
             public static final MetadataKey<java.util.Optional<net.minecraft.world.level.block.state.BlockState>> DATA_CARRY_STATE = new MetadataKey<>(16, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_BLOCK_STATE);
             public static final MetadataKey<java.lang.Boolean> DATA_CREEPY = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
             public static final MetadataKey<java.lang.Boolean> DATA_STARED_AT = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);

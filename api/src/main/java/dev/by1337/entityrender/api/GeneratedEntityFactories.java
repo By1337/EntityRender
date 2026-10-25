@@ -215,6 +215,10 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.boss.wither.VirtualWitherBoss) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:wither"))), location);
     }
 
+    default dev.by1337.entityrender.api.entity.decoration.VirtualCushion createCushion(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.decoration.VirtualCushion) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:cushion"))), location);
+    }
+
     default dev.by1337.entityrender.api.entity.decoration.VirtualGlowItemFrame createGlowItemFrame(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.decoration.VirtualGlowItemFrame) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:glow_item_frame"))), location);
     }
@@ -259,8 +263,8 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.monster.VirtualElderGuardian) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:elder_guardian"))), location);
     }
 
-    default dev.by1337.entityrender.api.entity.monster.VirtualEnderMan createEnderman(org.bukkit.Location location) {
-        return (dev.by1337.entityrender.api.entity.monster.VirtualEnderMan) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:enderman"))), location);
+    default dev.by1337.entityrender.api.entity.monster.VirtualEnderman createEnderman(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.monster.VirtualEnderman) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:enderman"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.monster.VirtualEndermite createEndermite(org.bukkit.Location location) {
@@ -531,6 +535,10 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.vehicle.boat.VirtualBoat) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:pale_oak_boat"))), location);
     }
 
+    default dev.by1337.entityrender.api.entity.vehicle.boat.VirtualBoat createPoplarBoat(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.vehicle.boat.VirtualBoat) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:poplar_boat"))), location);
+    }
+
     default dev.by1337.entityrender.api.entity.vehicle.boat.VirtualBoat createSpruceBoat(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.vehicle.boat.VirtualBoat) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:spruce_boat"))), location);
     }
@@ -565,6 +573,10 @@ public interface GeneratedEntityFactories {
 
     default dev.by1337.entityrender.api.entity.vehicle.boat.VirtualChestBoat createPaleOakChestBoat(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.vehicle.boat.VirtualChestBoat) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:pale_oak_chest_boat"))), location);
+    }
+
+    default dev.by1337.entityrender.api.entity.vehicle.boat.VirtualChestBoat createPoplarChestBoat(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.vehicle.boat.VirtualChestBoat) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:poplar_chest_boat"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.vehicle.boat.VirtualChestBoat createSpruceChestBoat(org.bukkit.Location location) {

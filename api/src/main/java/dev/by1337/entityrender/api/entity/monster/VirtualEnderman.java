@@ -1,10 +1,10 @@
 package dev.by1337.entityrender.api.entity.monster;
 
 /**
- * Generated from net.minecraft.world.entity.monster.EnderMan. Values use Bukkit types; packed flag fields remain
+ * Generated from net.minecraft.world.entity.monster.Enderman. Values use Bukkit types; packed flag fields remain
  * explicit.
  */
-public interface VirtualEnderMan extends dev.by1337.entityrender.api.entity.monster.VirtualMonster {
+public interface VirtualEnderman extends dev.by1337.entityrender.api.entity.monster.VirtualMonster {
     /** NMS DATA_CARRY_STATE; OPTIONAL_BLOCK_STATE. */
     org.bukkit.block.data.BlockData getCarryState();
 

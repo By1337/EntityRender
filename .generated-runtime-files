@@ -72,6 +72,7 @@ api/src/main/java/dev/by1337/entityrender/api/entity/boss/enderdragon/VirtualEnd
 api/src/main/java/dev/by1337/entityrender/api/entity/boss/enderdragon/VirtualEnderDragon.java
 api/src/main/java/dev/by1337/entityrender/api/entity/boss/wither/VirtualWitherBoss.java
 api/src/main/java/dev/by1337/entityrender/api/entity/decoration/VirtualBlockAttachedEntity.java
+api/src/main/java/dev/by1337/entityrender/api/entity/decoration/VirtualCushion.java
 api/src/main/java/dev/by1337/entityrender/api/entity/decoration/VirtualGlowItemFrame.java
 api/src/main/java/dev/by1337/entityrender/api/entity/decoration/VirtualHangingEntity.java
 api/src/main/java/dev/by1337/entityrender/api/entity/decoration/VirtualItemFrame.java
@@ -84,7 +85,7 @@ api/src/main/java/dev/by1337/entityrender/api/entity/item/VirtualPrimedTnt.java
 api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualBlaze.java
 api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualCreeper.java
 api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualElderGuardian.java
-api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualEnderMan.java
+api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualEnderman.java
 api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualEndermite.java
 api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualGhast.java
 api/src/main/java/dev/by1337/entityrender/api/entity/monster/VirtualGiant.java
@@ -253,6 +254,7 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_boss_enderdragon_EndCr
 core/src/main/java/dev/by1337/entityrender/core/Generated_boss_enderdragon_EnderDragon.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_boss_wither_WitherBoss.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_decoration_BlockAttachedEntity.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_decoration_Cushion.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_decoration_GlowItemFrame.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_decoration_HangingEntity.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_decoration_ItemFrame.java
@@ -265,7 +267,7 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_item_PrimedTnt.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_monster_Blaze.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_monster_Creeper.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_monster_ElderGuardian.java
-core/src/main/java/dev/by1337/entityrender/core/Generated_monster_EnderMan.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_monster_Enderman.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_monster_Endermite.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_monster_Ghast.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_monster_Giant.java

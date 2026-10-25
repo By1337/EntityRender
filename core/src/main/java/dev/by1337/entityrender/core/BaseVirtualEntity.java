@@ -6,7 +6,7 @@ import io.papermc.paper.adventure.PaperAdventure;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.PositionPath;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -368,7 +368,7 @@ abstract class BaseVirtualEntity implements VirtualEntity {
                 acknowledgeAdditional();
                 return;
             }
-            if (positionDirty) broadcast(new ClientboundEntityPositionSyncPacket(id, new PositionMoveRotation(new Vec3(x, y, z), Vec3.ZERO, yaw, pitch), onGround));
+            if (positionDirty) broadcast(new ClientboundEntityPositionSyncPacket(id, PositionPath.of(new Vec3(x, y, z)), yaw, pitch, onGround));
             if (headDirty) broadcast(owner.spawnPackets.head(id, yaw));
             if (metadata.isDirty()) broadcast(new ClientboundSetEntityDataPacket(id, metadata.dirtySnapshot()));
             flushAdditional();

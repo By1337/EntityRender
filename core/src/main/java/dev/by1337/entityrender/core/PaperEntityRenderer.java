@@ -147,7 +147,7 @@ public final class PaperEntityRenderer implements EntityRenderer, Listener {
             var level = ((CraftWorld) world).getHandle();
             var prototype = nativeType.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
             if (prototype == null) throw new IllegalArgumentException("Entity requires additional construction context: " + type);
-            var tracker = new net.minecraft.server.level.ServerEntity(level, prototype, 1, false, new net.minecraft.server.level.ServerEntity.Synchronizer() {
+            var tracker = new net.minecraft.server.level.ServerEntity(level, prototype, net.minecraft.world.entity.UpdateInterval.periodic(1), false, new net.minecraft.server.level.ServerEntity.Synchronizer() {
                 public void sendToTrackingPlayers(net.minecraft.network.protocol.Packet<? super net.minecraft.network.protocol.game.ClientGamePacketListener> p0) {
                 }
 

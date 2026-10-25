@@ -147,6 +147,7 @@ def main():
     holder_signature = next(line for line in javap('org.bukkit.craftbukkit.CraftRegistry').splitlines() if ' bukkitToMinecraftHolder(' in line)
     holder_registry = 'ResourceKey' in holder_signature
     def values(text):
+        text = text.replace('ResourceKey<? extends Registry<M>> registry', 'ResourceKey<Registry<M>> registry')
         text = re.sub(r'return CraftRegistry\.bukkitToMinecraftHolder\(value(?:, registry)?\);', 'return CraftRegistry.bukkitToMinecraftHolder(value'+(', registry' if holder_registry else '')+');', text)
         text = re.sub(r'import net\.minecraft\.world\.entity\.[^;]*\.VillagerData;', 'import '+villager+';', text)
         text = re.sub(r'static VillagerAppearance villager\(.*?(?=static String compound)', body, text, flags=re.S)
