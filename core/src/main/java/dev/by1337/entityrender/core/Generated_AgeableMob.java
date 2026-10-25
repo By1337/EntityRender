@@ -6,6 +6,16 @@ class Generated_AgeableMob extends Generated_PathfinderMob implements dev.by1337
     }
 
     @Override
+    public boolean isAgeLocked() {
+        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.AgeableMob.AGE_LOCKED);
+    }
+
+    @Override
+    public void setAgeLocked(boolean value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.AgeableMob.AGE_LOCKED, value);
+    }
+
+    @Override
     public boolean isBaby() {
         return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.AgeableMob.DATA_BABY_ID);
     }

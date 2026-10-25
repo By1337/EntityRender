@@ -24,4 +24,14 @@ class Generated_monster_zombie_ZombieVillager extends Generated_monster_zombie_Z
     public void setVillagerData(dev.by1337.entityrender.api.VillagerAppearance value) {
         set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.monster.zombie.ZombieVillager.DATA_VILLAGER_DATA, ValueConversions.villager(value));
     }
+
+    @Override
+    public boolean isVillagerDataFinalized() {
+        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.monster.zombie.ZombieVillager.DATA_VILLAGER_DATA_FINALIZED);
+    }
+
+    @Override
+    public void setVillagerDataFinalized(boolean value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.monster.zombie.ZombieVillager.DATA_VILLAGER_DATA_FINALIZED, value);
+    }
 }

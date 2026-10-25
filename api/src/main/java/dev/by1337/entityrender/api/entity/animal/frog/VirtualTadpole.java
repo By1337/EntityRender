@@ -5,4 +5,8 @@ package dev.by1337.entityrender.api.entity.animal.frog;
  * explicit.
  */
 public interface VirtualTadpole extends dev.by1337.entityrender.api.entity.animal.fish.VirtualAbstractFish {
+    /** NMS AGE_LOCKED; BOOLEAN. */
+    boolean isAgeLocked();
+
+    void setAgeLocked(boolean value);
 }

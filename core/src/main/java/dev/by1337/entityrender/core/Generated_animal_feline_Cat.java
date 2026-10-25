@@ -16,6 +16,16 @@ class Generated_animal_feline_Cat extends Generated_TamableAnimal implements dev
     }
 
     @Override
+    public org.bukkit.entity.Cat.SoundVariant getSoundVariant() {
+        return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.feline.Cat.DATA_SOUND_VARIANT_ID), net.minecraft.core.registries.Registries.CAT_SOUND_VARIANT);
+    }
+
+    @Override
+    public void setSoundVariant(org.bukkit.entity.Cat.SoundVariant value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.feline.Cat.DATA_SOUND_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.CAT_SOUND_VARIANT));
+    }
+
+    @Override
     public org.bukkit.entity.Cat.Type getVariant() {
         return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.feline.Cat.DATA_VARIANT_ID), net.minecraft.core.registries.Registries.CAT_VARIANT);
     }

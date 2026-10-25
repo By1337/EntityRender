@@ -10,6 +10,11 @@ public interface VirtualCat extends dev.by1337.entityrender.api.entity.VirtualTa
 
     void setCollarColor(org.bukkit.DyeColor value);
 
+    /** NMS DATA_SOUND_VARIANT_ID; CAT_SOUND_VARIANT. */
+    org.bukkit.entity.Cat.SoundVariant getSoundVariant();
+
+    void setSoundVariant(org.bukkit.entity.Cat.SoundVariant value);
+
     /** NMS DATA_VARIANT_ID; CAT_VARIANT. */
     org.bukkit.entity.Cat.Type getVariant();
 

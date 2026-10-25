@@ -6,9 +6,9 @@ package dev.by1337.entityrender.api.entity.animal.golem;
  */
 public interface VirtualCopperGolem extends dev.by1337.entityrender.api.entity.animal.golem.VirtualAbstractGolem {
     /** NMS COPPER_GOLEM_STATE; COPPER_GOLEM_STATE. */
-    String getCopperGolemState();
+    org.bukkit.entity.CopperGolem.State getCopperGolemState();
 
-    void setCopperGolemState(String value);
+    void setCopperGolemState(org.bukkit.entity.CopperGolem.State value);
 
     /** NMS DATA_WEATHER_STATE; WEATHERING_COPPER_STATE. */
     io.papermc.paper.world.WeatheringCopperState getWeatherState();

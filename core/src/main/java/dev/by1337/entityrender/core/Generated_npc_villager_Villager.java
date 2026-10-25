@@ -14,4 +14,14 @@ class Generated_npc_villager_Villager extends Generated_npc_villager_AbstractVil
     public void setVillagerData(dev.by1337.entityrender.api.VillagerAppearance value) {
         set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.npc.villager.Villager.DATA_VILLAGER_DATA, ValueConversions.villager(value));
     }
+
+    @Override
+    public boolean isVillagerDataFinalized() {
+        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.npc.villager.Villager.DATA_VILLAGER_DATA_FINALIZED);
+    }
+
+    @Override
+    public void setVillagerDataFinalized(boolean value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.npc.villager.Villager.DATA_VILLAGER_DATA_FINALIZED, value);
+    }
 }

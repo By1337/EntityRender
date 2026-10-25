@@ -16,6 +16,16 @@ class Generated_animal_pig_Pig extends Generated_animal_Animal implements dev.by
     }
 
     @Override
+    public org.bukkit.entity.Pig.SoundVariant getSoundVariant() {
+        return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.pig.Pig.DATA_SOUND_VARIANT_ID), net.minecraft.core.registries.Registries.PIG_SOUND_VARIANT);
+    }
+
+    @Override
+    public void setSoundVariant(org.bukkit.entity.Pig.SoundVariant value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.pig.Pig.DATA_SOUND_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.PIG_SOUND_VARIANT));
+    }
+
+    @Override
     public org.bukkit.entity.Pig.Variant getVariant() {
         return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.pig.Pig.DATA_VARIANT_ID), net.minecraft.core.registries.Registries.PIG_VARIANT);
     }

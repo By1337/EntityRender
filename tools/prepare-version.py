@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import zipfile
 from server_libraries import select_bundle
 
@@ -118,6 +119,8 @@ def main():
         text = re.sub(r'Bukkit\.getUnsafe\(\)\.nextEntityId\((?:world)?\)', 'Bukkit.getUnsafe().nextEntityId('+('world' if world_ids else '')+')', text)
         text = text.replace('net.minecraft.resources.ResourceLocation', 'net.minecraft.resources.'+identifier).replace('net.minecraft.resources.Identifier', 'net.minecraft.resources.'+identifier)
         path.write_text(text)
+    if 'net/minecraft/network/protocol/game/ServerboundAttackPacket.class' in entries:
+        run(sys.executable, 'tools/migrate-interactions.py')
     replace('dumper/src/main/java/dev/by1337/entityrender/dumper/RuntimeGenerator.java', lambda s:
             re.sub(r'net\.minecraft\.resources\.(?:ResourceLocation|Identifier)', 'net.minecraft.resources.'+identifier, s))
     if 'net/minecraft/world/entity/EntityReference.class' in entries:

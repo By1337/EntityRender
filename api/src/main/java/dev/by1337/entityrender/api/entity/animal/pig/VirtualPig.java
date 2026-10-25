@@ -10,6 +10,11 @@ public interface VirtualPig extends dev.by1337.entityrender.api.entity.animal.Vi
 
     void setBoostTime(int value);
 
+    /** NMS DATA_SOUND_VARIANT_ID; PIG_SOUND_VARIANT. */
+    org.bukkit.entity.Pig.SoundVariant getSoundVariant();
+
+    void setSoundVariant(org.bukkit.entity.Pig.SoundVariant value);
+
     /** NMS DATA_VARIANT_ID; PIG_VARIANT. */
     org.bukkit.entity.Pig.Variant getVariant();
 

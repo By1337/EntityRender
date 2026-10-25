@@ -127,7 +127,7 @@ final class RuntimeGenerator {
             case "SNIFFER_STATE" -> new Property("org.bukkit.entity.Sniffer.State", "", "org.bukkit.entity.Sniffer.State.valueOf($.name())", nms + ".valueOf($.name())");
             case "ARMADILLO_STATE" -> enumeration("org.bukkit.entity.Armadillo.State", nms);
             case "WEATHERING_COPPER_STATE" -> enumeration("io.papermc.paper.world.WeatheringCopperState", nms);
-            case "COPPER_GOLEM_STATE" -> new Property("String", "", "$.name()", nms + ".valueOf(java.util.Objects.requireNonNull($))");
+            case "COPPER_GOLEM_STATE" -> enumeration("org.bukkit.entity.CopperGolem.State", nms);
             case "DYE_COLOR" -> new Property("org.bukkit.DyeColor", "", "org.bukkit.DyeColor.valueOf($.name())", nms + ".valueOf($.name())");
             case "HUMANOID_ARM" -> new Property("org.bukkit.inventory.MainHand", "", "org.bukkit.inventory.MainHand.valueOf($.name())", nms + ".valueOf($.name())");
             case "COMPOUND_TAG" -> new Property("String", "Snbt", "ValueConversions.compound($)", "ValueConversions.compound($)");

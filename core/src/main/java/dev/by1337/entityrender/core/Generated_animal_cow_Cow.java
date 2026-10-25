@@ -6,6 +6,16 @@ class Generated_animal_cow_Cow extends Generated_animal_cow_AbstractCow implemen
     }
 
     @Override
+    public org.bukkit.entity.Cow.SoundVariant getSoundVariant() {
+        return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.cow.Cow.DATA_SOUND_VARIANT_ID), net.minecraft.core.registries.Registries.COW_SOUND_VARIANT);
+    }
+
+    @Override
+    public void setSoundVariant(org.bukkit.entity.Cow.SoundVariant value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.cow.Cow.DATA_SOUND_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.COW_SOUND_VARIANT));
+    }
+
+    @Override
     public org.bukkit.entity.Cow.Variant getVariant() {
         return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.cow.Cow.DATA_VARIANT_ID), net.minecraft.core.registries.Registries.COW_VARIANT);
     }

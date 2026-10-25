@@ -14,4 +14,9 @@ public interface VirtualZombieVillager extends dev.by1337.entityrender.api.entit
     dev.by1337.entityrender.api.VillagerAppearance getVillagerData();
 
     void setVillagerData(dev.by1337.entityrender.api.VillagerAppearance value);
+
+    /** NMS DATA_VILLAGER_DATA_FINALIZED; BOOLEAN. */
+    boolean isVillagerDataFinalized();
+
+    void setVillagerDataFinalized(boolean value);
 }

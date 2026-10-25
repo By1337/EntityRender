@@ -6,13 +6,13 @@ class Generated_animal_golem_CopperGolem extends Generated_animal_golem_Abstract
     }
 
     @Override
-    public String getCopperGolemState() {
-        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.golem.CopperGolem.COPPER_GOLEM_STATE).name();
+    public org.bukkit.entity.CopperGolem.State getCopperGolemState() {
+        return org.bukkit.entity.CopperGolem.State.valueOf(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.golem.CopperGolem.COPPER_GOLEM_STATE).name());
     }
 
     @Override
-    public void setCopperGolemState(String value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.golem.CopperGolem.COPPER_GOLEM_STATE, net.minecraft.world.entity.animal.golem.CopperGolemState.valueOf(java.util.Objects.requireNonNull(value)));
+    public void setCopperGolemState(org.bukkit.entity.CopperGolem.State value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.golem.CopperGolem.COPPER_GOLEM_STATE, net.minecraft.world.entity.animal.golem.CopperGolemState.valueOf(java.util.Objects.requireNonNull(value).name()));
     }
 
     @Override

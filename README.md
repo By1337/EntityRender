@@ -1,7 +1,7 @@
 # EntityRender
 
 Библиотека виртуальных сущностей и инструменты дампа / генерации.
-Runtime текущей ветки предназначен для **Paper 1.21.11 / Java 21**.
+Runtime текущей ветки предназначен для **Paper 26.1.2 / Java 25**.
 Предыдущие версии фиксируются отдельными ветками; `main` обновляется вперёд.
 Проверенные сборки и результаты интеграционных проверок перечислены в [VERSIONS.md](VERSIONS.md).
 
@@ -81,21 +81,22 @@ AI/физику, не добавляет сущности в мир, не соз
 Сборка без скачивания зависимостей из уже подготовленного Paper-сервера:
 
 ```sh
-JAVA_HOME=/path/to/jdk-21 sh build-runtime.sh /path/to/prepared-paper-1.21.4-server
+sh build-runtime.sh /path/to/prepared-paper-server
 ```
 
-Либо весь Maven reactor: `JAVA_HOME=/path/to/jdk-21 mvn package`.
+Для runtime выберите JDK целевой версии в `JAVA_HOME` (21 для 1.21.x, 25 для 26.x).
+Либо весь Maven reactor: `mvn clean package`.
 Maven собирает артефакты; интеграционные проверки запускаются явными скриптами ниже,
 без JUnit и других тестовых библиотек.
 
 ### Проверка runtime
 
 ```sh
-# Bootstrap vanilla + настоящий NMS codec + захват пакетов без подключения клиента:
-JAVA_HOME=/path/to/jdk-21 sh test-runtime.sh /path/to/prepared-paper-1.21.4-server /path/to/unbundled-vanilla-1.21.4.jar
+# Полный прогон: чистая Maven-сборка, два дампа, hex, генератор и живой Paper:
+sh tools/verify-version.sh /path/to/prepared-paper-server
 
-# Запускает отдельный временный Paper-сервер, без изменения исходного сервера:
-JAVA_HOME=/path/to/jdk-21 sh test-paper.sh /path/to/prepared-paper-1.21.4-server
+# Только живой Paper-тест в отдельном временном каталоге:
+sh test-paper.sh /path/to/prepared-paper-server
 ```
 
 Проверяются native metadata indices/serializers, полные packet roundtrip, dirty batching,
@@ -138,15 +139,17 @@ java -jar dumper/target/entity-dumper.jar dump \
 Minecraft JAR лежит `minecraft_server_<version>.jar`, он обнаруживается автоматически.
 Зависимости извлекаются в `.entityrender/cache/libraries`, проверяются по SHA-256.
 Вместо bundler можно указать `--libraries <directory>` с готовым classpath-зависимостями
-именно этой версии. Не складывайте в него разные версии одной библиотеки.
+именно этой версии. Если в папке лежит несколько версий зависимостей Paper,
+передайте одновременно `--bundle` и `--libraries`: зависимости выбираются строго
+по списку bundler и проверяются по SHA-256.
 
 Launcher запускает отдельную JVM с изолированным рабочим каталогом. Worker выполняет
 Minecraft bootstrap, читает metadata, записывает схему и завершается. Мир, сетевой
 порт и полноценный игровой сервер не создаются. Нужную JVM выбирает вызывающий
 через `--java`; автоматически Java не устанавливается.
 
-**Дампер проверен на remapped vanilla 1.21.4 / Java 21 и vanilla 26.3 / Java 25.** Другие версии пока не проверены:
-при изменениях NMS обновляем reflection-адаптер worker и набор образцов. Общее имя
+Результаты проверок версий перечислены в [VERSIONS.md](VERSIONS.md).
+При изменениях NMS обновляем reflection-адаптер worker и набор образцов. Общее имя
 Mojang-класса не гарантирует одинаковые методы/конструкторы между версиями.
 
 ## Формат схемы v1
@@ -267,7 +270,7 @@ sh test.sh /path/to/remapped_server_1.21.4.jar --bundle /path/to/original-bundle
 ```
 
 Два независимых bootstrap-процесса должны дать одинаковые схемы и hex, совпадающие
-с сохранённым эталоном `dumper/src/test/resources/golden/1.21.4`. Затем
+с сохранённым эталоном `dumper/src/test/resources/golden/<версия текущей ветки>`. Затем
 генерируются и компилируются все скелеты, проверяются известные сетевые байты
 и отклонение неправильного encoder. Артефакты остаются в напечатанном временном
 каталоге для просмотра.

@@ -4,6 +4,7 @@ import dev.by1337.entityrender.api.EntityInteraction;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundAttackPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.*;
@@ -18,7 +19,7 @@ final class InteractionChecks {
         }, ignored -> Bukkit.getUnsafe().nextEntityId());
         Player viewer = (Player) Proxy.newProxyInstance(Player.class.getClassLoader(), new Class<?>[]{ Player.class }, (proxy, method, args) -> switch (method.getName()) {
             case "getWorld" -> world;
-            case "isOnline" -> true;
+            case "isOnline", "isSneaking" -> true;
             case "getUniqueId" -> new UUID(2, 2);
             case "hashCode" -> 2;
             case "equals" -> proxy == args[0];
@@ -37,7 +38,7 @@ final class InteractionChecks {
             nativeTarget.setId(entity.getId());
             hooks.bind(viewer, channel);
             channel.runPendingTasks();
-            var packet = ServerboundInteractPacket.createInteractionPacket(nativeTarget, true, InteractionHand.OFF_HAND, new Vec3(.25, .5, .75));
+            var packet = new ServerboundInteractPacket(nativeTarget.getId(), InteractionHand.OFF_HAND, new Vec3(.25, .5, .75), true);
             channel.writeInbound(packet);
             require(channel.readInbound() == null, "Virtual interaction reached vanilla");
             require(callbacks.isEmpty(), "Callback ran on the network thread");
@@ -46,18 +47,21 @@ final class InteractionChecks {
             require(event.type() == EntityInteraction.Type.INTERACT_AT && event.hand() == EquipmentSlot.OFF_HAND && event.secondaryAction(), "Interaction fields lost");
             event.hitPosition().setX(99);
             require(event.hitPosition().getX() == .25, "Interaction point alias");
-            entity.hide(viewer);
-            channel.writeInbound(ServerboundInteractPacket.createAttackPacket(nativeTarget, false));
+            channel.writeInbound(new ServerboundAttackPacket(nativeTarget.getId()));
             while (!scheduled.isEmpty()) scheduled.removeFirst().run();
-            require(callbacks.size() == 1, "Non-viewer interaction accepted");
+            require(callbacks.size() == 2 && callbacks.getLast().type() == EntityInteraction.Type.ATTACK && callbacks.getLast().secondaryAction(), "Attack packet lost its server-side sneaking state");
+            entity.hide(viewer);
+            channel.writeInbound(new ServerboundAttackPacket(nativeTarget.getId()));
+            while (!scheduled.isEmpty()) scheduled.removeFirst().run();
+            require(callbacks.size() == 2, "Non-viewer interaction accepted");
             nativeTarget.setId(Bukkit.getUnsafe().nextEntityId());
-            var unrelated = ServerboundInteractPacket.createAttackPacket(nativeTarget, false);
+            var unrelated = new ServerboundAttackPacket(nativeTarget.getId());
             channel.writeInbound(unrelated);
             require(channel.readInbound() == unrelated, "Unrelated server interaction consumed");
             hooks.close();
             channel.runPendingTasks();
             nativeTarget.setId(entity.getId());
-            var afterClose = ServerboundInteractPacket.createAttackPacket(nativeTarget, false);
+            var afterClose = new ServerboundAttackPacket(nativeTarget.getId());
             channel.writeInbound(afterClose);
             require(channel.readInbound() == afterClose, "Pipeline hook leaked after close");
         } finally {

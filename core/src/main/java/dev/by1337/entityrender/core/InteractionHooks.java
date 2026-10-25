@@ -3,6 +3,7 @@ package dev.by1337.entityrender.core;
 import dev.by1337.entityrender.api.EntityInteraction;
 import io.netty.channel.*;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundAttackPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.entity.Player;
@@ -33,31 +34,19 @@ final class InteractionHooks implements AutoCloseable {
             channel.pipeline().addBefore("packet_handler", name, new ChannelInboundHandlerAdapter() {
                 @Override
                 public void channelRead(ChannelHandlerContext context, Object message) throws Exception {
-                    if (!closed && message instanceof ServerboundInteractPacket packet && owner.containsEntity(packet.getEntityId())) {
-                        packet.dispatch(new ServerboundInteractPacket.Handler() {
-                            @Override
-                            public void onAttack() {
-                                enqueue(EntityInteraction.Type.ATTACK, null, null);
-                            }
-
-                            @Override
-                            public void onInteraction(InteractionHand hand) {
-                                enqueue(EntityInteraction.Type.INTERACT, hand, null);
-                            }
-
-                            @Override
-                            public void onInteraction(InteractionHand hand, Vec3 hit) {
-                                enqueue(EntityInteraction.Type.INTERACT_AT, hand, hit);
-                            }
-
-                            private void enqueue(EntityInteraction.Type type, InteractionHand hand, Vec3 hit) {
-                                if (hit != null && (!Double.isFinite(hit.x) || !Double.isFinite(hit.y) || !Double.isFinite(hit.z))) return;
-                                EquipmentSlot slot = hand == null ? null : hand == InteractionHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
-                                Vector point = hit == null ? null : new Vector(hit.x, hit.y, hit.z);
-                                serverThread.execute(() -> {
-                                    if (!closed) owner.dispatchInteraction(player, packet.getEntityId(), type, slot, point, packet.isUsingSecondaryAction());
-                                });
-                            }
+                    if (!closed && message instanceof ServerboundAttackPacket packet && owner.containsEntity(packet.entityId())) {
+                        serverThread.execute(() -> {
+                            if (!closed) owner.dispatchInteraction(player, packet.entityId(), EntityInteraction.Type.ATTACK, null, null, player.isSneaking());
+                        });
+                        return;
+                    }
+                    if (!closed && message instanceof ServerboundInteractPacket packet && owner.containsEntity(packet.entityId())) {
+                        Vec3 hit = packet.location();
+                        if (hit == null || !Double.isFinite(hit.x) || !Double.isFinite(hit.y) || !Double.isFinite(hit.z)) return;
+                        EquipmentSlot slot = packet.hand() == InteractionHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
+                        Vector point = new Vector(hit.x, hit.y, hit.z);
+                        serverThread.execute(() -> {
+                            if (!closed) owner.dispatchInteraction(player, packet.entityId(), EntityInteraction.Type.INTERACT_AT, slot, point, packet.usingSecondaryAction());
                         });
                         return;
                     }
