@@ -6,12 +6,12 @@ class Generated_animal_Chicken extends Generated_animal_Animal implements dev.by
     }
 
     @Override
-    public org.bukkit.NamespacedKey getVariant() {
-        return org.bukkit.NamespacedKey.fromString(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Chicken.DATA_VARIANT_ID).unwrapKey().orElseThrow().location().toString());
+    public org.bukkit.entity.Chicken.Variant getVariant() {
+        return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Chicken.DATA_VARIANT_ID), net.minecraft.core.registries.Registries.CHICKEN_VARIANT);
     }
 
     @Override
-    public void setVariant(org.bukkit.NamespacedKey value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Chicken.DATA_VARIANT_ID, registries().lookupOrThrow(net.minecraft.core.registries.Registries.CHICKEN_VARIANT).getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.CHICKEN_VARIANT, net.minecraft.resources.ResourceLocation.parse(value.toString()))));
+    public void setVariant(org.bukkit.entity.Chicken.Variant value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Chicken.DATA_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.CHICKEN_VARIANT));
     }
 }

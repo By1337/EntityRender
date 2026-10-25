@@ -22,6 +22,6 @@ class Generated_animal_frog_Frog extends Generated_animal_Animal implements dev.
 
     @Override
     public void setVariant(org.bukkit.entity.Frog.Variant value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.frog.Frog.DATA_VARIANT_ID, org.bukkit.craftbukkit.CraftRegistry.bukkitToMinecraftHolder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.FROG_VARIANT));
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.frog.Frog.DATA_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.FROG_VARIANT));
     }
 }

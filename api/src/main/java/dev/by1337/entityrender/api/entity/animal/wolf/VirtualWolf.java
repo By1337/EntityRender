@@ -21,9 +21,9 @@ public interface VirtualWolf extends dev.by1337.entityrender.api.entity.VirtualT
     void setRemainingAngerTime(int value);
 
     /** NMS DATA_SOUND_VARIANT_ID; WOLF_SOUND_VARIANT. */
-    org.bukkit.NamespacedKey getSoundVariant();
+    org.bukkit.entity.Wolf.SoundVariant getSoundVariant();
 
-    void setSoundVariant(org.bukkit.NamespacedKey value);
+    void setSoundVariant(org.bukkit.entity.Wolf.SoundVariant value);
 
     /** NMS DATA_VARIANT_ID; WOLF_VARIANT. */
     org.bukkit.entity.Wolf.Variant getVariant();

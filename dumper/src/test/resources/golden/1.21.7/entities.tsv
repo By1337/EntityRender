@@ -1,0 +1,177 @@
+class	parent	abstract	entityTypes
+net.minecraft.world.entity.AgeableMob	net.minecraft.world.entity.PathfinderMob	true	
+net.minecraft.world.entity.AreaEffectCloud	net.minecraft.world.entity.Entity	false	minecraft:area_effect_cloud
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Entity	true	
+net.minecraft.world.entity.Display$BlockDisplay	net.minecraft.world.entity.Display	false	minecraft:block_display
+net.minecraft.world.entity.Display$ItemDisplay	net.minecraft.world.entity.Display	false	minecraft:item_display
+net.minecraft.world.entity.Display$TextDisplay	net.minecraft.world.entity.Display	false	minecraft:text_display
+net.minecraft.world.entity.Entity		true	
+net.minecraft.world.entity.ExperienceOrb	net.minecraft.world.entity.Entity	false	minecraft:experience_orb
+net.minecraft.world.entity.GlowSquid	net.minecraft.world.entity.animal.Squid	false	minecraft:glow_squid
+net.minecraft.world.entity.Interaction	net.minecraft.world.entity.Entity	false	minecraft:interaction
+net.minecraft.world.entity.LightningBolt	net.minecraft.world.entity.Entity	false	minecraft:lightning_bolt
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.Entity	true	
+net.minecraft.world.entity.Marker	net.minecraft.world.entity.Entity	false	minecraft:marker
+net.minecraft.world.entity.Mob	net.minecraft.world.entity.LivingEntity	true	
+net.minecraft.world.entity.OminousItemSpawner	net.minecraft.world.entity.Entity	false	minecraft:ominous_item_spawner
+net.minecraft.world.entity.PathfinderMob	net.minecraft.world.entity.Mob	true	
+net.minecraft.world.entity.TamableAnimal	net.minecraft.world.entity.animal.Animal	true	
+net.minecraft.world.entity.ambient.AmbientCreature	net.minecraft.world.entity.Mob	true	
+net.minecraft.world.entity.ambient.Bat	net.minecraft.world.entity.ambient.AmbientCreature	false	minecraft:bat
+net.minecraft.world.entity.animal.AbstractCow	net.minecraft.world.entity.animal.Animal	true	
+net.minecraft.world.entity.animal.AbstractFish	net.minecraft.world.entity.animal.WaterAnimal	true	
+net.minecraft.world.entity.animal.AbstractGolem	net.minecraft.world.entity.PathfinderMob	true	
+net.minecraft.world.entity.animal.AbstractSchoolingFish	net.minecraft.world.entity.animal.AbstractFish	true	
+net.minecraft.world.entity.animal.AgeableWaterCreature	net.minecraft.world.entity.AgeableMob	true	
+net.minecraft.world.entity.animal.Animal	net.minecraft.world.entity.AgeableMob	true	
+net.minecraft.world.entity.animal.Bee	net.minecraft.world.entity.animal.Animal	false	minecraft:bee
+net.minecraft.world.entity.animal.Cat	net.minecraft.world.entity.TamableAnimal	false	minecraft:cat
+net.minecraft.world.entity.animal.Chicken	net.minecraft.world.entity.animal.Animal	false	minecraft:chicken
+net.minecraft.world.entity.animal.Cod	net.minecraft.world.entity.animal.AbstractSchoolingFish	false	minecraft:cod
+net.minecraft.world.entity.animal.Cow	net.minecraft.world.entity.animal.AbstractCow	false	minecraft:cow
+net.minecraft.world.entity.animal.Dolphin	net.minecraft.world.entity.animal.AgeableWaterCreature	false	minecraft:dolphin
+net.minecraft.world.entity.animal.Fox	net.minecraft.world.entity.animal.Animal	false	minecraft:fox
+net.minecraft.world.entity.animal.HappyGhast	net.minecraft.world.entity.animal.Animal	false	minecraft:happy_ghast
+net.minecraft.world.entity.animal.IronGolem	net.minecraft.world.entity.animal.AbstractGolem	false	minecraft:iron_golem
+net.minecraft.world.entity.animal.MushroomCow	net.minecraft.world.entity.animal.AbstractCow	false	minecraft:mooshroom
+net.minecraft.world.entity.animal.Ocelot	net.minecraft.world.entity.animal.Animal	false	minecraft:ocelot
+net.minecraft.world.entity.animal.Panda	net.minecraft.world.entity.animal.Animal	false	minecraft:panda
+net.minecraft.world.entity.animal.Parrot	net.minecraft.world.entity.animal.ShoulderRidingEntity	false	minecraft:parrot
+net.minecraft.world.entity.animal.Pig	net.minecraft.world.entity.animal.Animal	false	minecraft:pig
+net.minecraft.world.entity.animal.PolarBear	net.minecraft.world.entity.animal.Animal	false	minecraft:polar_bear
+net.minecraft.world.entity.animal.Pufferfish	net.minecraft.world.entity.animal.AbstractFish	false	minecraft:pufferfish
+net.minecraft.world.entity.animal.Rabbit	net.minecraft.world.entity.animal.Animal	false	minecraft:rabbit
+net.minecraft.world.entity.animal.Salmon	net.minecraft.world.entity.animal.AbstractSchoolingFish	false	minecraft:salmon
+net.minecraft.world.entity.animal.ShoulderRidingEntity	net.minecraft.world.entity.TamableAnimal	true	
+net.minecraft.world.entity.animal.SnowGolem	net.minecraft.world.entity.animal.AbstractGolem	false	minecraft:snow_golem
+net.minecraft.world.entity.animal.Squid	net.minecraft.world.entity.animal.AgeableWaterCreature	false	minecraft:squid
+net.minecraft.world.entity.animal.TropicalFish	net.minecraft.world.entity.animal.AbstractSchoolingFish	false	minecraft:tropical_fish
+net.minecraft.world.entity.animal.Turtle	net.minecraft.world.entity.animal.Animal	false	minecraft:turtle
+net.minecraft.world.entity.animal.WaterAnimal	net.minecraft.world.entity.PathfinderMob	true	
+net.minecraft.world.entity.animal.allay.Allay	net.minecraft.world.entity.PathfinderMob	false	minecraft:allay
+net.minecraft.world.entity.animal.armadillo.Armadillo	net.minecraft.world.entity.animal.Animal	false	minecraft:armadillo
+net.minecraft.world.entity.animal.axolotl.Axolotl	net.minecraft.world.entity.animal.Animal	false	minecraft:axolotl
+net.minecraft.world.entity.animal.camel.Camel	net.minecraft.world.entity.animal.horse.AbstractHorse	false	minecraft:camel
+net.minecraft.world.entity.animal.frog.Frog	net.minecraft.world.entity.animal.Animal	false	minecraft:frog
+net.minecraft.world.entity.animal.frog.Tadpole	net.minecraft.world.entity.animal.AbstractFish	false	minecraft:tadpole
+net.minecraft.world.entity.animal.goat.Goat	net.minecraft.world.entity.animal.Animal	false	minecraft:goat
+net.minecraft.world.entity.animal.horse.AbstractChestedHorse	net.minecraft.world.entity.animal.horse.AbstractHorse	true	
+net.minecraft.world.entity.animal.horse.AbstractHorse	net.minecraft.world.entity.animal.Animal	true	
+net.minecraft.world.entity.animal.horse.Donkey	net.minecraft.world.entity.animal.horse.AbstractChestedHorse	false	minecraft:donkey
+net.minecraft.world.entity.animal.horse.Horse	net.minecraft.world.entity.animal.horse.AbstractHorse	false	minecraft:horse
+net.minecraft.world.entity.animal.horse.Llama	net.minecraft.world.entity.animal.horse.AbstractChestedHorse	false	minecraft:llama
+net.minecraft.world.entity.animal.horse.Mule	net.minecraft.world.entity.animal.horse.AbstractChestedHorse	false	minecraft:mule
+net.minecraft.world.entity.animal.horse.SkeletonHorse	net.minecraft.world.entity.animal.horse.AbstractHorse	false	minecraft:skeleton_horse
+net.minecraft.world.entity.animal.horse.TraderLlama	net.minecraft.world.entity.animal.horse.Llama	false	minecraft:trader_llama
+net.minecraft.world.entity.animal.horse.ZombieHorse	net.minecraft.world.entity.animal.horse.AbstractHorse	false	minecraft:zombie_horse
+net.minecraft.world.entity.animal.sheep.Sheep	net.minecraft.world.entity.animal.Animal	false	minecraft:sheep
+net.minecraft.world.entity.animal.sniffer.Sniffer	net.minecraft.world.entity.animal.Animal	false	minecraft:sniffer
+net.minecraft.world.entity.animal.wolf.Wolf	net.minecraft.world.entity.TamableAnimal	false	minecraft:wolf
+net.minecraft.world.entity.boss.enderdragon.EndCrystal	net.minecraft.world.entity.Entity	false	minecraft:end_crystal
+net.minecraft.world.entity.boss.enderdragon.EnderDragon	net.minecraft.world.entity.Mob	false	minecraft:ender_dragon
+net.minecraft.world.entity.boss.wither.WitherBoss	net.minecraft.world.entity.monster.Monster	false	minecraft:wither
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.LivingEntity	false	minecraft:armor_stand
+net.minecraft.world.entity.decoration.BlockAttachedEntity	net.minecraft.world.entity.Entity	true	
+net.minecraft.world.entity.decoration.GlowItemFrame	net.minecraft.world.entity.decoration.ItemFrame	false	minecraft:glow_item_frame
+net.minecraft.world.entity.decoration.HangingEntity	net.minecraft.world.entity.decoration.BlockAttachedEntity	true	
+net.minecraft.world.entity.decoration.ItemFrame	net.minecraft.world.entity.decoration.HangingEntity	false	minecraft:item_frame
+net.minecraft.world.entity.decoration.LeashFenceKnotEntity	net.minecraft.world.entity.decoration.BlockAttachedEntity	false	minecraft:leash_knot
+net.minecraft.world.entity.decoration.Painting	net.minecraft.world.entity.decoration.HangingEntity	false	minecraft:painting
+net.minecraft.world.entity.item.FallingBlockEntity	net.minecraft.world.entity.Entity	false	minecraft:falling_block
+net.minecraft.world.entity.item.ItemEntity	net.minecraft.world.entity.Entity	false	minecraft:item
+net.minecraft.world.entity.item.PrimedTnt	net.minecraft.world.entity.Entity	false	minecraft:tnt
+net.minecraft.world.entity.monster.AbstractIllager	net.minecraft.world.entity.raid.Raider	true	
+net.minecraft.world.entity.monster.AbstractSkeleton	net.minecraft.world.entity.monster.Monster	true	
+net.minecraft.world.entity.monster.Blaze	net.minecraft.world.entity.monster.Monster	false	minecraft:blaze
+net.minecraft.world.entity.monster.Bogged	net.minecraft.world.entity.monster.AbstractSkeleton	false	minecraft:bogged
+net.minecraft.world.entity.monster.CaveSpider	net.minecraft.world.entity.monster.Spider	false	minecraft:cave_spider
+net.minecraft.world.entity.monster.Creeper	net.minecraft.world.entity.monster.Monster	false	minecraft:creeper
+net.minecraft.world.entity.monster.Drowned	net.minecraft.world.entity.monster.Zombie	false	minecraft:drowned
+net.minecraft.world.entity.monster.ElderGuardian	net.minecraft.world.entity.monster.Guardian	false	minecraft:elder_guardian
+net.minecraft.world.entity.monster.EnderMan	net.minecraft.world.entity.monster.Monster	false	minecraft:enderman
+net.minecraft.world.entity.monster.Endermite	net.minecraft.world.entity.monster.Monster	false	minecraft:endermite
+net.minecraft.world.entity.monster.Evoker	net.minecraft.world.entity.monster.SpellcasterIllager	false	minecraft:evoker
+net.minecraft.world.entity.monster.Ghast	net.minecraft.world.entity.Mob	false	minecraft:ghast
+net.minecraft.world.entity.monster.Giant	net.minecraft.world.entity.monster.Monster	false	minecraft:giant
+net.minecraft.world.entity.monster.Guardian	net.minecraft.world.entity.monster.Monster	false	minecraft:guardian
+net.minecraft.world.entity.monster.Husk	net.minecraft.world.entity.monster.Zombie	false	minecraft:husk
+net.minecraft.world.entity.monster.Illusioner	net.minecraft.world.entity.monster.SpellcasterIllager	false	minecraft:illusioner
+net.minecraft.world.entity.monster.MagmaCube	net.minecraft.world.entity.monster.Slime	false	minecraft:magma_cube
+net.minecraft.world.entity.monster.Monster	net.minecraft.world.entity.PathfinderMob	true	
+net.minecraft.world.entity.monster.PatrollingMonster	net.minecraft.world.entity.monster.Monster	true	
+net.minecraft.world.entity.monster.Phantom	net.minecraft.world.entity.Mob	false	minecraft:phantom
+net.minecraft.world.entity.monster.Pillager	net.minecraft.world.entity.monster.AbstractIllager	false	minecraft:pillager
+net.minecraft.world.entity.monster.Ravager	net.minecraft.world.entity.raid.Raider	false	minecraft:ravager
+net.minecraft.world.entity.monster.Shulker	net.minecraft.world.entity.animal.AbstractGolem	false	minecraft:shulker
+net.minecraft.world.entity.monster.Silverfish	net.minecraft.world.entity.monster.Monster	false	minecraft:silverfish
+net.minecraft.world.entity.monster.Skeleton	net.minecraft.world.entity.monster.AbstractSkeleton	false	minecraft:skeleton
+net.minecraft.world.entity.monster.Slime	net.minecraft.world.entity.Mob	false	minecraft:slime
+net.minecraft.world.entity.monster.SpellcasterIllager	net.minecraft.world.entity.monster.AbstractIllager	true	
+net.minecraft.world.entity.monster.Spider	net.minecraft.world.entity.monster.Monster	false	minecraft:spider
+net.minecraft.world.entity.monster.Stray	net.minecraft.world.entity.monster.AbstractSkeleton	false	minecraft:stray
+net.minecraft.world.entity.monster.Strider	net.minecraft.world.entity.animal.Animal	false	minecraft:strider
+net.minecraft.world.entity.monster.Vex	net.minecraft.world.entity.monster.Monster	false	minecraft:vex
+net.minecraft.world.entity.monster.Vindicator	net.minecraft.world.entity.monster.AbstractIllager	false	minecraft:vindicator
+net.minecraft.world.entity.monster.Witch	net.minecraft.world.entity.raid.Raider	false	minecraft:witch
+net.minecraft.world.entity.monster.WitherSkeleton	net.minecraft.world.entity.monster.AbstractSkeleton	false	minecraft:wither_skeleton
+net.minecraft.world.entity.monster.Zoglin	net.minecraft.world.entity.monster.Monster	false	minecraft:zoglin
+net.minecraft.world.entity.monster.Zombie	net.minecraft.world.entity.monster.Monster	false	minecraft:zombie
+net.minecraft.world.entity.monster.ZombieVillager	net.minecraft.world.entity.monster.Zombie	false	minecraft:zombie_villager
+net.minecraft.world.entity.monster.ZombifiedPiglin	net.minecraft.world.entity.monster.Zombie	false	minecraft:zombified_piglin
+net.minecraft.world.entity.monster.breeze.Breeze	net.minecraft.world.entity.monster.Monster	false	minecraft:breeze
+net.minecraft.world.entity.monster.creaking.Creaking	net.minecraft.world.entity.monster.Monster	false	minecraft:creaking
+net.minecraft.world.entity.monster.hoglin.Hoglin	net.minecraft.world.entity.animal.Animal	false	minecraft:hoglin
+net.minecraft.world.entity.monster.piglin.AbstractPiglin	net.minecraft.world.entity.monster.Monster	true	
+net.minecraft.world.entity.monster.piglin.Piglin	net.minecraft.world.entity.monster.piglin.AbstractPiglin	false	minecraft:piglin
+net.minecraft.world.entity.monster.piglin.PiglinBrute	net.minecraft.world.entity.monster.piglin.AbstractPiglin	false	minecraft:piglin_brute
+net.minecraft.world.entity.monster.warden.Warden	net.minecraft.world.entity.monster.Monster	false	minecraft:warden
+net.minecraft.world.entity.npc.AbstractVillager	net.minecraft.world.entity.AgeableMob	true	
+net.minecraft.world.entity.npc.Villager	net.minecraft.world.entity.npc.AbstractVillager	false	minecraft:villager
+net.minecraft.world.entity.npc.WanderingTrader	net.minecraft.world.entity.npc.AbstractVillager	false	minecraft:wandering_trader
+net.minecraft.world.entity.player.Player	net.minecraft.world.entity.LivingEntity	true	minecraft:player
+net.minecraft.world.entity.projectile.AbstractArrow	net.minecraft.world.entity.projectile.Projectile	true	
+net.minecraft.world.entity.projectile.AbstractHurtingProjectile	net.minecraft.world.entity.projectile.Projectile	true	
+net.minecraft.world.entity.projectile.AbstractThrownPotion	net.minecraft.world.entity.projectile.ThrowableItemProjectile	true	
+net.minecraft.world.entity.projectile.Arrow	net.minecraft.world.entity.projectile.AbstractArrow	false	minecraft:arrow
+net.minecraft.world.entity.projectile.DragonFireball	net.minecraft.world.entity.projectile.AbstractHurtingProjectile	false	minecraft:dragon_fireball
+net.minecraft.world.entity.projectile.EvokerFangs	net.minecraft.world.entity.Entity	false	minecraft:evoker_fangs
+net.minecraft.world.entity.projectile.EyeOfEnder	net.minecraft.world.entity.Entity	false	minecraft:eye_of_ender
+net.minecraft.world.entity.projectile.Fireball	net.minecraft.world.entity.projectile.AbstractHurtingProjectile	true	
+net.minecraft.world.entity.projectile.FireworkRocketEntity	net.minecraft.world.entity.projectile.Projectile	false	minecraft:firework_rocket
+net.minecraft.world.entity.projectile.FishingHook	net.minecraft.world.entity.projectile.Projectile	false	minecraft:fishing_bobber
+net.minecraft.world.entity.projectile.LargeFireball	net.minecraft.world.entity.projectile.Fireball	false	minecraft:fireball
+net.minecraft.world.entity.projectile.LlamaSpit	net.minecraft.world.entity.projectile.Projectile	false	minecraft:llama_spit
+net.minecraft.world.entity.projectile.Projectile	net.minecraft.world.entity.Entity	true	
+net.minecraft.world.entity.projectile.ShulkerBullet	net.minecraft.world.entity.projectile.Projectile	false	minecraft:shulker_bullet
+net.minecraft.world.entity.projectile.SmallFireball	net.minecraft.world.entity.projectile.Fireball	false	minecraft:small_fireball
+net.minecraft.world.entity.projectile.Snowball	net.minecraft.world.entity.projectile.ThrowableItemProjectile	false	minecraft:snowball
+net.minecraft.world.entity.projectile.SpectralArrow	net.minecraft.world.entity.projectile.AbstractArrow	false	minecraft:spectral_arrow
+net.minecraft.world.entity.projectile.ThrowableItemProjectile	net.minecraft.world.entity.projectile.ThrowableProjectile	true	
+net.minecraft.world.entity.projectile.ThrowableProjectile	net.minecraft.world.entity.projectile.Projectile	true	
+net.minecraft.world.entity.projectile.ThrownEgg	net.minecraft.world.entity.projectile.ThrowableItemProjectile	false	minecraft:egg
+net.minecraft.world.entity.projectile.ThrownEnderpearl	net.minecraft.world.entity.projectile.ThrowableItemProjectile	false	minecraft:ender_pearl
+net.minecraft.world.entity.projectile.ThrownExperienceBottle	net.minecraft.world.entity.projectile.ThrowableItemProjectile	false	minecraft:experience_bottle
+net.minecraft.world.entity.projectile.ThrownLingeringPotion	net.minecraft.world.entity.projectile.AbstractThrownPotion	false	minecraft:lingering_potion
+net.minecraft.world.entity.projectile.ThrownSplashPotion	net.minecraft.world.entity.projectile.AbstractThrownPotion	false	minecraft:splash_potion
+net.minecraft.world.entity.projectile.ThrownTrident	net.minecraft.world.entity.projectile.AbstractArrow	false	minecraft:trident
+net.minecraft.world.entity.projectile.WitherSkull	net.minecraft.world.entity.projectile.AbstractHurtingProjectile	false	minecraft:wither_skull
+net.minecraft.world.entity.projectile.windcharge.AbstractWindCharge	net.minecraft.world.entity.projectile.AbstractHurtingProjectile	true	
+net.minecraft.world.entity.projectile.windcharge.BreezeWindCharge	net.minecraft.world.entity.projectile.windcharge.AbstractWindCharge	false	minecraft:breeze_wind_charge
+net.minecraft.world.entity.projectile.windcharge.WindCharge	net.minecraft.world.entity.projectile.windcharge.AbstractWindCharge	false	minecraft:wind_charge
+net.minecraft.world.entity.raid.Raider	net.minecraft.world.entity.monster.PatrollingMonster	true	
+net.minecraft.world.entity.vehicle.AbstractBoat	net.minecraft.world.entity.vehicle.VehicleEntity	true	
+net.minecraft.world.entity.vehicle.AbstractChestBoat	net.minecraft.world.entity.vehicle.AbstractBoat	true	
+net.minecraft.world.entity.vehicle.AbstractMinecart	net.minecraft.world.entity.vehicle.VehicleEntity	true	
+net.minecraft.world.entity.vehicle.AbstractMinecartContainer	net.minecraft.world.entity.vehicle.AbstractMinecart	true	
+net.minecraft.world.entity.vehicle.Boat	net.minecraft.world.entity.vehicle.AbstractBoat	false	minecraft:acacia_boat,minecraft:birch_boat,minecraft:cherry_boat,minecraft:dark_oak_boat,minecraft:jungle_boat,minecraft:mangrove_boat,minecraft:oak_boat,minecraft:pale_oak_boat,minecraft:spruce_boat
+net.minecraft.world.entity.vehicle.ChestBoat	net.minecraft.world.entity.vehicle.AbstractChestBoat	false	minecraft:acacia_chest_boat,minecraft:birch_chest_boat,minecraft:cherry_chest_boat,minecraft:dark_oak_chest_boat,minecraft:jungle_chest_boat,minecraft:mangrove_chest_boat,minecraft:oak_chest_boat,minecraft:pale_oak_chest_boat,minecraft:spruce_chest_boat
+net.minecraft.world.entity.vehicle.ChestRaft	net.minecraft.world.entity.vehicle.AbstractChestBoat	false	minecraft:bamboo_chest_raft
+net.minecraft.world.entity.vehicle.Minecart	net.minecraft.world.entity.vehicle.AbstractMinecart	false	minecraft:minecart
+net.minecraft.world.entity.vehicle.MinecartChest	net.minecraft.world.entity.vehicle.AbstractMinecartContainer	false	minecraft:chest_minecart
+net.minecraft.world.entity.vehicle.MinecartCommandBlock	net.minecraft.world.entity.vehicle.AbstractMinecart	false	minecraft:command_block_minecart
+net.minecraft.world.entity.vehicle.MinecartFurnace	net.minecraft.world.entity.vehicle.AbstractMinecart	false	minecraft:furnace_minecart
+net.minecraft.world.entity.vehicle.MinecartHopper	net.minecraft.world.entity.vehicle.AbstractMinecartContainer	false	minecraft:hopper_minecart
+net.minecraft.world.entity.vehicle.MinecartSpawner	net.minecraft.world.entity.vehicle.AbstractMinecart	false	minecraft:spawner_minecart
+net.minecraft.world.entity.vehicle.MinecartTNT	net.minecraft.world.entity.vehicle.AbstractMinecart	false	minecraft:tnt_minecart
+net.minecraft.world.entity.vehicle.Raft	net.minecraft.world.entity.vehicle.AbstractBoat	false	minecraft:bamboo_raft
+net.minecraft.world.entity.vehicle.VehicleEntity	net.minecraft.world.entity.Entity	true	

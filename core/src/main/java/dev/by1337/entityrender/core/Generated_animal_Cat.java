@@ -22,7 +22,7 @@ class Generated_animal_Cat extends Generated_TamableAnimal implements dev.by1337
 
     @Override
     public void setVariant(org.bukkit.entity.Cat.Type value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Cat.DATA_VARIANT_ID, org.bukkit.craftbukkit.CraftRegistry.bukkitToMinecraftHolder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.CAT_VARIANT));
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Cat.DATA_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.CAT_VARIANT));
     }
 
     @Override

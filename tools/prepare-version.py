@@ -73,7 +73,7 @@ def main():
     for file in ['pom.xml', 'api/pom.xml', 'core/pom.xml', 'dumper/pom.xml']:
         text = (ROOT / file).read_text()
         text = re.sub(r'2\.0\.0(?:\+[^<]+)?-SNAPSHOT', '2.0.0+'+args.version+'-SNAPSHOT', text)
-        text = property_value(text, 'maven.compiler.release', release)
+        text = property_value(text, 'maven.compiler.release', 21 if file == 'dumper/pom.xml' else release)
         if file == 'pom.xml':
             for key, value in {'paper.version': api_version, 'paper.nms.version': sdk_dir.name,
                                'minecraft.version': args.version, 'minecraft.protocol': version['protocol']}.items():
@@ -115,13 +115,16 @@ def main():
     holders = 'net.minecraft.core.Holder' in next(line for line in villager_api.splitlines() if 'public '+villager+'(' in line)
     vget = ('type()', 'profession()', 'level()') if holders else ('getType()', 'getProfession()', 'getLevel()')
     converter = 'minecraftHolderToBukkit' if holders else 'minecraftToBukkit'
-    reverse = ('CraftRegistry.bukkitToMinecraftHolder(value.type(),Registries.VILLAGER_TYPE),CraftRegistry.bukkitToMinecraftHolder(value.profession(),Registries.VILLAGER_PROFESSION)'
+    reverse = ('holder(value.type(),Registries.VILLAGER_TYPE),holder(value.profession(),Registries.VILLAGER_PROFESSION)'
                if holders else 'CraftRegistry.bukkitToMinecraft(value.type()),CraftRegistry.bukkitToMinecraft(value.profession())')
     body = ('static VillagerAppearance villager(VillagerData value) { return new VillagerAppearance(CraftRegistry.'+converter+'(value.'+vget[0]+',Registries.VILLAGER_TYPE),CraftRegistry.'+converter+'(value.'+vget[1]+',Registries.VILLAGER_PROFESSION),value.'+vget[2]+'); }\n'
             '    static VillagerData villager(VillagerAppearance value) { Objects.requireNonNull(value); return new VillagerData('+reverse+',value.level()); }\n\n    ')
     tag_api = javap('net.minecraft.nbt.TagParser')
     modern_tag = 'parseCompoundFully(java.lang.String)' in tag_api
+    holder_signature = next(line for line in javap('org.bukkit.craftbukkit.CraftRegistry').splitlines() if ' bukkitToMinecraftHolder(' in line)
+    holder_registry = 'ResourceKey' in holder_signature
     def values(text):
+        text = re.sub(r'return CraftRegistry\.bukkitToMinecraftHolder\(value(?:, registry)?\);', 'return CraftRegistry.bukkitToMinecraftHolder(value'+(', registry' if holder_registry else '')+');', text)
         text = re.sub(r'import net\.minecraft\.world\.entity\.[^;]*\.VillagerData;', 'import '+villager+';', text)
         text = re.sub(r'static VillagerAppearance villager\(.*?(?=static String compound)', body, text, flags=re.S)
         text = text.replace('TagParser.parseTag(', 'TagParser.parseCompoundFully(') if modern_tag else text.replace('TagParser.parseCompoundFully(', 'TagParser.parseTag(')

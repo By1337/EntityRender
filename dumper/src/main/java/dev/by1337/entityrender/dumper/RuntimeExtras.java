@@ -38,6 +38,9 @@ final class RuntimeExtras {
         if (simple.equals("ExperienceOrb") && own.isEmpty()) {
             method(api, impl, "int", "ExperienceValue", "getSpawnData()", "if (value < 0 || value > 32767) throw new IllegalArgumentException(\"Experience value must be 0..32767\"); setSpawnData(value);");
         }
+        if (simple.equals("ExperienceOrb") && own.stream().anyMatch(f -> f.name().equals("DATA_VALUE"))) {
+            method(api, impl, "int", "ExperienceValue", "get(" + namespace + ".DATA_VALUE)", "if (value < 0) throw new IllegalArgumentException(\"Experience value must be nonnegative\"); set(" + namespace + ".DATA_VALUE,value);");
+        }
         if (simple.equals("ItemFrame") || simple.equals("Painting")) {
             method(api, impl, "org.bukkit.block.BlockFace", "Facing", hangingDirection ? "getDirection()" : "ValueConversions.direction(net.minecraft.core.Direction.from3DDataValue(getSpawnData()))",
                     (simple.equals("Painting") ? "if (value == org.bukkit.block.BlockFace.UP || value == org.bukkit.block.BlockFace.DOWN) throw new IllegalArgumentException(\"Painting requires a horizontal face\"); " : "")

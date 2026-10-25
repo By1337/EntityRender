@@ -5,7 +5,7 @@ package dev.by1337.entityrender.api.entity.animal;
  */
 public interface VirtualCow extends dev.by1337.entityrender.api.entity.animal.VirtualAbstractCow {
     /** NMS DATA_VARIANT_ID; COW_VARIANT. */
-    org.bukkit.NamespacedKey getVariant();
+    org.bukkit.entity.Cow.Variant getVariant();
 
-    void setVariant(org.bukkit.NamespacedKey value);
+    void setVariant(org.bukkit.entity.Cow.Variant value);
 }

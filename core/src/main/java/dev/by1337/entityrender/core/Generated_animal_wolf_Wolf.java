@@ -36,13 +36,13 @@ class Generated_animal_wolf_Wolf extends Generated_TamableAnimal implements dev.
     }
 
     @Override
-    public org.bukkit.NamespacedKey getSoundVariant() {
-        return org.bukkit.NamespacedKey.fromString(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_SOUND_VARIANT_ID).unwrapKey().orElseThrow().location().toString());
+    public org.bukkit.entity.Wolf.SoundVariant getSoundVariant() {
+        return org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_SOUND_VARIANT_ID), net.minecraft.core.registries.Registries.WOLF_SOUND_VARIANT);
     }
 
     @Override
-    public void setSoundVariant(org.bukkit.NamespacedKey value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_SOUND_VARIANT_ID, registries().lookupOrThrow(net.minecraft.core.registries.Registries.WOLF_SOUND_VARIANT).getOrThrow(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.WOLF_SOUND_VARIANT, net.minecraft.resources.ResourceLocation.parse(value.toString()))));
+    public void setSoundVariant(org.bukkit.entity.Wolf.SoundVariant value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_SOUND_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.WOLF_SOUND_VARIANT));
     }
 
     @Override
@@ -52,6 +52,6 @@ class Generated_animal_wolf_Wolf extends Generated_TamableAnimal implements dev.
 
     @Override
     public void setVariant(org.bukkit.entity.Wolf.Variant value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_VARIANT_ID, org.bukkit.craftbukkit.CraftRegistry.bukkitToMinecraftHolder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.WOLF_VARIANT));
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.wolf.Wolf.DATA_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.WOLF_VARIANT));
     }
 }

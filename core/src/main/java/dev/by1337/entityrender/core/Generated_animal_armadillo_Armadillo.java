@@ -6,12 +6,12 @@ class Generated_animal_armadillo_Armadillo extends Generated_animal_Animal imple
     }
 
     @Override
-    public String getArmadilloState() {
-        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.armadillo.Armadillo.ARMADILLO_STATE).name();
+    public org.bukkit.entity.Armadillo.State getArmadilloState() {
+        return org.bukkit.entity.Armadillo.State.valueOf(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.armadillo.Armadillo.ARMADILLO_STATE).name());
     }
 
     @Override
-    public void setArmadilloState(String value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.armadillo.Armadillo.ARMADILLO_STATE, net.minecraft.world.entity.animal.armadillo.Armadillo.ArmadilloState.valueOf(java.util.Objects.requireNonNull(value)));
+    public void setArmadilloState(org.bukkit.entity.Armadillo.State value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.armadillo.Armadillo.ARMADILLO_STATE, net.minecraft.world.entity.animal.armadillo.Armadillo.ArmadilloState.valueOf(java.util.Objects.requireNonNull(value).name()));
     }
 }

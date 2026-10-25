@@ -16,6 +16,10 @@ import org.bukkit.util.BlockVector;
 import java.util.*;
 
 final class ValueConversions {
+    static <B extends org.bukkit.Keyed, M> Holder<M> holder(B value, ResourceKey<? extends Registry<M>> registry) {
+        return CraftRegistry.bukkitToMinecraftHolder(value);
+    }
+
     private ValueConversions() {
     }
 
@@ -67,7 +71,7 @@ final class ValueConversions {
 
     static VillagerData villager(VillagerAppearance value) {
         Objects.requireNonNull(value);
-        return new VillagerData(CraftRegistry.bukkitToMinecraftHolder(value.type(), Registries.VILLAGER_TYPE), CraftRegistry.bukkitToMinecraftHolder(value.profession(), Registries.VILLAGER_PROFESSION), value.level());
+        return new VillagerData(holder(value.type(), Registries.VILLAGER_TYPE), holder(value.profession(), Registries.VILLAGER_PROFESSION), value.level());
     }
 
     static String compound(CompoundTag value) {

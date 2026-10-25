@@ -14,4 +14,15 @@ class Generated_ExperienceOrb extends BaseVirtualEntity implements dev.by1337.en
     public void setValue(int value) {
         set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.ExperienceOrb.DATA_VALUE, value);
     }
+
+    @Override
+    public int getExperienceValue() {
+        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.ExperienceOrb.DATA_VALUE);
+    }
+
+    @Override
+    public void setExperienceValue(int value) {
+        if (value < 0) throw new IllegalArgumentException("Experience value must be nonnegative");
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.ExperienceOrb.DATA_VALUE, value);
+    }
 }

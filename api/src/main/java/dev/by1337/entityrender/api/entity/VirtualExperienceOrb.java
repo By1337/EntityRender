@@ -8,4 +8,8 @@ public interface VirtualExperienceOrb extends dev.by1337.entityrender.api.entity
     int getValue();
 
     void setValue(int value);
+
+    int getExperienceValue();
+
+    void setExperienceValue(int value);
 }

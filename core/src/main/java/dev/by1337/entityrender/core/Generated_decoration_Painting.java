@@ -12,7 +12,7 @@ class Generated_decoration_Painting extends Generated_decoration_HangingEntity i
 
     @Override
     public void setPaintingVariant(org.bukkit.Art value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.decoration.Painting.DATA_PAINTING_VARIANT_ID, org.bukkit.craftbukkit.CraftRegistry.bukkitToMinecraftHolder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.PAINTING_VARIANT));
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.decoration.Painting.DATA_PAINTING_VARIANT_ID, ValueConversions.holder(java.util.Objects.requireNonNull(value), net.minecraft.core.registries.Registries.PAINTING_VARIANT));
     }
 
     @Override

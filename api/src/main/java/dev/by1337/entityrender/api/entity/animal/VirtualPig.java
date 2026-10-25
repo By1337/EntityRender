@@ -10,7 +10,7 @@ public interface VirtualPig extends dev.by1337.entityrender.api.entity.animal.Vi
     void setBoostTime(int value);
 
     /** NMS DATA_VARIANT_ID; PIG_VARIANT. */
-    org.bukkit.NamespacedKey getVariant();
+    org.bukkit.entity.Pig.Variant getVariant();
 
-    void setVariant(org.bukkit.NamespacedKey value);
+    void setVariant(org.bukkit.entity.Pig.Variant value);
 }

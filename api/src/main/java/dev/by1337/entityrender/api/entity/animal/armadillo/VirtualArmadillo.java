@@ -6,7 +6,7 @@ package dev.by1337.entityrender.api.entity.animal.armadillo;
  */
 public interface VirtualArmadillo extends dev.by1337.entityrender.api.entity.animal.VirtualAnimal {
     /** NMS ARMADILLO_STATE; ARMADILLO_STATE. */
-    String getArmadilloState();
+    org.bukkit.entity.Armadillo.State getArmadilloState();
 
-    void setArmadilloState(String value);
+    void setArmadilloState(org.bukkit.entity.Armadillo.State value);
 }

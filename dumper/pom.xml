@@ -1,7 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent><groupId>dev.by1337.entityrender</groupId><artifactId>EntityRender</artifactId><version>2.0.0+1.21.6-SNAPSHOT</version></parent>
+  <parent><groupId>dev.by1337.entityrender</groupId><artifactId>EntityRender</artifactId><version>2.0.0+1.21.7-SNAPSHOT</version></parent>
   <artifactId>entity-dumper</artifactId>
+  <properties><maven.compiler.release>21</maven.compiler.release></properties>
   <build><plugins><plugin>
     <groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId>
     <configuration><archive><manifest><mainClass>dev.by1337.entityrender.dumper.Main</mainClass></manifest></archive></configuration>

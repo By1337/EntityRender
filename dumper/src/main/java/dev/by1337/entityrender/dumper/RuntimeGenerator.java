@@ -111,11 +111,22 @@ final class RuntimeGenerator {
             case "DIRECTION" -> conversion("org.bukkit.block.BlockFace", "direction");
             case "VILLAGER_DATA" -> conversion("dev.by1337.entityrender.api.VillagerAppearance", "villager");
             case "CAT_VARIANT" -> holder("org.bukkit.entity.Cat.Type", "CAT_VARIANT");
+            case "COW_VARIANT" -> holder("org.bukkit.entity.Cow.Variant", "COW_VARIANT");
+            case "PIG_VARIANT" -> holder("org.bukkit.entity.Pig.Variant", "PIG_VARIANT");
+            case "CHICKEN_VARIANT" -> holder("org.bukkit.entity.Chicken.Variant", "CHICKEN_VARIANT");
+            case "CAT_SOUND_VARIANT" -> holder("org.bukkit.entity.Cat.SoundVariant", "CAT_SOUND_VARIANT");
+            case "COW_SOUND_VARIANT" -> holder("org.bukkit.entity.Cow.SoundVariant", "COW_SOUND_VARIANT");
+            case "PIG_SOUND_VARIANT" -> holder("org.bukkit.entity.Pig.SoundVariant", "PIG_SOUND_VARIANT");
+            case "CHICKEN_SOUND_VARIANT" -> holder("org.bukkit.entity.Chicken.SoundVariant", "CHICKEN_SOUND_VARIANT");
+            case "WOLF_SOUND_VARIANT" -> holder("org.bukkit.entity.Wolf.SoundVariant", "WOLF_SOUND_VARIANT");
+            case "ZOMBIE_NAUTILUS_VARIANT" -> holder("org.bukkit.entity.ZombieNautilus.Variant", "ZOMBIE_NAUTILUS_VARIANT");
             case "WOLF_VARIANT" -> holder("org.bukkit.entity.Wolf.Variant", "WOLF_VARIANT");
             case "FROG_VARIANT" -> holder("org.bukkit.entity.Frog.Variant", "FROG_VARIANT");
             case "PAINTING_VARIANT" -> holder("org.bukkit.Art", "PAINTING_VARIANT");
             case "SNIFFER_STATE" -> new Property("org.bukkit.entity.Sniffer.State", "", "org.bukkit.entity.Sniffer.State.valueOf($.name())", nms + ".valueOf($.name())");
-            case "ARMADILLO_STATE", "WEATHERING_COPPER_STATE", "COPPER_GOLEM_STATE" -> new Property("String", "", "$.name()", nms + ".valueOf(java.util.Objects.requireNonNull($))");
+            case "ARMADILLO_STATE" -> enumeration("org.bukkit.entity.Armadillo.State", nms);
+            case "WEATHERING_COPPER_STATE" -> enumeration("io.papermc.paper.world.WeatheringCopperState", nms);
+            case "COPPER_GOLEM_STATE" -> enumeration("org.bukkit.entity.CopperGolem.State", nms);
             case "DYE_COLOR" -> new Property("org.bukkit.DyeColor", "", "org.bukkit.DyeColor.valueOf($.name())", nms + ".valueOf($.name())");
             case "HUMANOID_ARM" -> new Property("org.bukkit.inventory.MainHand", "", "org.bukkit.inventory.MainHand.valueOf($.name())", nms + ".valueOf($.name())");
             case "COMPOUND_TAG" -> new Property("String", "Snbt", "ValueConversions.compound($)", "ValueConversions.compound($)");
@@ -128,6 +139,10 @@ final class RuntimeGenerator {
                 throw new IllegalArgumentException("No public API conversion for " + field);
             }
         };
+    }
+
+    private static Property enumeration(String type, String nms) {
+        return new Property(type, "", type + ".valueOf($.name())", nms + ".valueOf(java.util.Objects.requireNonNull($).name())");
     }
 
     private static Property direct(String type) {
@@ -143,7 +158,7 @@ final class RuntimeGenerator {
     }
 
     private static Property holder(String type, String registry) {
-        return new Property(type, "", "org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit($,net.minecraft.core.registries.Registries." + registry + ")", "org.bukkit.craftbukkit.CraftRegistry.bukkitToMinecraftHolder(java.util.Objects.requireNonNull($),net.minecraft.core.registries.Registries." + registry + ")");
+        return new Property(type, "", "org.bukkit.craftbukkit.CraftRegistry.minecraftHolderToBukkit($,net.minecraft.core.registries.Registries." + registry + ")", "ValueConversions.holder(java.util.Objects.requireNonNull($),net.minecraft.core.registries.Registries." + registry + ")");
     }
 
     private static String propertyName(Schema.Field field) {
