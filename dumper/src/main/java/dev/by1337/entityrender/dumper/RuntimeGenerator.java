@@ -17,8 +17,8 @@ final class RuntimeGenerator {
         var entities = Schema.entities(schema);
         var fields = Schema.fields(schema);
         Files.createDirectories(out);
-        var factory = new StringBuilder("package dev.by1337.entityrender.core;\n\nfinal class GeneratedEntityFactory {\n")
-                .append("    static BaseVirtualEntity create(PaperEntityRenderer owner, int id, org.bukkit.Location location, org.bukkit.entity.EntityType type, net.minecraft.world.entity.EntityType<?> nativeType) {\n")
+        var factory = new StringBuilder("package dev.by1337.entityrender.core.generated;\n\nimport dev.by1337.entityrender.core.BaseVirtualEntity;\nimport dev.by1337.entityrender.core.PaperEntityRenderer;\n\npublic final class GeneratedEntityFactory {\n")
+                .append("    public static BaseVirtualEntity create(PaperEntityRenderer owner, int id, org.bukkit.Location location, org.bukkit.entity.EntityType type, net.minecraft.world.entity.EntityType<?> nativeType) {\n")
                 .append("        return switch (type.getKey().toString()) {\n");
         var conveniences = new StringBuilder("package dev.by1337.entityrender.api;\n\npublic interface GeneratedEntityFactories {\n")
                 .append("    dev.by1337.entityrender.api.entity.VirtualEntity create(org.bukkit.entity.EntityType type, org.bukkit.Location location);\n");
@@ -34,7 +34,7 @@ final class RuntimeGenerator {
             var api = new StringBuilder("package " + apiName.substring(0, apiName.lastIndexOf('.')) + ";\n\n")
                     .append("/** Generated from ").append(entity.name()).append(". Values use Bukkit types; packed flag fields remain explicit. */\n")
                     .append("public interface ").append(apiName.substring(apiName.lastIndexOf('.') + 1)).append(" extends ").append(parentApi).append(" {\n");
-            var impl = new StringBuilder("package dev.by1337.entityrender.core;\n\nclass ").append(implName).append(" extends ").append(parentImpl)
+            var impl = new StringBuilder("package dev.by1337.entityrender.core.generated;\n\nimport dev.by1337.entityrender.core.BaseVirtualEntity;\nimport dev.by1337.entityrender.core.PaperEntityRenderer;\nimport dev.by1337.entityrender.core.ValueConversions;\n\nclass ").append(implName).append(" extends ").append(parentImpl)
                     .append(" implements ").append(apiName).append(" {\n")
                     .append("    ").append(implName).append("(PaperEntityRenderer owner, int id, org.bukkit.Location location, org.bukkit.entity.EntityType type, net.minecraft.world.entity.EntityType<?> nativeType, dev.by1337.entityrender.core.metadata.MetadataLayout layout) {\n")
                     .append("        super(owner,id,location,type,nativeType,layout);\n    }\n");
@@ -60,7 +60,7 @@ final class RuntimeGenerator {
             api.append("}\n");
             impl.append("}\n");
             save(out.resolve("api/" + apiName.replace('.', '/') + ".java"), api.toString());
-            save(out.resolve("core/dev/by1337/entityrender/core/" + implName + ".java"), impl.toString());
+            save(out.resolve("core/dev/by1337/entityrender/core/generated/" + implName + ".java"), impl.toString());
             if (!entity.types().isEmpty()) for (String key : entity.types().split(",")) {
                 if (Set.of("minecraft:player", "minecraft:fishing_bobber", "minecraft:marker").contains(key)) continue;
                 String method = camel(key.substring(key.indexOf(':') + 1));
@@ -74,13 +74,13 @@ final class RuntimeGenerator {
         }
         factory.append("            default -> throw new IllegalArgumentException(\"Unsupported entity type: \" + type);\n        };\n    }\n}\n");
         conveniences.append("}\n");
-        save(out.resolve("core/dev/by1337/entityrender/core/GeneratedEntityFactory.java"), factory.toString());
+        save(out.resolve("core/dev/by1337/entityrender/core/generated/GeneratedEntityFactory.java"), factory.toString());
         save(out.resolve("api/dev/by1337/entityrender/api/GeneratedEntityFactories.java"), conveniences.toString());
         var version = Schema.read(schema, "version.tsv", "key\tvalue");
         String minecraft = version.stream().filter(row -> row[0].equals("minecraft")).findFirst().orElseThrow()[1];
         int protocol = Integer.parseInt(version.stream().filter(row -> row[0].equals("protocol")).findFirst().orElseThrow()[1]);
         if (!minecraft.matches("[A-Za-z0-9_.+\\-]+")) throw new IOException("Invalid Minecraft version");
-        save(out.resolve("core/dev/by1337/entityrender/core/TargetVersion.java"), "package dev.by1337.entityrender.core;\n\nfinal class TargetVersion {\n    static final String MINECRAFT_VERSION=\"" + minecraft + "\";\n    static final int PROTOCOL=" + protocol + ";\n}\n");
+        save(out.resolve("core/dev/by1337/entityrender/core/generated/TargetVersion.java"), "package dev.by1337.entityrender.core.generated;\n\npublic final class TargetVersion {\n    public static final String MINECRAFT_VERSION=\"" + minecraft + "\";\n    public static final int PROTOCOL=" + protocol + ";\n}\n");
         System.out.println("Generated runtime hierarchy for " + entities.size() + " entity classes");
     }
 

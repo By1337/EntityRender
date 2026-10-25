@@ -39,6 +39,8 @@ final class AllEntitiesChecks {
                             if (!setter.getName().startsWith("set") || setter.getParameterCount() != 1) continue;
                             String suffix = setter.getName().substring(3);
                             Method getter = c.getDeclaredMethod((setter.getParameterTypes()[0] == boolean.class ? "is" : "get") + suffix);
+                            getter.setAccessible(true);
+                            setter.setAccessible(true);
                             Object value = getter.invoke(entity);
                             setter.invoke(entity, value);
                             properties++;
@@ -68,6 +70,7 @@ final class AllEntitiesChecks {
             frame.setFacing(org.bukkit.block.BlockFace.EAST);
             if (frame.getFacing() != org.bukkit.block.BlockFace.EAST) throw new AssertionError("Item-frame facing roundtrip failed");
             var direction = frame.getClass().getMethod("getDirection");
+            direction.setAccessible(true);
             if (direction.invoke(frame) != org.bukkit.block.BlockFace.EAST) throw new AssertionError("Item-frame spawn facing disagrees with metadata direction");
             var falling = renderer.createFallingBlock(new Location(world, 4, 70, 4));
             falling.show(viewer);

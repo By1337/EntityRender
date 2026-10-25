@@ -1,5 +1,8 @@
 package dev.by1337.entityrender.core;
 
+import dev.by1337.entityrender.core.generated.GeneratedEntityFactory;
+import dev.by1337.entityrender.core.generated.TargetVersion;
+
 import dev.by1337.entityrender.api.EntityRenderer;
 import dev.by1337.entityrender.api.entity.*;
 import dev.by1337.entityrender.core.metadata.MetadataLayout;
@@ -89,7 +92,7 @@ public final class PaperEntityRenderer implements EntityRenderer {
         return resources(world).registries;
     }
 
-    MetadataLayout template(org.bukkit.entity.EntityType type, World world, net.minecraft.world.entity.EntityType<?> nativeType, MetadataLayout generated) {
+    public MetadataLayout template(org.bukkit.entity.EntityType type, World world, net.minecraft.world.entity.EntityType<?> nativeType, MetadataLayout generated) {
         checkOpen();
         return resources(world).template(type, generated).layout();
     }

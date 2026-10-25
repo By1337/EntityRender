@@ -10,7 +10,7 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import dev.by1337.entityrender.core.metadata.GeneratedMetadata;
 
-abstract class BaseVirtualEntity implements VirtualEntity {
+public abstract class BaseVirtualEntity implements VirtualEntity {
     protected final PaperEntityRenderer owner;
     protected final MetadataState metadata;
     private final int id;
@@ -34,7 +34,7 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     private List<com.mojang.datafixers.util.Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> publishedEquipment = List.of();
     private PublishedEntity.Position publishedPosition;
 
-    BaseVirtualEntity(PaperEntityRenderer owner, int id, Location location, EntityType type,
+    protected BaseVirtualEntity(PaperEntityRenderer owner, int id, Location location, EntityType type,
         net.minecraft.world.entity.EntityType<?> nmsType, MetadataLayout layout) {
         validateLocation(location);
         this.owner = owner;

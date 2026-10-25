@@ -15,45 +15,45 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockVector;
 import java.util.*;
 
-final class ValueConversions {
-    static <B extends org.bukkit.Keyed, M> Holder<M> holder(B value, ResourceKey<? extends Registry<M>> registry) {
+public final class ValueConversions {
+    public static <B extends org.bukkit.Keyed, M> Holder<M> holder(B value, ResourceKey<? extends Registry<M>> registry) {
         return CraftRegistry.bukkitToMinecraftHolder(value);
     }
 
     private ValueConversions() {
     }
 
-    static ItemStack item(net.minecraft.world.item.ItemStack value) {
+    public static ItemStack item(net.minecraft.world.item.ItemStack value) {
         return CraftItemStack.asBukkitCopy(value);
     }
 
-    static net.minecraft.world.item.ItemStack item(ItemStack value) {
+    public static net.minecraft.world.item.ItemStack item(ItemStack value) {
         return value == null ? net.minecraft.world.item.ItemStack.EMPTY : CraftItemStack.asNMSCopy(value);
     }
 
-    static BlockData block(net.minecraft.world.level.block.state.BlockState value) {
+    public static BlockData block(net.minecraft.world.level.block.state.BlockState value) {
         return CraftBlockData.createData(value);
     }
 
-    static net.minecraft.world.level.block.state.BlockState block(BlockData value) {
+    public static net.minecraft.world.level.block.state.BlockState block(BlockData value) {
         return ((CraftBlockData) Objects.requireNonNull(value)).getState();
     }
 
-    static BlockVector position(BlockPos value) {
+    public static BlockVector position(BlockPos value) {
         return new BlockVector(value.getX(), value.getY(), value.getZ());
     }
 
-    static BlockPos position(BlockVector value) {
+    public static BlockPos position(BlockVector value) {
         Objects.requireNonNull(value);
         value.checkFinite();
         return new BlockPos(value.getBlockX(), value.getBlockY(), value.getBlockZ());
     }
 
-    static BlockFace direction(Direction value) {
+    public static BlockFace direction(Direction value) {
         return BlockFace.valueOf(value.name());
     }
 
-    static Direction direction(BlockFace value) {
+    public static Direction direction(BlockFace value) {
         return switch (Objects.requireNonNull(value)) {
             case DOWN -> Direction.DOWN;
             case UP -> Direction.UP;
@@ -65,20 +65,20 @@ final class ValueConversions {
         };
     }
 
-    static VillagerAppearance villager(VillagerData value) {
+    public static VillagerAppearance villager(VillagerData value) {
         return new VillagerAppearance(CraftRegistry.minecraftHolderToBukkit(value.type(), Registries.VILLAGER_TYPE), CraftRegistry.minecraftHolderToBukkit(value.profession(), Registries.VILLAGER_PROFESSION), value.level());
     }
 
-    static VillagerData villager(VillagerAppearance value) {
+    public static VillagerData villager(VillagerAppearance value) {
         Objects.requireNonNull(value);
         return new VillagerData(holder(value.type(), Registries.VILLAGER_TYPE), holder(value.profession(), Registries.VILLAGER_PROFESSION), value.level());
     }
 
-    static String compound(CompoundTag value) {
+    public static String compound(CompoundTag value) {
         return value.toString();
     }
 
-    static CompoundTag compound(String value) {
+    public static CompoundTag compound(String value) {
         try {
             return TagParser.parseCompoundFully(Objects.requireNonNull(value));
         } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
@@ -86,11 +86,11 @@ final class ValueConversions {
         }
     }
 
-    static <T> String encode(com.mojang.serialization.Codec<T> codec, T value, RegistryAccess registries) {
+    public static <T> String encode(com.mojang.serialization.Codec<T> codec, T value, RegistryAccess registries) {
         return codec.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registries), value).getOrThrow().toString();
     }
 
-    static <T> T decode(com.mojang.serialization.Codec<T> codec, String value, RegistryAccess registries) {
+    public static <T> T decode(com.mojang.serialization.Codec<T> codec, String value, RegistryAccess registries) {
         try {
             return codec.parse(RegistryOps.create(NbtOps.INSTANCE, registries), parseSnbt(value)).getOrThrow();
         } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {

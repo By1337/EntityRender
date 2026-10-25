@@ -13,7 +13,7 @@ trap 'rm -rf -- "$work_dir"' EXIT HUP INT TERM
 if [ -f .generated-runtime-files ]; then
   comm -23 .generated-runtime-files "$work_dir/files" > "$work_dir/stale"
   while IFS= read -r file; do
-    case "$file" in api/src/main/java/dev/by1337/entityrender/api/*.java|core/src/main/java/dev/by1337/entityrender/core/Generated*.java|core/src/main/java/dev/by1337/entityrender/core/TargetVersion.java) rm -f -- "$file" ;; *) echo "Invalid generated path: $file"; exit 1 ;; esac
+    case "$file" in api/src/main/java/dev/by1337/entityrender/api/*.java|core/src/main/java/dev/by1337/entityrender/core/Generated*.java|core/src/main/java/dev/by1337/entityrender/core/TargetVersion.java|core/src/main/java/dev/by1337/entityrender/core/generated/Generated*.java|core/src/main/java/dev/by1337/entityrender/core/generated/TargetVersion.java) rm -f -- "$file" ;; *) echo "Invalid generated path: $file"; exit 1 ;; esac
   done < "$work_dir/stale"
 fi
 cp -a "$work_dir/generated/api/." api/src/main/java/

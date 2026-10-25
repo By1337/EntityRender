@@ -3,6 +3,7 @@ target/
 .idea/
 *.iml
 generated/
+!/core/src/main/java/dev/by1337/entityrender/core/generated/
 logs/
 dist/
 
