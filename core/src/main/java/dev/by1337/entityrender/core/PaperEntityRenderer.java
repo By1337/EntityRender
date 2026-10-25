@@ -67,7 +67,7 @@ public final class PaperEntityRenderer implements EntityRenderer, Listener {
         if (!owner.isEnabled()) throw new IllegalStateException("Owner plugin is not enabled");
         if (!Bukkit.getMinecraftVersion().equals(TargetVersion.MINECRAFT_VERSION)) throw new IllegalStateException("This EntityRender build requires Paper " + TargetVersion.MINECRAFT_VERSION + "; got " + Bukkit.getMinecraftVersion());
         var renderer = new PaperEntityRenderer((player, packet) -> ((CraftPlayer) player).getHandle().connection.connection.send(packet, null, false),
-                world -> Bukkit.getUnsafe().nextEntityId());
+                world -> Bukkit.getUnsafe().nextEntityId(world));
         renderer.plugin = owner;
         try {
             Bukkit.getPluginManager().registerEvents(renderer, owner);

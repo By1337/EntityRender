@@ -10,7 +10,7 @@ import dev.by1337.entityrender.core.metadata.GeneratedMetadata;
 
 final class TextDisplayEntity extends AbstractDisplayEntity implements VirtualTextDisplay {
     TextDisplayEntity(PaperEntityRenderer owner, int id, Location location) {
-        super(owner, id, location, EntityType.TEXT_DISPLAY, net.minecraft.world.entity.EntityType.TEXT_DISPLAY, GeneratedMetadata.Display.TextDisplay.LAYOUT);
+        super(owner, id, location, EntityType.TEXT_DISPLAY, net.minecraft.world.entity.EntityTypes.TEXT_DISPLAY, GeneratedMetadata.Display.TextDisplay.LAYOUT);
     }
 
     @Override

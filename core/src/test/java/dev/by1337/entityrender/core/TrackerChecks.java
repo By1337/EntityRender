@@ -21,7 +21,7 @@ final class TrackerChecks {
             default -> throw new UnsupportedOperationException(method.toString());
         });
         var packets = new ArrayList<Packet<?>>();
-        try (var renderer = new PaperEntityRenderer((player, packet) -> packets.add(packet), ignored -> Bukkit.getUnsafe().nextEntityId(), ignored -> List.of(viewer))) {
+        try (var renderer = new PaperEntityRenderer((player, packet) -> packets.add(packet), ignored -> Bukkit.getUnsafe().nextEntityId(world), ignored -> List.of(viewer))) {
             var first = renderer.createArmorStand(new Location(world, 0, 64, 0));
             var second = renderer.createArmorStand(new Location(world, 0, 65, 0));
             var center = new Location(world, 0, 64, 0);

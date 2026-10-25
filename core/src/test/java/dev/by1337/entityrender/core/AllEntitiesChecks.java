@@ -13,7 +13,7 @@ final class AllEntitiesChecks {
     static void run(World world) throws Exception {
         int before = world.getEntities().size();
         var packets = new ArrayList<Packet<?>>();
-        var renderer = new PaperEntityRenderer((player, packet) -> packets.add(packet), ignored -> Bukkit.getUnsafe().nextEntityId());
+        var renderer = new PaperEntityRenderer((player, packet) -> packets.add(packet), ignored -> Bukkit.getUnsafe().nextEntityId(world));
         Player viewer = (Player) Proxy.newProxyInstance(Player.class.getClassLoader(), new Class<?>[]{ Player.class }, (proxy, method, args) -> switch (method.getName()) {
             case "getWorld" -> world;
             case "isOnline" -> true;
@@ -29,9 +29,9 @@ final class AllEntitiesChecks {
                 if (Set.of("minecraft:player", "minecraft:fishing_bobber", "minecraft:marker").contains(type.getKey().toString())) continue;
                 try {
                     var entity = (BaseVirtualEntity) renderer.create(type, new Location(world, 0, 64, 0));
-                    int marker = Bukkit.getUnsafe().nextEntityId();
+                    int marker = Bukkit.getUnsafe().nextEntityId(world);
                     renderer.create(type, new Location(world, 0, 64, 0)).close();
-                    int after = Bukkit.getUnsafe().nextEntityId();
+                    int after = Bukkit.getUnsafe().nextEntityId(world);
                     if (after - marker != (type == EntityType.ENDER_DRAGON ? 10 : 2)) throw new AssertionError("Repeated creation allocated a real NMS entity: " + type);
                     byte[] expected = metadata(entity, world);
                     for (Class<?> c = entity.getClass(); c != null && c.getSimpleName().startsWith("Generated_"); c = c.getSuperclass()) {

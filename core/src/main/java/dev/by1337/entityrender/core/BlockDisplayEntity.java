@@ -10,7 +10,7 @@ import dev.by1337.entityrender.core.metadata.GeneratedMetadata;
 
 final class BlockDisplayEntity extends AbstractDisplayEntity implements VirtualBlockDisplay {
     BlockDisplayEntity(PaperEntityRenderer owner, int id, Location location) {
-        super(owner, id, location, EntityType.BLOCK_DISPLAY, net.minecraft.world.entity.EntityType.BLOCK_DISPLAY, GeneratedMetadata.Display.BlockDisplay.LAYOUT);
+        super(owner, id, location, EntityType.BLOCK_DISPLAY, net.minecraft.world.entity.EntityTypes.BLOCK_DISPLAY, GeneratedMetadata.Display.BlockDisplay.LAYOUT);
     }
 
     @Override

@@ -1160,14 +1160,6 @@ public final class GeneratedMetadata {
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.Monster.LAYOUT, DATA_ID_ATTACK_TARGET, DATA_ID_MOVING);
         }
 
-        public static final class MagmaCube {
-            private MagmaCube() {
-            }
-
-            // NMS: net.minecraft.world.entity.monster.MagmaCube
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.Slime.LAYOUT);
-        }
-
         public static final class Monster {
             private Monster() {
             }
@@ -1218,15 +1210,6 @@ public final class GeneratedMetadata {
 
             // NMS: net.minecraft.world.entity.monster.Silverfish
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.Monster.LAYOUT);
-        }
-
-        public static final class Slime {
-            private Slime() {
-            }
-
-            // NMS: net.minecraft.world.entity.monster.Slime
-            public static final MetadataKey<java.lang.Integer> ID_SIZE = new MetadataKey<>(16, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Mob.LAYOUT, ID_SIZE);
         }
 
         public static final class Strider {
@@ -1293,6 +1276,46 @@ public final class GeneratedMetadata {
                 public static final MetadataKey<java.lang.Boolean> IS_ACTIVE = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
                 public static final MetadataKey<java.lang.Boolean> IS_TEARING_DOWN = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
                 public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.Monster.LAYOUT, CAN_MOVE, HOME_POS, IS_ACTIVE, IS_TEARING_DOWN);
+            }
+        }
+
+        public static final class cubemob {
+            private cubemob() {
+            }
+
+            public static final class AbstractCubeMob {
+                private AbstractCubeMob() {
+                }
+
+                // NMS: net.minecraft.world.entity.monster.cubemob.AbstractCubeMob
+                public static final MetadataKey<java.lang.Integer> ID_SIZE = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.INT);
+                public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.AgeableMob.LAYOUT, ID_SIZE);
+            }
+
+            public static final class MagmaCube {
+                private MagmaCube() {
+                }
+
+                // NMS: net.minecraft.world.entity.monster.cubemob.MagmaCube
+                public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.cubemob.AbstractCubeMob.LAYOUT);
+            }
+
+            public static final class Slime {
+                private Slime() {
+                }
+
+                // NMS: net.minecraft.world.entity.monster.cubemob.Slime
+                public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.cubemob.AbstractCubeMob.LAYOUT);
+            }
+
+            public static final class SulfurCube {
+                private SulfurCube() {
+                }
+
+                // NMS: net.minecraft.world.entity.monster.cubemob.SulfurCube
+                public static final MetadataKey<java.lang.Boolean> FROM_BUCKET = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+                public static final MetadataKey<java.lang.Integer> MAX_FUSE = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.INT);
+                public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.monster.cubemob.AbstractCubeMob.LAYOUT, FROM_BUCKET, MAX_FUSE);
             }
         }
 

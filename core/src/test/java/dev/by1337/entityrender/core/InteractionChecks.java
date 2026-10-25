@@ -16,7 +16,7 @@ import java.util.*;
 final class InteractionChecks {
     static void run(World world) {
         var renderer = new PaperEntityRenderer((player, packet) -> {
-        }, ignored -> Bukkit.getUnsafe().nextEntityId());
+        }, ignored -> Bukkit.getUnsafe().nextEntityId(world));
         Player viewer = (Player) Proxy.newProxyInstance(Player.class.getClassLoader(), new Class<?>[]{ Player.class }, (proxy, method, args) -> switch (method.getName()) {
             case "getWorld" -> world;
             case "isOnline", "isSneaking" -> true;
@@ -34,7 +34,7 @@ final class InteractionChecks {
             var entity = renderer.createArmorStand(new Location(world, 0, 64, 0));
             entity.show(viewer);
             entity.setInteractionHandler(callbacks::add);
-            var nativeTarget = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, ((org.bukkit.craftbukkit.CraftWorld) world).getHandle());
+            var nativeTarget = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityTypes.ARMOR_STAND, ((org.bukkit.craftbukkit.CraftWorld) world).getHandle());
             nativeTarget.setId(entity.getId());
             hooks.bind(viewer, channel);
             channel.runPendingTasks();
@@ -54,7 +54,7 @@ final class InteractionChecks {
             channel.writeInbound(new ServerboundAttackPacket(nativeTarget.getId()));
             while (!scheduled.isEmpty()) scheduled.removeFirst().run();
             require(callbacks.size() == 2, "Non-viewer interaction accepted");
-            nativeTarget.setId(Bukkit.getUnsafe().nextEntityId());
+            nativeTarget.setId(Bukkit.getUnsafe().nextEntityId(world));
             var unrelated = new ServerboundAttackPacket(nativeTarget.getId());
             channel.writeInbound(unrelated);
             require(channel.readInbound() == unrelated, "Unrelated server interaction consumed");

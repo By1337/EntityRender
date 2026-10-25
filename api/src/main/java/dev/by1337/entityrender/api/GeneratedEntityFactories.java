@@ -279,10 +279,6 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.monster.VirtualGuardian) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:guardian"))), location);
     }
 
-    default dev.by1337.entityrender.api.entity.monster.VirtualMagmaCube createMagmaCube(org.bukkit.Location location) {
-        return (dev.by1337.entityrender.api.entity.monster.VirtualMagmaCube) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:magma_cube"))), location);
-    }
-
     default dev.by1337.entityrender.api.entity.monster.VirtualPhantom createPhantom(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.monster.VirtualPhantom) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:phantom"))), location);
     }
@@ -297,10 +293,6 @@ public interface GeneratedEntityFactories {
 
     default dev.by1337.entityrender.api.entity.monster.VirtualSilverfish createSilverfish(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.monster.VirtualSilverfish) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:silverfish"))), location);
-    }
-
-    default dev.by1337.entityrender.api.entity.monster.VirtualSlime createSlime(org.bukkit.Location location) {
-        return (dev.by1337.entityrender.api.entity.monster.VirtualSlime) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:slime"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.monster.VirtualStrider createStrider(org.bukkit.Location location) {
@@ -325,6 +317,18 @@ public interface GeneratedEntityFactories {
 
     default dev.by1337.entityrender.api.entity.monster.creaking.VirtualCreaking createCreaking(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.monster.creaking.VirtualCreaking) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:creaking"))), location);
+    }
+
+    default dev.by1337.entityrender.api.entity.monster.cubemob.VirtualMagmaCube createMagmaCube(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.monster.cubemob.VirtualMagmaCube) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:magma_cube"))), location);
+    }
+
+    default dev.by1337.entityrender.api.entity.monster.cubemob.VirtualSlime createSlime(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.monster.cubemob.VirtualSlime) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:slime"))), location);
+    }
+
+    default dev.by1337.entityrender.api.entity.monster.cubemob.VirtualSulfurCube createSulfurCube(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.monster.cubemob.VirtualSulfurCube) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:sulfur_cube"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.monster.hoglin.VirtualHoglin createHoglin(org.bukkit.Location location) {

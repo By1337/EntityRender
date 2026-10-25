@@ -75,16 +75,16 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
             require(((org.bukkit.block.data.Orientable) blockDisplay.getBlockData()).getAxis() == Axis.X, "Block data getter alias");
             renderer.flush();
             require(world.getEntities().size() == before, "Virtual entities were added to the world");
-            int nativeId = Bukkit.getUnsafe().nextEntityId();
+            int nativeId = Bukkit.getUnsafe().nextEntityId(world);
             require(nativeId != stand.getId() && nativeId != display.getId() && stand.getId() != display.getId(), "Entity IDs collide with server allocator");
         }
         // Compare actual initialized NMS metadata with the compact defaults.
-        var nativeStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, ((CraftWorld) world).getHandle());
-        var nativeText = new net.minecraft.world.entity.Display.TextDisplay(net.minecraft.world.entity.EntityType.TEXT_DISPLAY, ((CraftWorld) world).getHandle());
+        var nativeStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityTypes.ARMOR_STAND, ((CraftWorld) world).getHandle());
+        var nativeText = new net.minecraft.world.entity.Display.TextDisplay(net.minecraft.world.entity.EntityTypes.TEXT_DISPLAY, ((CraftWorld) world).getHandle());
         compareDefaults("ArmorStand", nativeStand.getEntityData().packAll(), new MetadataState(GeneratedMetadata.decoration.ArmorStand.LAYOUT).fullSnapshot());
         compareDefaults("TextDisplay", nativeText.getEntityData().packAll(), new MetadataState(GeneratedMetadata.Display.TextDisplay.LAYOUT).fullSnapshot());
-        var nativeItem = new net.minecraft.world.entity.Display.ItemDisplay(net.minecraft.world.entity.EntityType.ITEM_DISPLAY, ((CraftWorld) world).getHandle());
-        var nativeBlock = new net.minecraft.world.entity.Display.BlockDisplay(net.minecraft.world.entity.EntityType.BLOCK_DISPLAY, ((CraftWorld) world).getHandle());
+        var nativeItem = new net.minecraft.world.entity.Display.ItemDisplay(net.minecraft.world.entity.EntityTypes.ITEM_DISPLAY, ((CraftWorld) world).getHandle());
+        var nativeBlock = new net.minecraft.world.entity.Display.BlockDisplay(net.minecraft.world.entity.EntityTypes.BLOCK_DISPLAY, ((CraftWorld) world).getHandle());
         compareDefaults("ItemDisplay", nativeItem.getEntityData().packAll(), new MetadataState(GeneratedMetadata.Display.ItemDisplay.LAYOUT).fullSnapshot());
         compareDefaults("BlockDisplay", nativeBlock.getEntityData().packAll(), new MetadataState(GeneratedMetadata.Display.BlockDisplay.LAYOUT).fullSnapshot());
         AllEntitiesChecks.run(world);

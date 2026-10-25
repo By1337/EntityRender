@@ -22,7 +22,7 @@ final class ArmorStandEntity extends BaseVirtualEntity implements VirtualArmorSt
     private int equipmentDirty;
 
     ArmorStandEntity(PaperEntityRenderer owner, int id, Location location) {
-        super(owner, id, location, EntityType.ARMOR_STAND, net.minecraft.world.entity.EntityType.ARMOR_STAND, GeneratedMetadata.decoration.ArmorStand.LAYOUT);
+        super(owner, id, location, EntityType.ARMOR_STAND, net.minecraft.world.entity.EntityTypes.ARMOR_STAND, GeneratedMetadata.decoration.ArmorStand.LAYOUT);
         Arrays.fill(equipment, net.minecraft.world.item.ItemStack.EMPTY);
     }
 

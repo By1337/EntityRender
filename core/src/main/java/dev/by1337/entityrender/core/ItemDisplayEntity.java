@@ -11,7 +11,7 @@ import dev.by1337.entityrender.core.metadata.GeneratedMetadata;
 
 final class ItemDisplayEntity extends AbstractDisplayEntity implements VirtualItemDisplay {
     ItemDisplayEntity(PaperEntityRenderer owner, int id, Location location) {
-        super(owner, id, location, EntityType.ITEM_DISPLAY, net.minecraft.world.entity.EntityType.ITEM_DISPLAY, GeneratedMetadata.Display.ItemDisplay.LAYOUT);
+        super(owner, id, location, EntityType.ITEM_DISPLAY, net.minecraft.world.entity.EntityTypes.ITEM_DISPLAY, GeneratedMetadata.Display.ItemDisplay.LAYOUT);
     }
 
     @Override
