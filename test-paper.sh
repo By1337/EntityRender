@@ -6,18 +6,20 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 sh build-runtime.sh "$1"
+java_release="$(cat core/target/java-release.txt)"
+target_version="$(cat core/target/minecraft-version.txt)"
 mkdir -p core/target/test-classes
 find core/target/test-classes -type f -name '*.class' -delete
 find core/src/test/java -name '*.java' | LC_ALL=C sort > core/target/test-sources.txt
 classpath="$(cat core/target/server-classpath.txt)"
-"${JAVA_HOME:+$JAVA_HOME/bin/}javac" --release 21 -encoding UTF-8 -cp "api/target/classes:core/target/classes:$classpath" -d core/target/test-classes @core/target/test-sources.txt
+"${JAVA_HOME:+$JAVA_HOME/bin/}javac" --release "$java_release" -encoding UTF-8 -cp "api/target/classes:core/target/classes:$classpath" -d core/target/test-classes @core/target/test-sources.txt
 test_dir="$(mktemp -d "${TMPDIR:-/tmp}/entityrender-paper-XXXXXX")"
 mkdir -p "$test_dir/plugins" "$test_dir/plugin-meta"
-cat > "$test_dir/plugin-meta/plugin.yml" <<'EOF'
+cat > "$test_dir/plugin-meta/plugin.yml" <<EOF
 name: EntityRenderIntegrationTest
 version: '1.0'
 main: dev.by1337.entityrender.core.PaperIntegrationPlugin
-api-version: '1.21.4'
+api-version: '$target_version'
 EOF
 "${JAVA_HOME:+$JAVA_HOME/bin/}jar" --create --file "$test_dir/plugins/entityrender-test.jar" --manifest core/target/MANIFEST.MF -C api/target/classes . -C core/target/classes . -C core/target/test-classes . -C "$test_dir/plugin-meta" plugin.yml
 cat > "$test_dir/server.properties" <<'EOF'

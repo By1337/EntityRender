@@ -42,6 +42,19 @@ public final class MetadataLayout {
         return Arrays.stream(defaults).noneMatch(value -> value == UNKNOWN);
     }
 
+    /** Cold-path initialization from a real entity, with strict schema validation. */
+    public MetadataLayout withSnapshot(List<net.minecraft.network.syncher.SynchedEntityData.DataValue<?>> snapshot) {
+        if (snapshot.size() != keys.length) throw new IllegalArgumentException("Native metadata size differs from generated layout");
+        Object[] captured = new Object[keys.length];
+        for (var value : snapshot) {
+            int index = value.id();
+            if (index < 0 || index >= keys.length || captured[index] != null || keys[index].serializer() != value.serializer())
+                throw new IllegalArgumentException("Native metadata differs at index " + index);
+            captured[index] = copy(keys[index], Objects.requireNonNull(value.value()));
+        }
+        return new MetadataLayout(keys, captured);
+    }
+
     private static <T> T copy(MetadataKey<T> key, Object value) {
         @SuppressWarnings("unchecked")
         T typed = (T) value;

@@ -74,6 +74,12 @@ final class HexFixtures {
 
     private static List<Sample> samples(String name) throws Exception {
         var result = new ArrayList<Sample>();
+        var declaredType = Worker.type("net.minecraft.network.syncher.EntityDataSerializers").getField(name).getGenericType();
+        if (declaredType instanceof java.lang.reflect.ParameterizedType generic
+                && generic.getActualTypeArguments()[0] instanceof Class<?> valueType && valueType.isEnum()) {
+            for (Object value : valueType.getEnumConstants()) add(result, ((Enum<?>) value).name(), value);
+            return result;
+        }
         switch (name) {
             case "BYTE" -> {
                 for (byte value : new byte[]{ Byte.MIN_VALUE, -1, 0, 1, Byte.MAX_VALUE }) add(result, Byte.toString(value), value);
@@ -139,7 +145,14 @@ final class HexFixtures {
                 add(result, "empty", Optional.empty());
                 for (String uuid : List.of("00000000-0000-0000-0000-000000000000", "01234567-89ab-cdef-fedc-ba9876543210")) {
                     Object value = UUID.fromString(uuid);
-                    if (name.equals("OPTIONAL_LIVING_ENTITY_REFERENCE")) value = Worker.type("net.minecraft.world.entity.EntityReference").getMethod("of", UUID.class).invoke(null, value);
+                    if (name.equals("OPTIONAL_LIVING_ENTITY_REFERENCE")) {
+                        var reference = Worker.type("net.minecraft.world.entity.EntityReference");
+                        try {
+                            value = reference.getConstructor(UUID.class).newInstance(value);
+                        } catch (NoSuchMethodException factoryBased) {
+                            value = reference.getMethod("of", UUID.class).invoke(null, value);
+                        }
+                    }
                     add(result, uuid, Optional.of(value));
                 }
             }
@@ -151,7 +164,7 @@ final class HexFixtures {
             }
             case "ITEM_STACK" -> {
                 add(result, "empty", field("net.minecraft.world.item.ItemStack", "EMPTY"));
-                if (isModern()) {
+                if (isModern() || needsLiveItemContext()) {
                     result.add(new Sample("diamond_3", "item:minecraft:diamond,count:3,components:default", new Unsupported("Requires loaded item component data; bootstrap alone is insufficient")));
                     break;
                 }
@@ -161,6 +174,10 @@ final class HexFixtures {
             }
             case "VILLAGER_DATA" -> {
                 if (isModern()) break; // Modern villager types/professions require dynamic registries.
+                Class<?> dataType = (Class<?>) ((java.lang.reflect.ParameterizedType) declaredType).getActualTypeArguments()[0];
+                if (java.util.Arrays.stream(dataType.getConstructors()).noneMatch(constructor -> constructor.getParameterCount() == 3
+                        && constructor.getParameterTypes()[0].getName().equals("net.minecraft.world.entity.npc.VillagerType")))
+                    break;
                 for (int level : new int[]{ 1, 5 }) {
                     Object value = construct("net.minecraft.world.entity.npc.VillagerData", new Class<?>[]{ Worker.type("net.minecraft.world.entity.npc.VillagerType"), Worker.type("net.minecraft.world.entity.npc.VillagerProfession"), int.class },
                             field("net.minecraft.world.entity.npc.VillagerType", "PLAINS"), field("net.minecraft.world.entity.npc.VillagerProfession", "FARMER"), level);
@@ -202,6 +219,15 @@ final class HexFixtures {
             Worker.type("net.minecraft.world.entity.EntityTypes");
             return true;
         } catch (ClassNotFoundException legacy) {
+            return false;
+        }
+    }
+
+    private static boolean needsLiveItemContext() throws Exception {
+        try {
+            Class.forName("io.papermc.paper.util.sanitizer.ItemComponentSanitizer", false, HexFixtures.class.getClassLoader());
+            return Worker.type("net.minecraft.server.MinecraftServer").getMethod("getServer").invoke(null) == null;
+        } catch (ClassNotFoundException vanilla) {
             return false;
         }
     }

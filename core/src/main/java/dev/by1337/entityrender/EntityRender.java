@@ -4,7 +4,7 @@ import dev.by1337.entityrender.api.EntityRenderer;
 import dev.by1337.entityrender.core.PaperEntityRenderer;
 import org.bukkit.plugin.Plugin;
 
-/** Paper 1.21.4 implementation entry point. This library is not a Bukkit plugin. */
+/** Version-specific Paper implementation entry point. This library is not a Bukkit plugin. */
 public final class EntityRender {
     private EntityRender() {
     }

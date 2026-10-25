@@ -37,7 +37,7 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
         if (!condition) throw new AssertionError(message);
     }
 
-    private void live() {
+    private void live() throws Exception {
         World world = getServer().getWorlds().getFirst();
         int before = world.getEntities().size();
         try (var renderer = EntityRender.createManual(this)) {
@@ -87,6 +87,9 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
         var nativeBlock = new net.minecraft.world.entity.Display.BlockDisplay(net.minecraft.world.entity.EntityType.BLOCK_DISPLAY, ((CraftWorld) world).getHandle());
         compareDefaults("ItemDisplay", nativeItem.getEntityData().packAll(), new MetadataState(GeneratedMetadata.Display.ItemDisplay.LAYOUT).fullSnapshot());
         compareDefaults("BlockDisplay", nativeBlock.getEntityData().packAll(), new MetadataState(GeneratedMetadata.Display.BlockDisplay.LAYOUT).fullSnapshot());
+        AllEntitiesChecks.run(world);
+        InteractionChecks.run(world);
+        TrackerChecks.run(world);
     }
 
     private static void compareDefaults(String name, List<net.minecraft.network.syncher.SynchedEntityData.DataValue<?>> nativeValues,

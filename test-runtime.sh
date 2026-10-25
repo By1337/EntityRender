@@ -6,11 +6,13 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 sh build-runtime.sh "$1"
+java_release="$(cat core/target/java-release.txt)"
+target_version="$(cat core/target/minecraft-version.txt)"
 mkdir -p core/target/test-classes
 find core/target/test-classes -type f -name '*.class' -delete
 find core/src/test/java -name '*.java' | LC_ALL=C sort > core/target/test-sources.txt
 classpath="api/target/classes:core/target/classes:$(cat core/target/server-classpath.txt)"
-"${JAVA_HOME:+$JAVA_HOME/bin/}javac" --release 21 -encoding UTF-8 -cp "$classpath" -d core/target/test-classes @core/target/test-sources.txt
+"${JAVA_HOME:+$JAVA_HOME/bin/}javac" --release "$java_release" -encoding UTF-8 -cp "$classpath" -d core/target/test-classes @core/target/test-sources.txt
 # Vanilla first: bootstrap without a running CraftServer. Craft classes are only used
 # by the live Paper transport / conversion paths, not by this packet-capture harness.
 "${JAVA_HOME:+$JAVA_HOME/bin/}java" -cp "$2:core/target/test-classes:$classpath" dev.by1337.entityrender.core.RuntimeChecks

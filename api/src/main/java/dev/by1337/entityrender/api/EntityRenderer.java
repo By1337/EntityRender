@@ -4,7 +4,9 @@ import dev.by1337.entityrender.api.entity.*;
 import org.bukkit.Location;
 
 /** One owner for virtual entities. All operations are confined to its server thread. */
-public interface EntityRenderer extends AutoCloseable {
+public interface EntityRenderer extends AutoCloseable, GeneratedEntityFactories {
+    ViewerTracker createTracker(Location center, double range);
+
     VirtualArmorStand createArmorStand(Location location);
 
     VirtualTextDisplay createTextDisplay(Location location);

@@ -13,7 +13,6 @@ final class Launcher {
         Path minecraft = Main.path(options, "minecraft");
         Path out = Main.path(options, "out");
         if (Files.exists(out)) throw new IOException("Output already exists; use a new directory: " + out);
-        if (options.containsKey("bundle") && options.containsKey("libraries")) throw new IllegalArgumentException("Choose --bundle or --libraries");
         String metadata;
         try (var jar = new ZipFile(minecraft.toFile())) {
             var entry = jar.getEntry("version.json");
@@ -30,7 +29,9 @@ final class Launcher {
         var classpath = new ArrayList<Path>();
         classpath.add(Path.of(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
         classpath.add(minecraft);
-        if (options.containsKey("libraries")) {
+        if (options.containsKey("bundle")) {
+            classpath.addAll(extractLibraries(Main.path(options, "bundle"), cache, options.containsKey("libraries") ? Main.path(options, "libraries") : null));
+        } else if (options.containsKey("libraries")) {
             Path libraries = Main.path(options, "libraries");
             try (var files = Files.walk(libraries)) {
                 classpath.addAll(files.filter(Files::isRegularFile).filter(p -> p.toString().endsWith(".jar")).sorted().toList());
@@ -39,7 +40,7 @@ final class Launcher {
             Path bundle = options.containsKey("bundle") ? Main.path(options, "bundle")
                     : minecraft.resolveSibling("minecraft_server_" + version + ".jar");
             if (!Files.isRegularFile(bundle)) throw new IOException("Supply --bundle <original server jar> or --libraries <directory>; not found: " + bundle);
-            classpath.addAll(extractLibraries(bundle, cache));
+            classpath.addAll(extractLibraries(bundle, cache, null));
         }
         if (classpath.size() <= 2) throw new IOException("No Minecraft dependency jars found");
         Path java = Path.of(options.getOrDefault("java", Path.of(System.getProperty("java.home"), "bin", "java").toString()));
@@ -55,7 +56,7 @@ final class Launcher {
         if (exit != 0) throw new IOException("Minecraft worker exited with code " + exit + "; check --java (Minecraft requires Java " + javaVersion + "). Work directory: " + work);
     }
 
-    private static List<Path> extractLibraries(Path bundle, Path cache) throws Exception {
+    private static List<Path> extractLibraries(Path bundle, Path cache, Path libraries) throws Exception {
         var result = new ArrayList<Path>();
         try (var jar = new ZipFile(bundle.toFile())) {
             var list = jar.getEntry("META-INF/libraries.list");
@@ -68,6 +69,12 @@ final class Launcher {
                 if (line.isBlank()) continue;
                 String[] parts = line.split("\t", -1);
                 if (parts.length != 3 || !parts[0].matches("[a-fA-F0-9]{64}")) throw new IOException("Invalid libraries.list entry: " + line);
+                if (libraries != null) {
+                    Path local = libraries.resolve(parts[2]).normalize();
+                    if (!local.startsWith(libraries) || !Files.isRegularFile(local) || !sha256(local).equalsIgnoreCase(parts[0])) throw new IOException("Missing or mismatched listed dependency: " + local);
+                    result.add(local);
+                    continue;
+                }
                 Path target = cache.resolve("libraries").resolve(parts[0].toLowerCase(Locale.ROOT) + ".jar");
                 if (!Files.isRegularFile(target) || !sha256(target).equalsIgnoreCase(parts[0])) {
                     var entry = jar.getEntry("META-INF/libraries/" + parts[2]);

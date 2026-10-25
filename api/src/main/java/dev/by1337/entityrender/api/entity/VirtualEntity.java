@@ -68,6 +68,12 @@ public interface VirtualEntity extends AutoCloseable {
 
     void hide(Player player);
 
+    /** Recreates the client representation using the current complete state. */
+    void respawn();
+
+    /** Replaces the interaction handler; null clears it. Invoked on the owning server thread. */
+    void setInteractionHandler(java.util.function.Consumer<dev.by1337.entityrender.api.EntityInteraction> handler);
+
     Set<UUID> getViewers();
 
     boolean isClosed();

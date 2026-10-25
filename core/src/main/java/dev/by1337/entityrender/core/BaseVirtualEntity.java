@@ -22,11 +22,17 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     private final World world;
     private final EntityType type;
     private final net.minecraft.world.entity.EntityType<?> nmsType;
+    private int spawnData;
+    private boolean respawnDirty;
+    private boolean headDirty;
+    private final boolean living;
     private final Map<UUID, Player> viewers = new HashMap<>();
     private double x, y, z;
     private float yaw, pitch;
     private boolean onGround, positionDirty, closed;
     boolean queued;
+    private EquipmentState equipment;
+    private java.util.function.Consumer<dev.by1337.entityrender.api.EntityInteraction> interactionHandler;
 
     BaseVirtualEntity(PaperEntityRenderer owner, int id, Location location, EntityType type,
         net.minecraft.world.entity.EntityType<?> nmsType, MetadataLayout layout) {
@@ -34,6 +40,7 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         this.owner = owner;
         this.id = id;
         this.type = type;
+        living = type.getEntityClass() != null && LivingEntity.class.isAssignableFrom(type.getEntityClass());
         this.nmsType = nmsType;
         world = location.getWorld();
         x = location.getX();
@@ -63,9 +70,48 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         if (closed) throw new IllegalStateException("Entity is closed");
     }
 
+    protected final net.minecraft.core.RegistryAccess registries() {
+        return ((org.bukkit.craftbukkit.CraftWorld) getWorld()).getHandle().registryAccess();
+    }
+
+    final void initializeSpawnData(int data) {
+        spawnData = data;
+    }
+
+    protected final int getSpawnData() {
+        checkOpen();
+        return spawnData;
+    }
+
+    protected final void setSpawnData(int data) {
+        checkOpen();
+        if (spawnData != data) {
+            spawnData = data;
+            respawn();
+        }
+    }
+
+    @Override
+    public final void respawn() {
+        checkOpen();
+        respawnDirty = true;
+        owner.enqueue(this);
+    }
+
     protected <T> T get(MetadataKey<T> key) {
         checkOpen();
         return metadata.get(key);
+    }
+
+    @Override
+    public final void setInteractionHandler(java.util.function.Consumer<dev.by1337.entityrender.api.EntityInteraction> handler) {
+        checkOpen();
+        interactionHandler = handler;
+    }
+
+    final void interact(Player player, dev.by1337.entityrender.api.EntityInteraction.Type type, org.bukkit.inventory.EquipmentSlot hand, Vector hit, boolean secondary) {
+        if (closed || !viewers.containsKey(player.getUniqueId()) || !world.equals(player.getWorld()) || interactionHandler == null) return;
+        interactionHandler.accept(new dev.by1337.entityrender.api.EntityInteraction(this, player, type, hand, hit, secondary));
     }
 
     protected <T> void set(MetadataKey<T> key, T value) {
@@ -153,6 +199,7 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         finite(pitch);
         pitch = Math.clamp(pitch, -90f, 90f);
         if (this.yaw == yaw && this.pitch == pitch) return;
+        if (this.yaw != yaw && living) headDirty = true;
         this.yaw = yaw;
         this.pitch = pitch;
         positionChanged();
@@ -258,7 +305,7 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         if (!world.equals(player.getWorld())) throw new IllegalArgumentException("Viewer must be in the entity's world");
         if (viewers.containsKey(player.getUniqueId())) return;
         try {
-            owner.send(player, new ClientboundAddEntityPacket(id, uuid, x, y, z, pitch, yaw, nmsType, 0, Vec3.ZERO, yaw));
+            owner.send(player, owner.spawnPackets.create(type, nmsType, id, uuid, x, y, z, pitch, yaw, spawnData));
             owner.send(player, new ClientboundSetEntityDataPacket(id, metadata.fullSnapshot()));
             sendAdditionalSnapshot(player);
             viewers.put(player.getUniqueId(), player);
@@ -286,6 +333,10 @@ abstract class BaseVirtualEntity implements VirtualEntity {
         viewers.remove(player);
     }
 
+    final boolean hasViewer(UUID player) {
+        return viewers.containsKey(player);
+    }
+
     @Override
     public Set<UUID> getViewers() {
         owner.checkThread();
@@ -301,22 +352,62 @@ abstract class BaseVirtualEntity implements VirtualEntity {
     void flushChanges() {
         checkOpen();
         if (!viewers.isEmpty()) {
+            if (respawnDirty) {
+                broadcast(new ClientboundRemoveEntitiesPacket(id));
+                var spawn = owner.spawnPackets.create(type, nmsType, id, uuid, x, y, z, pitch, yaw, spawnData);
+                var full = new ClientboundSetEntityDataPacket(id, metadata.fullSnapshot());
+                for (var player : viewers.values()) {
+                    owner.send(player, spawn);
+                    owner.send(player, full);
+                    sendAdditionalSnapshot(player);
+                }
+                metadata.acknowledge();
+                headDirty = false;
+                positionDirty = false;
+                respawnDirty = false;
+                acknowledgeAdditional();
+                return;
+            }
             if (positionDirty) broadcast(new ClientboundEntityPositionSyncPacket(id, new PositionMoveRotation(new Vec3(x, y, z), Vec3.ZERO, yaw, pitch), onGround));
+            if (headDirty) broadcast(owner.spawnPackets.head(id, yaw));
             if (metadata.isDirty()) broadcast(new ClientboundSetEntityDataPacket(id, metadata.dirtySnapshot()));
             flushAdditional();
         }
         metadata.acknowledge();
+        headDirty = false;
         positionDirty = false;
+        respawnDirty = false;
         acknowledgeAdditional();
     }
 
     protected void sendAdditionalSnapshot(Player player) {
+        if (equipment != null) {
+            var packet = equipment.packet(id, true);
+            if (packet != null) owner.send(player, packet);
+        }
     }
 
     protected void flushAdditional() {
+        if (equipment != null) {
+            var packet = equipment.packet(id, false);
+            if (packet != null) broadcast(packet);
+        }
     }
 
     protected void acknowledgeAdditional() {
+        if (equipment != null) equipment.acknowledge();
+    }
+
+    public org.bukkit.inventory.ItemStack getEquipment(org.bukkit.inventory.EquipmentSlot slot) {
+        checkOpen();
+        Objects.requireNonNull(slot);
+        return equipment == null ? null : equipment.get(slot);
+    }
+
+    public void setEquipment(org.bukkit.inventory.EquipmentSlot slot, org.bukkit.inventory.ItemStack item) {
+        checkOpen();
+        if (equipment == null) equipment = new EquipmentState();
+        if (equipment.set(slot, item)) owner.enqueue(this);
     }
 
     protected final void broadcast(Packet<?> packet) {
@@ -340,6 +431,7 @@ abstract class BaseVirtualEntity implements VirtualEntity {
             if (!viewers.isEmpty()) broadcast(new ClientboundRemoveEntitiesPacket(id));
         } finally {
             closed = true;
+            interactionHandler = null;
             viewers.clear();
             owner.forget(this);
         }
