@@ -1,0 +1,6 @@
+target/
+.entityrender/
+.idea/
+*.iml
+generated/
+logs/

@@ -1,0 +1,2 @@
+# An empty last TSV cell is meaningful and must retain its delimiter.
+*.tsv whitespace=-blank-at-eol

@@ -1,0 +1,47 @@
+entity	owner	field	expression
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_BILLBOARD_RENDER_CONSTRAINTS_ID	(byte) 0
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_BRIGHTNESS_OVERRIDE_ID	-1
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_GLOW_COLOR_OVERRIDE_ID	-1
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_HEIGHT_ID	0f
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_LEFT_ROTATION_ID	new org.joml.Quaternionf()
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_POS_ROT_INTERPOLATION_DURATION_ID	0
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_RIGHT_ROTATION_ID	new org.joml.Quaternionf()
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_SCALE_ID	new org.joml.Vector3f(1)
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_SHADOW_RADIUS_ID	0f
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_SHADOW_STRENGTH_ID	1f
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_TRANSFORMATION_INTERPOLATION_DURATION_ID	0
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_TRANSFORMATION_INTERPOLATION_START_DELTA_TICKS_ID	0
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_TRANSLATION_ID	new org.joml.Vector3f()
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_VIEW_RANGE_ID	1f
+net.minecraft.world.entity.Display	net.minecraft.world.entity.Display	DATA_WIDTH_ID	0f
+net.minecraft.world.entity.Display$BlockDisplay	net.minecraft.world.entity.Display$BlockDisplay	DATA_BLOCK_STATE_ID	net.minecraft.world.level.block.Blocks.AIR.defaultBlockState()
+net.minecraft.world.entity.Display$ItemDisplay	net.minecraft.world.entity.Display$ItemDisplay	DATA_ITEM_DISPLAY_ID	(byte) 0
+net.minecraft.world.entity.Display$ItemDisplay	net.minecraft.world.entity.Display$ItemDisplay	DATA_ITEM_STACK_ID	net.minecraft.world.item.ItemStack.EMPTY
+net.minecraft.world.entity.Display$TextDisplay	net.minecraft.world.entity.Display$TextDisplay	DATA_BACKGROUND_COLOR_ID	0x40000000
+net.minecraft.world.entity.Display$TextDisplay	net.minecraft.world.entity.Display$TextDisplay	DATA_LINE_WIDTH_ID	200
+net.minecraft.world.entity.Display$TextDisplay	net.minecraft.world.entity.Display$TextDisplay	DATA_STYLE_FLAGS_ID	(byte) 0
+net.minecraft.world.entity.Display$TextDisplay	net.minecraft.world.entity.Display$TextDisplay	DATA_TEXT_ID	net.minecraft.network.chat.Component.empty()
+net.minecraft.world.entity.Display$TextDisplay	net.minecraft.world.entity.Display$TextDisplay	DATA_TEXT_OPACITY_ID	(byte) -1
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_AIR_SUPPLY_ID	300
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_CUSTOM_NAME	java.util.Optional.empty()
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_CUSTOM_NAME_VISIBLE	false
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_NO_GRAVITY	false
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_POSE	net.minecraft.world.entity.Pose.STANDING
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_SHARED_FLAGS_ID	(byte) 0
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_SILENT	false
+net.minecraft.world.entity.Entity	net.minecraft.world.entity.Entity	DATA_TICKS_FROZEN	0
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.LivingEntity	DATA_ARROW_COUNT_ID	0
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.LivingEntity	DATA_EFFECT_AMBIENCE_ID	false
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.LivingEntity	DATA_EFFECT_PARTICLES	java.util.List.of()
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.LivingEntity	DATA_HEALTH_ID	1f
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.LivingEntity	DATA_LIVING_ENTITY_FLAGS	(byte) 0
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.LivingEntity	DATA_STINGER_COUNT_ID	0
+net.minecraft.world.entity.LivingEntity	net.minecraft.world.entity.LivingEntity	SLEEPING_POS_ID	java.util.Optional.empty()
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.LivingEntity	DATA_HEALTH_ID	20f
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.decoration.ArmorStand	DATA_BODY_POSE	net.minecraft.world.entity.decoration.ArmorStand.DEFAULT_BODY_POSE
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.decoration.ArmorStand	DATA_CLIENT_FLAGS	(byte) 0
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.decoration.ArmorStand	DATA_HEAD_POSE	net.minecraft.world.entity.decoration.ArmorStand.DEFAULT_HEAD_POSE
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.decoration.ArmorStand	DATA_LEFT_ARM_POSE	net.minecraft.world.entity.decoration.ArmorStand.DEFAULT_LEFT_ARM_POSE
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.decoration.ArmorStand	DATA_LEFT_LEG_POSE	net.minecraft.world.entity.decoration.ArmorStand.DEFAULT_LEFT_LEG_POSE
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.decoration.ArmorStand	DATA_RIGHT_ARM_POSE	net.minecraft.world.entity.decoration.ArmorStand.DEFAULT_RIGHT_ARM_POSE
+net.minecraft.world.entity.decoration.ArmorStand	net.minecraft.world.entity.decoration.ArmorStand	DATA_RIGHT_LEG_POSE	net.minecraft.world.entity.decoration.ArmorStand.DEFAULT_RIGHT_LEG_POSE
