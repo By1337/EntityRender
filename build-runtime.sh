@@ -10,7 +10,7 @@ target_version="$(sed -n 's:.*<minecraft.version>\([^<]*\)</minecraft.version>.*
 java_release="$(sed -n 's:.*<maven.compiler.release>\([^<]*\)</maven.compiler.release>.*:\1:p' pom.xml)"
 mkdir -p api/target/classes core/target/classes
 find api/target/classes core/target/classes -type f -name '*.class' -delete
-python3 tools/server-libraries.py "$server_dir" > core/target/server-jars.txt
+python3 tools/server_libraries.py "$server_dir" > core/target/server-jars.txt
 if [ ! -f "$server_dir/versions/$target_version/paper-$target_version.jar" ]; then
   echo 'Prepared Paper 1.21.4 server jar not found'
   exit 1

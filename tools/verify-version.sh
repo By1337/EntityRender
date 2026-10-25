@@ -6,15 +6,7 @@ server_dir="$(cd "$1" && pwd)"
 target_version="$(sed -n 's:.*<minecraft.version>\([^<]*\)</minecraft.version>.*:\1:p' pom.xml)"
 java_release="$(sed -n 's:.*<maven.compiler.release>\([^<]*\)</maven.compiler.release>.*:\1:p' pom.xml)"
 export JAVA_HOME="/usr/lib/jvm/java-$java_release-openjdk"
-bundle="$(python3 - "$server_dir" <<'PY'
-from pathlib import Path
-import sys
-bundles = list(Path(sys.argv[1]).glob('paper*.jar'))
-if len(bundles) != 1:
-    raise SystemExit('Expected exactly one Paper bootstrap jar')
-print(bundles[0])
-PY
-)"
+bundle="$(python3 tools/server_libraries.py --bundle "$server_dir")"
 mvn -o -q clean package
 sh test.sh "$server_dir/versions/$target_version/paper-$target_version.jar" --bundle "$bundle" --libraries "$server_dir/libraries" --java "$JAVA_HOME/bin/java"
 sh test-paper.sh "$server_dir"

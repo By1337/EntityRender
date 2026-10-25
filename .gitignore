@@ -5,3 +5,6 @@ target/
 generated/
 logs/
 dist/
+
+__pycache__/
+*.pyc

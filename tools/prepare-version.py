@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import subprocess
 import zipfile
+from server_libraries import select_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -72,7 +73,7 @@ def main():
     def property_value(text, key, value):
         return re.sub(r'(<'+re.escape(key)+r'>)[^<]*(</'+re.escape(key)+r'>)', lambda m: m[1]+str(value)+m[2], text)
 
-    with zipfile.ZipFile(next(server.glob('paper*.jar'))) as bundle:
+    with zipfile.ZipFile(select_bundle(server)) as bundle:
         coordinates = [row.split('\t')[1].split(':') for row in bundle.read('META-INF/libraries.list').decode().splitlines() if row.strip()]
     server_dependencies = {coordinate[1]: coordinate[2] for coordinate in coordinates}
 
