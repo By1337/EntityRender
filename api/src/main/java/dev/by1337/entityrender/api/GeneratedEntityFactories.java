@@ -135,6 +135,10 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.animal.camel.VirtualCamel) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:camel"))), location);
     }
 
+    default dev.by1337.entityrender.api.entity.animal.coppergolem.VirtualCopperGolem createCopperGolem(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.animal.coppergolem.VirtualCopperGolem) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:copper_golem"))), location);
+    }
+
     default dev.by1337.entityrender.api.entity.animal.frog.VirtualFrog createFrog(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.animal.frog.VirtualFrog) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:frog"))), location);
     }
@@ -209,6 +213,10 @@ public interface GeneratedEntityFactories {
 
     default dev.by1337.entityrender.api.entity.decoration.VirtualLeashFenceKnotEntity createLeashKnot(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.decoration.VirtualLeashFenceKnotEntity) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:leash_knot"))), location);
+    }
+
+    default dev.by1337.entityrender.api.entity.decoration.VirtualMannequin createMannequin(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.decoration.VirtualMannequin) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:mannequin"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.decoration.VirtualPainting createPainting(org.bukkit.Location location) {

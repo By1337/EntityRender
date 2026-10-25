@@ -105,9 +105,10 @@ final class RuntimeGenerator {
             case "OPTIONAL_BLOCK_POS" -> optional("org.bukkit.util.BlockVector", "position");
             case "OPTIONAL_BLOCK_STATE" -> optional("org.bukkit.block.data.BlockData", "block");
             case "OPTIONAL_UUID" -> new Property("java.util.UUID", "", "$.orElse(null)", "java.util.Optional.ofNullable($)");
-            case "OPTIONAL_LIVING_ENTITY_REFERENCE" -> new Property("java.util.UUID", "", "$.map(net.minecraft.world.entity.EntityReference::getUUID).orElse(null)", "java.util.Optional.ofNullable($).map(net.minecraft.world.entity.EntityReference::new)");
+            case "OPTIONAL_LIVING_ENTITY_REFERENCE" -> new Property("java.util.UUID", "", "$.map(net.minecraft.world.entity.EntityReference::getUUID).orElse(null)", "java.util.Optional.ofNullable($).map(net.minecraft.world.entity.EntityReference::of)");
             case "OPTIONAL_UNSIGNED_INT" -> direct("java.util.OptionalInt");
             case "COMPONENT" -> new Property("net.kyori.adventure.text.Component", "", "io.papermc.paper.adventure.PaperAdventure.asAdventure($)", "io.papermc.paper.adventure.PaperAdventure.asVanilla(java.util.Objects.requireNonNull($))");
+            case "OPTIONAL_COMPONENT" -> new Property("net.kyori.adventure.text.Component", "", "$.map(io.papermc.paper.adventure.PaperAdventure::asAdventure).orElse(null)", "java.util.Optional.ofNullable($).map(io.papermc.paper.adventure.PaperAdventure::asVanilla)");
             case "DIRECTION" -> conversion("org.bukkit.block.BlockFace", "direction");
             case "VILLAGER_DATA" -> conversion("dev.by1337.entityrender.api.VillagerAppearance", "villager");
             case "CAT_VARIANT" -> holder("org.bukkit.entity.Cat.Type", "CAT_VARIANT");
@@ -126,7 +127,7 @@ final class RuntimeGenerator {
             case "SNIFFER_STATE" -> new Property("org.bukkit.entity.Sniffer.State", "", "org.bukkit.entity.Sniffer.State.valueOf($.name())", nms + ".valueOf($.name())");
             case "ARMADILLO_STATE" -> enumeration("org.bukkit.entity.Armadillo.State", nms);
             case "WEATHERING_COPPER_STATE" -> enumeration("io.papermc.paper.world.WeatheringCopperState", nms);
-            case "COPPER_GOLEM_STATE" -> enumeration("org.bukkit.entity.CopperGolem.State", nms);
+            case "COPPER_GOLEM_STATE" -> new Property("String", "", "$.name()", nms + ".valueOf(java.util.Objects.requireNonNull($))");
             case "DYE_COLOR" -> new Property("org.bukkit.DyeColor", "", "org.bukkit.DyeColor.valueOf($.name())", nms + ".valueOf($.name())");
             case "HUMANOID_ARM" -> new Property("org.bukkit.inventory.MainHand", "", "org.bukkit.inventory.MainHand.valueOf($.name())", nms + ".valueOf($.name())");
             case "COMPOUND_TAG" -> new Property("String", "Snbt", "ValueConversions.compound($)", "ValueConversions.compound($)");

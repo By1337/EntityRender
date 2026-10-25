@@ -52,6 +52,8 @@ def main():
     with zipfile.ZipFile(sdk) as jar:
         entries = set(jar.namelist())
         metadata = json.loads(jar.read('version.json'))
+    if metadata['id'] != args.version:
+        raise SystemExit('NMS SDK does not match requested Minecraft version')
     release = int(metadata['java_version'])
     jdk = Path('/usr/lib/jvm') / f'java-{release}-openjdk'
     env = dict(os.environ, JAVA_HOME=str(jdk))
@@ -72,7 +74,7 @@ def main():
 
     with zipfile.ZipFile(next(server.glob('paper*.jar'))) as bundle:
         coordinates = [row.split('\t')[1].split(':') for row in bundle.read('META-INF/libraries.list').decode().splitlines() if row.strip()]
-    server_dependencies = {artifact: version for group, artifact, version in coordinates}
+    server_dependencies = {coordinate[1]: coordinate[2] for coordinate in coordinates}
 
     for file in ['pom.xml', 'api/pom.xml', 'core/pom.xml', 'dumper/pom.xml']:
         text = (ROOT / file).read_text()
@@ -94,6 +96,12 @@ def main():
     identifier = 'Identifier' if 'net/minecraft/resources/Identifier.class' in entries else 'ResourceLocation'
     rotations = javap('net.minecraft.core.Rotations')
     record_rotations = 'float x()' in rotations
+    with zipfile.ZipFile(next(max(api_dirs,key=natural).glob('*.jar'))) as api_jar:
+        copper_state = 'org/bukkit/entity/CopperGolem$State.class' in api_jar.namelist()
+    state_property = ('enumeration("org.bukkit.entity.CopperGolem.State", nms)' if copper_state
+                      else 'new Property("String", "", "$.name()", nms + ".valueOf(java.util.Objects.requireNonNull($))")')
+    replace('dumper/src/main/java/dev/by1337/entityrender/dumper/RuntimeGenerator.java', lambda s:
+            re.sub(r'case "COPPER_GOLEM_STATE" -> .*?;', 'case "COPPER_GOLEM_STATE" -> '+state_property+';', s))
     unsafe = subprocess.check_output([str(jdk / 'bin/javap'), '-classpath', str(next(max(api_dirs,key=natural).glob('*.jar'))), 'org.bukkit.UnsafeValues'], text=True)
     world_ids = 'nextEntityId(org.bukkit.World)' in unsafe
     for path in core.rglob('*.java'):

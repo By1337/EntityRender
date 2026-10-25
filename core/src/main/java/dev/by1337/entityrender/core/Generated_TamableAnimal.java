@@ -22,7 +22,7 @@ class Generated_TamableAnimal extends Generated_animal_Animal implements dev.by1
 
     @Override
     public void setOwneruuid(java.util.UUID value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.TamableAnimal.DATA_OWNERUUID_ID, java.util.Optional.ofNullable(value).map(net.minecraft.world.entity.EntityReference::new));
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.TamableAnimal.DATA_OWNERUUID_ID, java.util.Optional.ofNullable(value).map(net.minecraft.world.entity.EntityReference::of));
     }
 
     @Override

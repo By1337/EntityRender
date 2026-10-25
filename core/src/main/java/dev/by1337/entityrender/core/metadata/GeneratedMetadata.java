@@ -25,6 +25,16 @@ public final class GeneratedMetadata {
         public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Entity.LAYOUT, DATA_PARTICLE, DATA_RADIUS, DATA_WAITING);
     }
 
+    public static final class Avatar {
+        private Avatar() {
+        }
+
+        // NMS: net.minecraft.world.entity.Avatar
+        public static final MetadataKey<java.lang.Byte> DATA_PLAYER_MAIN_HAND = new MetadataKey<>(15, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
+        public static final MetadataKey<java.lang.Byte> DATA_PLAYER_MODE_CUSTOMISATION = new MetadataKey<>(16, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
+        public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.LivingEntity.LAYOUT, DATA_PLAYER_MAIN_HAND, DATA_PLAYER_MODE_CUSTOMISATION);
+    }
+
     public static final class Display {
         private Display() {
         }
@@ -593,6 +603,21 @@ public final class GeneratedMetadata {
             }
         }
 
+        public static final class coppergolem {
+            private coppergolem() {
+            }
+
+            public static final class CopperGolem {
+                private CopperGolem() {
+                }
+
+                // NMS: net.minecraft.world.entity.animal.coppergolem.CopperGolem
+                public static final MetadataKey<net.minecraft.world.entity.animal.coppergolem.CopperGolemState> COPPER_GOLEM_STATE = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.COPPER_GOLEM_STATE);
+                public static final MetadataKey<net.minecraft.world.level.block.WeatheringCopper.WeatherState> DATA_WEATHER_STATE = new MetadataKey<>(16, net.minecraft.network.syncher.EntityDataSerializers.WEATHERING_COPPER_STATE);
+                public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.AbstractGolem.LAYOUT, COPPER_GOLEM_STATE, DATA_WEATHER_STATE);
+            }
+        }
+
         public static final class frog {
             private frog() {
             }
@@ -876,6 +901,17 @@ public final class GeneratedMetadata {
 
             // NMS: net.minecraft.world.entity.decoration.LeashFenceKnotEntity
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.decoration.BlockAttachedEntity.LAYOUT);
+        }
+
+        public static final class Mannequin {
+            private Mannequin() {
+            }
+
+            // NMS: net.minecraft.world.entity.decoration.Mannequin
+            public static final MetadataKey<java.util.Optional<net.minecraft.network.chat.Component>> DATA_DESCRIPTION = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_COMPONENT);
+            public static final MetadataKey<java.lang.Boolean> DATA_IMMOVABLE = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+            public static final MetadataKey<net.minecraft.world.item.component.ResolvableProfile> DATA_PROFILE = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.RESOLVABLE_PROFILE);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Avatar.LAYOUT, DATA_DESCRIPTION, DATA_IMMOVABLE, DATA_PROFILE);
         }
 
         public static final class Painting {
@@ -1391,13 +1427,11 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.player.Player
-            public static final MetadataKey<java.lang.Float> DATA_PLAYER_ABSORPTION_ID = new MetadataKey<>(15, net.minecraft.network.syncher.EntityDataSerializers.FLOAT);
-            public static final MetadataKey<java.lang.Byte> DATA_PLAYER_MAIN_HAND = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
-            public static final MetadataKey<java.lang.Byte> DATA_PLAYER_MODE_CUSTOMISATION = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
-            public static final MetadataKey<java.lang.Integer> DATA_SCORE_ID = new MetadataKey<>(16, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataKey<net.minecraft.nbt.CompoundTag> DATA_SHOULDER_LEFT = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.COMPOUND_TAG);
-            public static final MetadataKey<net.minecraft.nbt.CompoundTag> DATA_SHOULDER_RIGHT = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.COMPOUND_TAG);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.LivingEntity.LAYOUT, DATA_PLAYER_ABSORPTION_ID, DATA_PLAYER_MAIN_HAND, DATA_PLAYER_MODE_CUSTOMISATION, DATA_SCORE_ID, DATA_SHOULDER_LEFT, DATA_SHOULDER_RIGHT);
+            public static final MetadataKey<java.lang.Float> DATA_PLAYER_ABSORPTION_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.FLOAT);
+            public static final MetadataKey<java.lang.Integer> DATA_SCORE_ID = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.INT);
+            public static final MetadataKey<java.util.OptionalInt> DATA_SHOULDER_PARROT_LEFT = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
+            public static final MetadataKey<java.util.OptionalInt> DATA_SHOULDER_PARROT_RIGHT = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Avatar.LAYOUT, DATA_PLAYER_ABSORPTION_ID, DATA_SCORE_ID, DATA_SHOULDER_PARROT_LEFT, DATA_SHOULDER_PARROT_RIGHT);
         }
     }
 

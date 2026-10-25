@@ -22,7 +22,7 @@ class Generated_animal_Fox extends Generated_animal_Animal implements dev.by1337
 
     @Override
     public void setTrustedId0(java.util.UUID value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Fox.DATA_TRUSTED_ID_0, java.util.Optional.ofNullable(value).map(net.minecraft.world.entity.EntityReference::new));
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Fox.DATA_TRUSTED_ID_0, java.util.Optional.ofNullable(value).map(net.minecraft.world.entity.EntityReference::of));
     }
 
     @Override
@@ -32,7 +32,7 @@ class Generated_animal_Fox extends Generated_animal_Animal implements dev.by1337
 
     @Override
     public void setTrustedId1(java.util.UUID value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Fox.DATA_TRUSTED_ID_1, java.util.Optional.ofNullable(value).map(net.minecraft.world.entity.EntityReference::new));
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Fox.DATA_TRUSTED_ID_1, java.util.Optional.ofNullable(value).map(net.minecraft.world.entity.EntityReference::of));
     }
 
     @Override

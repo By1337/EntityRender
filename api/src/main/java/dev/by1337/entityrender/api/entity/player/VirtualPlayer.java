@@ -3,34 +3,24 @@ package dev.by1337.entityrender.api.entity.player;
 /**
  * Generated from net.minecraft.world.entity.player.Player. Values use Bukkit types; packed flag fields remain explicit.
  */
-public interface VirtualPlayer extends dev.by1337.entityrender.api.entity.VirtualLivingEntity {
+public interface VirtualPlayer extends dev.by1337.entityrender.api.entity.VirtualAvatar {
     /** NMS DATA_PLAYER_ABSORPTION_ID; FLOAT. */
     float getPlayerAbsorption();
 
     void setPlayerAbsorption(float value);
-
-    /** NMS DATA_PLAYER_MAIN_HAND; BYTE. */
-    byte getPlayerMainHand();
-
-    void setPlayerMainHand(byte value);
-
-    /** NMS DATA_PLAYER_MODE_CUSTOMISATION; BYTE. */
-    byte getPlayerModeCustomisation();
-
-    void setPlayerModeCustomisation(byte value);
 
     /** NMS DATA_SCORE_ID; INT. */
     int getScore();
 
     void setScore(int value);
 
-    /** NMS DATA_SHOULDER_LEFT; COMPOUND_TAG. */
-    String getShoulderLeftSnbt();
+    /** NMS DATA_SHOULDER_PARROT_LEFT; OPTIONAL_UNSIGNED_INT. */
+    java.util.OptionalInt getShoulderParrotLeft();
 
-    void setShoulderLeftSnbt(String value);
+    void setShoulderParrotLeft(java.util.OptionalInt value);
 
-    /** NMS DATA_SHOULDER_RIGHT; COMPOUND_TAG. */
-    String getShoulderRightSnbt();
+    /** NMS DATA_SHOULDER_PARROT_RIGHT; OPTIONAL_UNSIGNED_INT. */
+    java.util.OptionalInt getShoulderParrotRight();
 
-    void setShoulderRightSnbt(String value);
+    void setShoulderParrotRight(java.util.OptionalInt value);
 }
