@@ -24,14 +24,4 @@ class Generated_animal_Dolphin extends Generated_animal_AgeableWaterCreature imp
     public void setMoistnessLevel(int value) {
         set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Dolphin.MOISTNESS_LEVEL, value);
     }
-
-    @Override
-    public org.bukkit.util.BlockVector getTreasurePos() {
-        return ValueConversions.position(get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Dolphin.TREASURE_POS));
-    }
-
-    @Override
-    public void setTreasurePos(org.bukkit.util.BlockVector value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.animal.Dolphin.TREASURE_POS, ValueConversions.position(value));
-    }
 }

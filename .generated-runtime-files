@@ -14,6 +14,7 @@ api/src/main/java/dev/by1337/entityrender/api/entity/VirtualPathfinderMob.java
 api/src/main/java/dev/by1337/entityrender/api/entity/VirtualTamableAnimal.java
 api/src/main/java/dev/by1337/entityrender/api/entity/ambient/VirtualAmbientCreature.java
 api/src/main/java/dev/by1337/entityrender/api/entity/ambient/VirtualBat.java
+api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualAbstractCow.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualAbstractFish.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualAbstractGolem.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualAbstractSchoolingFish.java
@@ -36,14 +37,12 @@ api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualPolarBear.jav
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualPufferfish.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualRabbit.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualSalmon.java
-api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualSheep.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualShoulderRidingEntity.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualSnowGolem.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualSquid.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualTropicalFish.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualTurtle.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualWaterAnimal.java
-api/src/main/java/dev/by1337/entityrender/api/entity/animal/VirtualWolf.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/allay/VirtualAllay.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/armadillo/VirtualArmadillo.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/axolotl/VirtualAxolotl.java
@@ -60,7 +59,9 @@ api/src/main/java/dev/by1337/entityrender/api/entity/animal/horse/VirtualMule.ja
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/horse/VirtualSkeletonHorse.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/horse/VirtualTraderLlama.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/horse/VirtualZombieHorse.java
+api/src/main/java/dev/by1337/entityrender/api/entity/animal/sheep/VirtualSheep.java
 api/src/main/java/dev/by1337/entityrender/api/entity/animal/sniffer/VirtualSniffer.java
+api/src/main/java/dev/by1337/entityrender/api/entity/animal/wolf/VirtualWolf.java
 api/src/main/java/dev/by1337/entityrender/api/entity/boss/enderdragon/VirtualEndCrystal.java
 api/src/main/java/dev/by1337/entityrender/api/entity/boss/enderdragon/VirtualEnderDragon.java
 api/src/main/java/dev/by1337/entityrender/api/entity/boss/wither/VirtualWitherBoss.java
@@ -124,6 +125,7 @@ api/src/main/java/dev/by1337/entityrender/api/entity/npc/VirtualWanderingTrader.
 api/src/main/java/dev/by1337/entityrender/api/entity/player/VirtualPlayer.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualAbstractArrow.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualAbstractHurtingProjectile.java
+api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualAbstractThrownPotion.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualArrow.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualDragonFireball.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualEvokerFangs.java
@@ -143,7 +145,8 @@ api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrowable
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrownEgg.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrownEnderpearl.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrownExperienceBottle.java
-api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrownPotion.java
+api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrownLingeringPotion.java
+api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrownSplashPotion.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualThrownTrident.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/VirtualWitherSkull.java
 api/src/main/java/dev/by1337/entityrender/api/entity/projectile/windcharge/VirtualAbstractWindCharge.java
@@ -182,6 +185,7 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_PathfinderMob.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_TamableAnimal.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_ambient_AmbientCreature.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_ambient_Bat.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_animal_AbstractCow.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_AbstractFish.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_AbstractGolem.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_AbstractSchoolingFish.java
@@ -204,14 +208,12 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_animal_PolarBear.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Pufferfish.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Rabbit.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Salmon.java
-core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Sheep.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_ShoulderRidingEntity.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_SnowGolem.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Squid.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_TropicalFish.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Turtle.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_WaterAnimal.java
-core/src/main/java/dev/by1337/entityrender/core/Generated_animal_Wolf.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_allay_Allay.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_armadillo_Armadillo.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_axolotl_Axolotl.java
@@ -228,7 +230,9 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_animal_horse_Mule.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_horse_SkeletonHorse.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_horse_TraderLlama.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_horse_ZombieHorse.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_animal_sheep_Sheep.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_animal_sniffer_Sniffer.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_animal_wolf_Wolf.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_boss_enderdragon_EndCrystal.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_boss_enderdragon_EnderDragon.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_boss_wither_WitherBoss.java
@@ -292,6 +296,7 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_npc_WanderingTrader.ja
 core/src/main/java/dev/by1337/entityrender/core/Generated_player_Player.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_AbstractArrow.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_AbstractHurtingProjectile.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_AbstractThrownPotion.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_Arrow.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_DragonFireball.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_EvokerFangs.java
@@ -311,7 +316,8 @@ core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrowablePr
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrownEgg.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrownEnderpearl.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrownExperienceBottle.java
-core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrownPotion.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrownLingeringPotion.java
+core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrownSplashPotion.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_ThrownTrident.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_WitherSkull.java
 core/src/main/java/dev/by1337/entityrender/core/Generated_projectile_windcharge_AbstractWindCharge.java

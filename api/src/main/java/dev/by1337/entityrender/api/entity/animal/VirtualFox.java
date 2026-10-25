@@ -9,12 +9,12 @@ public interface VirtualFox extends dev.by1337.entityrender.api.entity.animal.Vi
 
     void setFoxFlags(byte value);
 
-    /** NMS DATA_TRUSTED_ID_0; OPTIONAL_UUID. */
+    /** NMS DATA_TRUSTED_ID_0; OPTIONAL_LIVING_ENTITY_REFERENCE. */
     java.util.UUID getTrustedId0();
 
     void setTrustedId0(java.util.UUID value);
 
-    /** NMS DATA_TRUSTED_ID_1; OPTIONAL_UUID. */
+    /** NMS DATA_TRUSTED_ID_1; OPTIONAL_LIVING_ENTITY_REFERENCE. */
     java.util.UUID getTrustedId1();
 
     void setTrustedId1(java.util.UUID value);

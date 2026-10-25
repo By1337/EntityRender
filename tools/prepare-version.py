@@ -80,6 +80,10 @@ def main():
                 text = property_value(text, key, value)
         (ROOT / file).write_text(text)
 
+    readme = ROOT / 'README.md'
+    text = re.sub(r'Paper [0-9.]+ / Java [0-9]+', 'Paper '+args.version+' / Java '+str(release), readme.read_text())
+    readme.write_text(text)
+
     core = ROOT / 'core/src'
     static_types = 'EntityTypes' if 'net/minecraft/world/entity/EntityTypes.class' in entries else 'EntityType'
     identifier = 'Identifier' if 'net/minecraft/resources/Identifier.class' in entries else 'ResourceLocation'

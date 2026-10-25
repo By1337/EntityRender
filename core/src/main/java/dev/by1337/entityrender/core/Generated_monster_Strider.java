@@ -16,16 +16,6 @@ class Generated_monster_Strider extends Generated_animal_Animal implements dev.b
     }
 
     @Override
-    public boolean isSaddle() {
-        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.monster.Strider.DATA_SADDLE_ID);
-    }
-
-    @Override
-    public void setSaddle(boolean value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.monster.Strider.DATA_SADDLE_ID, value);
-    }
-
-    @Override
     public boolean isSuffocating() {
         return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.monster.Strider.DATA_SUFFOCATING);
     }

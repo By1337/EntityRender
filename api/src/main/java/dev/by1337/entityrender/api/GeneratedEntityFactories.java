@@ -99,10 +99,6 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.animal.VirtualSalmon) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:salmon"))), location);
     }
 
-    default dev.by1337.entityrender.api.entity.animal.VirtualSheep createSheep(org.bukkit.Location location) {
-        return (dev.by1337.entityrender.api.entity.animal.VirtualSheep) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:sheep"))), location);
-    }
-
     default dev.by1337.entityrender.api.entity.animal.VirtualSnowGolem createSnowGolem(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.animal.VirtualSnowGolem) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:snow_golem"))), location);
     }
@@ -117,10 +113,6 @@ public interface GeneratedEntityFactories {
 
     default dev.by1337.entityrender.api.entity.animal.VirtualTurtle createTurtle(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.animal.VirtualTurtle) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:turtle"))), location);
-    }
-
-    default dev.by1337.entityrender.api.entity.animal.VirtualWolf createWolf(org.bukkit.Location location) {
-        return (dev.by1337.entityrender.api.entity.animal.VirtualWolf) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:wolf"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.animal.allay.VirtualAllay createAllay(org.bukkit.Location location) {
@@ -179,8 +171,16 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.animal.horse.VirtualZombieHorse) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:zombie_horse"))), location);
     }
 
+    default dev.by1337.entityrender.api.entity.animal.sheep.VirtualSheep createSheep(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.animal.sheep.VirtualSheep) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:sheep"))), location);
+    }
+
     default dev.by1337.entityrender.api.entity.animal.sniffer.VirtualSniffer createSniffer(org.bukkit.Location location) {
         return (dev.by1337.entityrender.api.entity.animal.sniffer.VirtualSniffer) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:sniffer"))), location);
+    }
+
+    default dev.by1337.entityrender.api.entity.animal.wolf.VirtualWolf createWolf(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.animal.wolf.VirtualWolf) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:wolf"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.boss.enderdragon.VirtualEndCrystal createEndCrystal(org.bukkit.Location location) {
@@ -443,8 +443,12 @@ public interface GeneratedEntityFactories {
         return (dev.by1337.entityrender.api.entity.projectile.VirtualThrownExperienceBottle) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:experience_bottle"))), location);
     }
 
-    default dev.by1337.entityrender.api.entity.projectile.VirtualThrownPotion createPotion(org.bukkit.Location location) {
-        return (dev.by1337.entityrender.api.entity.projectile.VirtualThrownPotion) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:potion"))), location);
+    default dev.by1337.entityrender.api.entity.projectile.VirtualThrownLingeringPotion createLingeringPotion(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.projectile.VirtualThrownLingeringPotion) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:lingering_potion"))), location);
+    }
+
+    default dev.by1337.entityrender.api.entity.projectile.VirtualThrownSplashPotion createSplashPotion(org.bukkit.Location location) {
+        return (dev.by1337.entityrender.api.entity.projectile.VirtualThrownSplashPotion) create(java.util.Objects.requireNonNull(org.bukkit.Registry.ENTITY_TYPE.get(org.bukkit.NamespacedKey.fromString("minecraft:splash_potion"))), location);
     }
 
     default dev.by1337.entityrender.api.entity.projectile.VirtualThrownTrident createTrident(org.bukkit.Location location) {

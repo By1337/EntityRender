@@ -1,7 +1,8 @@
-package dev.by1337.entityrender.api.entity.animal;
+package dev.by1337.entityrender.api.entity.animal.sheep;
 
 /**
- * Generated from net.minecraft.world.entity.animal.Sheep. Values use Bukkit types; packed flag fields remain explicit.
+ * Generated from net.minecraft.world.entity.animal.sheep.Sheep. Values use Bukkit types; packed flag fields remain
+ * explicit.
  */
 public interface VirtualSheep extends dev.by1337.entityrender.api.entity.animal.VirtualAnimal {
     /** NMS DATA_WOOL_ID; BYTE. */

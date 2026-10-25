@@ -10,11 +10,6 @@ public interface VirtualStrider extends dev.by1337.entityrender.api.entity.anima
 
     void setBoostTime(int value);
 
-    /** NMS DATA_SADDLE_ID; BOOLEAN. */
-    boolean isSaddle();
-
-    void setSaddle(boolean value);
-
     /** NMS DATA_SUFFOCATING; BOOLEAN. */
     boolean isSuffocating();
 

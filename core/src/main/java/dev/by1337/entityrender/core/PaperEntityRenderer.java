@@ -148,10 +148,11 @@ public final class PaperEntityRenderer implements EntityRenderer, Listener {
             var prototype = nativeType.create(level, net.minecraft.world.entity.EntitySpawnReason.COMMAND);
             if (prototype == null) throw new IllegalArgumentException("Entity requires additional construction context: " + type);
             var tracker = new net.minecraft.server.level.ServerEntity(level, prototype, 1, false, packet -> {
+            }, (packet, players) -> {
             }, Set.of());
             var packet = prototype.getAddEntityPacket(tracker);
             int data = packet instanceof net.minecraft.network.protocol.game.ClientboundAddEntityPacket add ? add.getData()
-                    : packet instanceof net.minecraft.network.protocol.game.ClientboundAddExperienceOrbPacket orb ? orb.getValue() : 0;
+                    : 0;
             spawnData.put(type, data);
             return generated.withSnapshot(prototype.getEntityData().packAll());
         });

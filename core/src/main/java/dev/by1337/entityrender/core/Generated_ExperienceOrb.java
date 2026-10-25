@@ -6,13 +6,12 @@ class Generated_ExperienceOrb extends BaseVirtualEntity implements dev.by1337.en
     }
 
     @Override
-    public int getExperienceValue() {
-        return getSpawnData();
+    public int getValue() {
+        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.ExperienceOrb.DATA_VALUE);
     }
 
     @Override
-    public void setExperienceValue(int value) {
-        if (value < 0 || value > 32767) throw new IllegalArgumentException("Experience value must be 0..32767");
-        setSpawnData(value);
+    public void setValue(int value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.ExperienceOrb.DATA_VALUE, value);
     }
 }

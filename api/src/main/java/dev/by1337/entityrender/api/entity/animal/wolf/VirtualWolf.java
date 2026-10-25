@@ -1,7 +1,8 @@
-package dev.by1337.entityrender.api.entity.animal;
+package dev.by1337.entityrender.api.entity.animal.wolf;
 
 /**
- * Generated from net.minecraft.world.entity.animal.Wolf. Values use Bukkit types; packed flag fields remain explicit.
+ * Generated from net.minecraft.world.entity.animal.wolf.Wolf. Values use Bukkit types; packed flag fields remain
+ * explicit.
  */
 public interface VirtualWolf extends dev.by1337.entityrender.api.entity.VirtualTamableAnimal {
     /** NMS DATA_COLLAR_COLOR; INT. */
@@ -18,6 +19,11 @@ public interface VirtualWolf extends dev.by1337.entityrender.api.entity.VirtualT
     int getRemainingAngerTime();
 
     void setRemainingAngerTime(int value);
+
+    /** NMS DATA_SOUND_VARIANT_ID; WOLF_SOUND_VARIANT. */
+    org.bukkit.NamespacedKey getSoundVariant();
+
+    void setSoundVariant(org.bukkit.NamespacedKey value);
 
     /** NMS DATA_VARIANT_ID; WOLF_VARIANT. */
     org.bukkit.entity.Wolf.Variant getVariant();

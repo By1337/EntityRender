@@ -5,15 +5,10 @@ package dev.by1337.entityrender.api.entity.vehicle;
  * remain explicit.
  */
 public interface VirtualAbstractMinecart extends dev.by1337.entityrender.api.entity.vehicle.VirtualVehicleEntity {
-    /** NMS DATA_ID_CUSTOM_DISPLAY; BOOLEAN. */
-    boolean isCustomDisplay();
+    /** NMS DATA_ID_CUSTOM_DISPLAY_BLOCK; OPTIONAL_BLOCK_STATE. */
+    org.bukkit.block.data.BlockData getCustomDisplayBlock();
 
-    void setCustomDisplay(boolean value);
-
-    /** NMS DATA_ID_DISPLAY_BLOCK; INT. */
-    int getDisplayBlock();
-
-    void setDisplayBlock(int value);
+    void setCustomDisplayBlock(org.bukkit.block.data.BlockData value);
 
     /** NMS DATA_ID_DISPLAY_OFFSET; INT. */
     int getDisplayOffset();

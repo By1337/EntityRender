@@ -105,7 +105,7 @@ final class RuntimeGenerator {
             case "OPTIONAL_BLOCK_POS" -> optional("org.bukkit.util.BlockVector", "position");
             case "OPTIONAL_BLOCK_STATE" -> optional("org.bukkit.block.data.BlockData", "block");
             case "OPTIONAL_UUID" -> new Property("java.util.UUID", "", "$.orElse(null)", "java.util.Optional.ofNullable($)");
-            case "OPTIONAL_LIVING_ENTITY_REFERENCE" -> new Property("java.util.UUID", "", "$.map(net.minecraft.world.entity.EntityReference::getUUID).orElse(null)", "java.util.Optional.ofNullable($).map(net.minecraft.world.entity.EntityReference::of)");
+            case "OPTIONAL_LIVING_ENTITY_REFERENCE" -> new Property("java.util.UUID", "", "$.map(net.minecraft.world.entity.EntityReference::getUUID).orElse(null)", "java.util.Optional.ofNullable($).map(net.minecraft.world.entity.EntityReference::new)");
             case "OPTIONAL_UNSIGNED_INT" -> direct("java.util.OptionalInt");
             case "COMPONENT" -> new Property("net.kyori.adventure.text.Component", "", "io.papermc.paper.adventure.PaperAdventure.asAdventure($)", "io.papermc.paper.adventure.PaperAdventure.asVanilla(java.util.Objects.requireNonNull($))");
             case "DIRECTION" -> conversion("org.bukkit.block.BlockFace", "direction");

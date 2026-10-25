@@ -68,7 +68,7 @@ final class ArmorStandEntity extends BaseVirtualEntity implements VirtualArmorSt
 
     private EulerAngle pose(MetadataKey<Rotations> key) {
         var value = get(key);
-        return new EulerAngle(Math.toRadians(value.getX()), Math.toRadians(value.getY()), Math.toRadians(value.getZ()));
+        return new EulerAngle(Math.toRadians(value.x()), Math.toRadians(value.y()), Math.toRadians(value.z()));
     }
 
     private void pose(MetadataKey<Rotations> key, EulerAngle value) {

@@ -5,4 +5,8 @@ package dev.by1337.entityrender.api.entity.animal;
  * explicit.
  */
 public interface VirtualChicken extends dev.by1337.entityrender.api.entity.animal.VirtualAnimal {
+    /** NMS DATA_VARIANT_ID; CHICKEN_VARIANT. */
+    org.bukkit.NamespacedKey getVariant();
+
+    void setVariant(org.bukkit.NamespacedKey value);
 }

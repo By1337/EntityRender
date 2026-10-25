@@ -6,23 +6,13 @@ class Generated_vehicle_AbstractMinecart extends Generated_vehicle_VehicleEntity
     }
 
     @Override
-    public boolean isCustomDisplay() {
-        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.vehicle.AbstractMinecart.DATA_ID_CUSTOM_DISPLAY);
+    public org.bukkit.block.data.BlockData getCustomDisplayBlock() {
+        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.vehicle.AbstractMinecart.DATA_ID_CUSTOM_DISPLAY_BLOCK).map(ValueConversions::block).orElse(null);
     }
 
     @Override
-    public void setCustomDisplay(boolean value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.vehicle.AbstractMinecart.DATA_ID_CUSTOM_DISPLAY, value);
-    }
-
-    @Override
-    public int getDisplayBlock() {
-        return get(dev.by1337.entityrender.core.metadata.GeneratedMetadata.vehicle.AbstractMinecart.DATA_ID_DISPLAY_BLOCK);
-    }
-
-    @Override
-    public void setDisplayBlock(int value) {
-        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.vehicle.AbstractMinecart.DATA_ID_DISPLAY_BLOCK, value);
+    public void setCustomDisplayBlock(org.bukkit.block.data.BlockData value) {
+        set(dev.by1337.entityrender.core.metadata.GeneratedMetadata.vehicle.AbstractMinecart.DATA_ID_CUSTOM_DISPLAY_BLOCK, java.util.Optional.ofNullable(value).map(ValueConversions::block));
     }
 
     @Override

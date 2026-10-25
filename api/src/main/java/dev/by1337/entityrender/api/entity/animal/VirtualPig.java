@@ -9,8 +9,8 @@ public interface VirtualPig extends dev.by1337.entityrender.api.entity.animal.Vi
 
     void setBoostTime(int value);
 
-    /** NMS DATA_SADDLE_ID; BOOLEAN. */
-    boolean isSaddle();
+    /** NMS DATA_VARIANT_ID; PIG_VARIANT. */
+    org.bukkit.NamespacedKey getVariant();
 
-    void setSaddle(boolean value);
+    void setVariant(org.bukkit.NamespacedKey value);
 }

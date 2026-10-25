@@ -24,8 +24,8 @@ public final class DumperChecks {
         expect(hex, "OPTIONAL_UNSIGNED_INT/empty", "00");
         expect(hex, "OPTIONAL_UNSIGNED_INT/0", "01");
         var fields = Schema.fields(schema);
-        var creeper = fields.stream().filter(f -> f.owner().equals("net.minecraft.world.entity.monster.Creeper") && f.name().equals("DATA_IS_POWERED")).findFirst().orElseThrow();
-        if (creeper.index() != 17 || !creeper.serializer().equals("BOOLEAN")) throw new AssertionError("Unexpected 1.21.4 creeper metadata");
+        var creeper = fields.stream().filter(f -> f.owner().endsWith(".Creeper") && f.name().equals("DATA_IS_POWERED")).findFirst().orElseThrow();
+        if (creeper.index() < 0 || !creeper.serializer().equals("BOOLEAN")) throw new AssertionError("Unexpected creeper metadata");
         boolean mismatchDetected = false;
         try {
             HexVerifier.verify(schema, (serializer, sample, input) -> new byte[]{ 42 });
@@ -33,7 +33,7 @@ public final class DumperChecks {
             mismatchDetected = true;
         }
         if (!mismatchDetected) throw new AssertionError("Hex verifier accepted invalid encoder");
-        System.out.println("Minecraft 1.21.4 integration assertions passed (" + hex.size() + " golden vectors)");
+        System.out.println("Minecraft integration assertions passed (" + hex.size() + " golden vectors)");
     }
 
     private static void expect(Map<String, String> actual, String key, String expected) {

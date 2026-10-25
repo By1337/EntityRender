@@ -62,13 +62,12 @@ final class ValueConversions {
     }
 
     static VillagerAppearance villager(VillagerData value) {
-        return new VillagerAppearance(CraftRegistry.minecraftToBukkit(value.getType(), Registries.VILLAGER_TYPE),
-                CraftRegistry.minecraftToBukkit(value.getProfession(), Registries.VILLAGER_PROFESSION), value.getLevel());
+        return new VillagerAppearance(CraftRegistry.minecraftHolderToBukkit(value.type(), Registries.VILLAGER_TYPE), CraftRegistry.minecraftHolderToBukkit(value.profession(), Registries.VILLAGER_PROFESSION), value.level());
     }
 
     static VillagerData villager(VillagerAppearance value) {
         Objects.requireNonNull(value);
-        return new VillagerData(CraftRegistry.bukkitToMinecraft(value.type()), CraftRegistry.bukkitToMinecraft(value.profession()), value.level());
+        return new VillagerData(CraftRegistry.bukkitToMinecraftHolder(value.type(), Registries.VILLAGER_TYPE), CraftRegistry.bukkitToMinecraftHolder(value.profession(), Registries.VILLAGER_PROFESSION), value.level());
     }
 
     static String compound(CompoundTag value) {
@@ -77,7 +76,7 @@ final class ValueConversions {
 
     static CompoundTag compound(String value) {
         try {
-            return TagParser.parseTag(Objects.requireNonNull(value));
+            return TagParser.parseCompoundFully(Objects.requireNonNull(value));
         } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
             throw new IllegalArgumentException("Invalid SNBT", e);
         }
@@ -96,10 +95,6 @@ final class ValueConversions {
     }
 
     private static Tag parseSnbt(String text) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
-        var reader = new com.mojang.brigadier.StringReader(Objects.requireNonNull(text));
-        Tag value = new TagParser(reader).readValue();
-        reader.skipWhitespace();
-        if (reader.canRead()) throw new IllegalArgumentException("Trailing SNBT data");
-        return value;
+        return TagParser.create(NbtOps.INSTANCE).parseFully(Objects.requireNonNull(text));
     }
 }

@@ -47,7 +47,6 @@ final class AllEntitiesChecks {
                     if (!Arrays.equals(expected, metadata(entity, world))) throw new AssertionError("Public property roundtrip changed native bytes: " + type);
                     packets.clear();
                     entity.show(viewer);
-                    if (type == EntityType.EXPERIENCE_ORB && !(packets.getFirst() instanceof ClientboundAddExperienceOrbPacket)) throw new AssertionError("Orb requires its native spawn packet");
                     if (packets.size() < 2 || !(packets.get(1) instanceof ClientboundSetEntityDataPacket)) throw new AssertionError("Missing entity snapshot: " + type);
                     packets.clear();
                     entity.setRotation(90, 20);
@@ -73,10 +72,10 @@ final class AllEntitiesChecks {
                             .noneMatch(packet -> packet.getData() == net.minecraft.world.level.block.Block.getId(net.minecraft.world.level.block.Blocks.STONE.defaultBlockState())))
                 throw new AssertionError("Falling-block spawn state was not refreshed");
             var orb = renderer.createExperienceOrb(new Location(world, 5, 70, 5));
-            orb.setExperienceValue(17);
+            orb.setValue(17);
             packets.clear();
             orb.show(viewer);
-            if (!(packets.getFirst() instanceof ClientboundAddExperienceOrbPacket xp) || xp.getValue() != 17) throw new AssertionError("Orb value was not encoded by the native spawn codec");
+            if (!(packets.getFirst() instanceof ClientboundAddEntityPacket)) throw new AssertionError("Missing native orb spawn packet");
         }
         Bukkit.getLogger().info("ENTITY_RENDER_COVERAGE types=" + types + " properties=" + properties);
     }

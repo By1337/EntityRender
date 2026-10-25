@@ -34,16 +34,6 @@ final class SpawnPackets implements AutoCloseable {
 
     Packet<?> create(org.bukkit.entity.EntityType type, net.minecraft.world.entity.EntityType<?> nativeType, int id, UUID uuid,
         double x, double y, double z, float pitch, float yaw, int data) {
-        if (type == org.bukkit.entity.EntityType.EXPERIENCE_ORB) {
-            var buffer = buffer();
-            buffer.writeVarInt(id);
-            buffer.writeDouble(x);
-            buffer.writeDouble(y);
-            buffer.writeDouble(z);
-            buffer.writeShort(data);
-            return ClientboundAddExperienceOrbPacket.STREAM_CODEC.decode(buffer);
-        }
-
         return new ClientboundAddEntityPacket(id, uuid, x, y, z, pitch, yaw, nativeType, data, Vec3.ZERO, yaw);
     }
 }

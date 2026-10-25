@@ -132,7 +132,8 @@ public final class GeneratedMetadata {
         }
 
         // NMS: net.minecraft.world.entity.ExperienceOrb
-        public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Entity.LAYOUT);
+        public static final MetadataKey<java.lang.Integer> DATA_VALUE = new MetadataKey<>(8, net.minecraft.network.syncher.EntityDataSerializers.INT);
+        public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.Entity.LAYOUT, DATA_VALUE);
     }
 
     public static final class FlyingMob {
@@ -233,7 +234,7 @@ public final class GeneratedMetadata {
 
         // NMS: net.minecraft.world.entity.TamableAnimal
         public static final MetadataKey<java.lang.Byte> DATA_FLAGS_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
-        public static final MetadataKey<java.util.Optional<java.util.UUID>> DATA_OWNERUUID_ID = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UUID);
+        public static final MetadataKey<java.util.Optional<net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity>>> DATA_OWNERUUID_ID = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
         public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_FLAGS_ID, DATA_OWNERUUID_ID);
     }
 
@@ -261,6 +262,14 @@ public final class GeneratedMetadata {
 
     public static final class animal {
         private animal() {
+        }
+
+        public static final class AbstractCow {
+            private AbstractCow() {
+            }
+
+            // NMS: net.minecraft.world.entity.animal.AbstractCow
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT);
         }
 
         public static final class AbstractFish {
@@ -331,7 +340,8 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.animal.Chicken
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT);
+            public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.ChickenVariant>> DATA_VARIANT_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.CHICKEN_VARIANT);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_VARIANT_ID);
         }
 
         public static final class Cod {
@@ -347,7 +357,8 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.animal.Cow
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT);
+            public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.CowVariant>> DATA_VARIANT_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.COW_VARIANT);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.AbstractCow.LAYOUT, DATA_VARIANT_ID);
         }
 
         public static final class Dolphin {
@@ -355,10 +366,9 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.animal.Dolphin
-            public static final MetadataKey<java.lang.Boolean> GOT_FISH = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataKey<java.lang.Integer> MOISTNESS_LEVEL = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataKey<net.minecraft.core.BlockPos> TREASURE_POS = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BLOCK_POS);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.AgeableWaterCreature.LAYOUT, GOT_FISH, MOISTNESS_LEVEL, TREASURE_POS);
+            public static final MetadataKey<java.lang.Boolean> GOT_FISH = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+            public static final MetadataKey<java.lang.Integer> MOISTNESS_LEVEL = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.INT);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.AgeableWaterCreature.LAYOUT, GOT_FISH, MOISTNESS_LEVEL);
         }
 
         public static final class Fox {
@@ -367,8 +377,8 @@ public final class GeneratedMetadata {
 
             // NMS: net.minecraft.world.entity.animal.Fox
             public static final MetadataKey<java.lang.Byte> DATA_FLAGS_ID = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
-            public static final MetadataKey<java.util.Optional<java.util.UUID>> DATA_TRUSTED_ID_0 = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UUID);
-            public static final MetadataKey<java.util.Optional<java.util.UUID>> DATA_TRUSTED_ID_1 = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UUID);
+            public static final MetadataKey<java.util.Optional<net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity>>> DATA_TRUSTED_ID_0 = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
+            public static final MetadataKey<java.util.Optional<net.minecraft.world.entity.EntityReference<net.minecraft.world.entity.LivingEntity>>> DATA_TRUSTED_ID_1 = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
             public static final MetadataKey<java.lang.Integer> DATA_TYPE_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.INT);
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_FLAGS_ID, DATA_TRUSTED_ID_0, DATA_TRUSTED_ID_1, DATA_TYPE_ID);
         }
@@ -387,8 +397,8 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.animal.MushroomCow
-            public static final MetadataKey<java.lang.String> DATA_TYPE = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.STRING);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Cow.LAYOUT, DATA_TYPE);
+            public static final MetadataKey<java.lang.Integer> DATA_TYPE = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.INT);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.AbstractCow.LAYOUT, DATA_TYPE);
         }
 
         public static final class Ocelot {
@@ -428,9 +438,9 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.animal.Pig
-            public static final MetadataKey<java.lang.Integer> DATA_BOOST_TIME = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataKey<java.lang.Boolean> DATA_SADDLE_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_BOOST_TIME, DATA_SADDLE_ID);
+            public static final MetadataKey<java.lang.Integer> DATA_BOOST_TIME = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.INT);
+            public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.PigVariant>> DATA_VARIANT_ID = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.PIG_VARIANT);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_BOOST_TIME, DATA_VARIANT_ID);
         }
 
         public static final class PolarBear {
@@ -467,15 +477,6 @@ public final class GeneratedMetadata {
             // NMS: net.minecraft.world.entity.animal.Salmon
             public static final MetadataKey<java.lang.Integer> DATA_TYPE = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.INT);
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.AbstractSchoolingFish.LAYOUT, DATA_TYPE);
-        }
-
-        public static final class Sheep {
-            private Sheep() {
-            }
-
-            // NMS: net.minecraft.world.entity.animal.Sheep
-            public static final MetadataKey<java.lang.Byte> DATA_WOOL_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_WOOL_ID);
         }
 
         public static final class ShoulderRidingEntity {
@@ -517,13 +518,9 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.animal.Turtle
-            public static final MetadataKey<java.lang.Boolean> GOING_HOME = new MetadataKey<>(21, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataKey<java.lang.Boolean> HAS_EGG = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataKey<net.minecraft.core.BlockPos> HOME_POS = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BLOCK_POS);
-            public static final MetadataKey<java.lang.Boolean> LAYING_EGG = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataKey<java.lang.Boolean> TRAVELLING = new MetadataKey<>(22, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataKey<net.minecraft.core.BlockPos> TRAVEL_POS = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.BLOCK_POS);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, GOING_HOME, HAS_EGG, HOME_POS, LAYING_EGG, TRAVELLING, TRAVEL_POS);
+            public static final MetadataKey<java.lang.Boolean> HAS_EGG = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+            public static final MetadataKey<java.lang.Boolean> LAYING_EGG = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, HAS_EGG, LAYING_EGG);
         }
 
         public static final class WaterAnimal {
@@ -532,18 +529,6 @@ public final class GeneratedMetadata {
 
             // NMS: net.minecraft.world.entity.animal.WaterAnimal
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.PathfinderMob.LAYOUT);
-        }
-
-        public static final class Wolf {
-            private Wolf() {
-            }
-
-            // NMS: net.minecraft.world.entity.animal.Wolf
-            public static final MetadataKey<java.lang.Integer> DATA_COLLAR_COLOR = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataKey<java.lang.Boolean> DATA_INTERESTED_ID = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataKey<java.lang.Integer> DATA_REMAINING_ANGER_TIME = new MetadataKey<>(21, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.WolfVariant>> DATA_VARIANT_ID = new MetadataKey<>(22, net.minecraft.network.syncher.EntityDataSerializers.WOLF_VARIANT);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.TamableAnimal.LAYOUT, DATA_COLLAR_COLOR, DATA_INTERESTED_ID, DATA_REMAINING_ANGER_TIME, DATA_VARIANT_ID);
         }
 
         public static final class allay {
@@ -616,7 +601,7 @@ public final class GeneratedMetadata {
 
                 // NMS: net.minecraft.world.entity.animal.frog.Frog
                 public static final MetadataKey<java.util.OptionalInt> DATA_TONGUE_TARGET_ID = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UNSIGNED_INT);
-                public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.FrogVariant>> DATA_VARIANT_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.FROG_VARIANT);
+                public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.frog.FrogVariant>> DATA_VARIANT_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.FROG_VARIANT);
                 public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_TONGUE_TARGET_ID, DATA_VARIANT_ID);
             }
 
@@ -727,6 +712,20 @@ public final class GeneratedMetadata {
             }
         }
 
+        public static final class sheep {
+            private sheep() {
+            }
+
+            public static final class Sheep {
+                private Sheep() {
+                }
+
+                // NMS: net.minecraft.world.entity.animal.sheep.Sheep
+                public static final MetadataKey<java.lang.Byte> DATA_WOOL_ID = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.BYTE);
+                public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_WOOL_ID);
+            }
+        }
+
         public static final class sniffer {
             private sniffer() {
             }
@@ -739,6 +738,24 @@ public final class GeneratedMetadata {
                 public static final MetadataKey<java.lang.Integer> DATA_DROP_SEED_AT_TICK = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.INT);
                 public static final MetadataKey<net.minecraft.world.entity.animal.sniffer.Sniffer.State> DATA_STATE = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.SNIFFER_STATE);
                 public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_DROP_SEED_AT_TICK, DATA_STATE);
+            }
+        }
+
+        public static final class wolf {
+            private wolf() {
+            }
+
+            public static final class Wolf {
+                private Wolf() {
+                }
+
+                // NMS: net.minecraft.world.entity.animal.wolf.Wolf
+                public static final MetadataKey<java.lang.Integer> DATA_COLLAR_COLOR = new MetadataKey<>(20, net.minecraft.network.syncher.EntityDataSerializers.INT);
+                public static final MetadataKey<java.lang.Boolean> DATA_INTERESTED_ID = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+                public static final MetadataKey<java.lang.Integer> DATA_REMAINING_ANGER_TIME = new MetadataKey<>(21, net.minecraft.network.syncher.EntityDataSerializers.INT);
+                public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.wolf.WolfSoundVariant>> DATA_SOUND_VARIANT_ID = new MetadataKey<>(23, net.minecraft.network.syncher.EntityDataSerializers.WOLF_SOUND_VARIANT);
+                public static final MetadataKey<net.minecraft.core.Holder<net.minecraft.world.entity.animal.wolf.WolfVariant>> DATA_VARIANT_ID = new MetadataKey<>(22, net.minecraft.network.syncher.EntityDataSerializers.WOLF_VARIANT);
+                public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.TamableAnimal.LAYOUT, DATA_COLLAR_COLOR, DATA_INTERESTED_ID, DATA_REMAINING_ANGER_TIME, DATA_SOUND_VARIANT_ID, DATA_VARIANT_ID);
             }
         }
     }
@@ -1163,9 +1180,8 @@ public final class GeneratedMetadata {
 
             // NMS: net.minecraft.world.entity.monster.Strider
             public static final MetadataKey<java.lang.Integer> DATA_BOOST_TIME = new MetadataKey<>(17, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataKey<java.lang.Boolean> DATA_SADDLE_ID = new MetadataKey<>(19, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
             public static final MetadataKey<java.lang.Boolean> DATA_SUFFOCATING = new MetadataKey<>(18, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_BOOST_TIME, DATA_SADDLE_ID, DATA_SUFFOCATING);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.animal.Animal.LAYOUT, DATA_BOOST_TIME, DATA_SUFFOCATING);
         }
 
         public static final class Vex {
@@ -1405,6 +1421,14 @@ public final class GeneratedMetadata {
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.projectile.Projectile.LAYOUT);
         }
 
+        public static final class AbstractThrownPotion {
+            private AbstractThrownPotion() {
+            }
+
+            // NMS: net.minecraft.world.entity.projectile.AbstractThrownPotion
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.projectile.ThrowableItemProjectile.LAYOUT);
+        }
+
         public static final class Arrow {
             private Arrow() {
             }
@@ -1566,12 +1590,20 @@ public final class GeneratedMetadata {
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.projectile.ThrowableItemProjectile.LAYOUT);
         }
 
-        public static final class ThrownPotion {
-            private ThrownPotion() {
+        public static final class ThrownLingeringPotion {
+            private ThrownLingeringPotion() {
             }
 
-            // NMS: net.minecraft.world.entity.projectile.ThrownPotion
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.projectile.ThrowableItemProjectile.LAYOUT);
+            // NMS: net.minecraft.world.entity.projectile.ThrownLingeringPotion
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.projectile.AbstractThrownPotion.LAYOUT);
+        }
+
+        public static final class ThrownSplashPotion {
+            private ThrownSplashPotion() {
+            }
+
+            // NMS: net.minecraft.world.entity.projectile.ThrownSplashPotion
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.projectile.AbstractThrownPotion.LAYOUT);
         }
 
         public static final class ThrownTrident {
@@ -1665,10 +1697,9 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.vehicle.AbstractMinecart
-            public static final MetadataKey<java.lang.Boolean> DATA_ID_CUSTOM_DISPLAY = new MetadataKey<>(13, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
-            public static final MetadataKey<java.lang.Integer> DATA_ID_DISPLAY_BLOCK = new MetadataKey<>(11, net.minecraft.network.syncher.EntityDataSerializers.INT);
+            public static final MetadataKey<java.util.Optional<net.minecraft.world.level.block.state.BlockState>> DATA_ID_CUSTOM_DISPLAY_BLOCK = new MetadataKey<>(11, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_BLOCK_STATE);
             public static final MetadataKey<java.lang.Integer> DATA_ID_DISPLAY_OFFSET = new MetadataKey<>(12, net.minecraft.network.syncher.EntityDataSerializers.INT);
-            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.vehicle.VehicleEntity.LAYOUT, DATA_ID_CUSTOM_DISPLAY, DATA_ID_DISPLAY_BLOCK, DATA_ID_DISPLAY_OFFSET);
+            public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.vehicle.VehicleEntity.LAYOUT, DATA_ID_CUSTOM_DISPLAY_BLOCK, DATA_ID_DISPLAY_OFFSET);
         }
 
         public static final class AbstractMinecartContainer {
@@ -1724,8 +1755,8 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.vehicle.MinecartCommandBlock
-            public static final MetadataKey<java.lang.String> DATA_ID_COMMAND_NAME = new MetadataKey<>(14, net.minecraft.network.syncher.EntityDataSerializers.STRING);
-            public static final MetadataKey<net.minecraft.network.chat.Component> DATA_ID_LAST_OUTPUT = new MetadataKey<>(15, net.minecraft.network.syncher.EntityDataSerializers.COMPONENT);
+            public static final MetadataKey<java.lang.String> DATA_ID_COMMAND_NAME = new MetadataKey<>(13, net.minecraft.network.syncher.EntityDataSerializers.STRING);
+            public static final MetadataKey<net.minecraft.network.chat.Component> DATA_ID_LAST_OUTPUT = new MetadataKey<>(14, net.minecraft.network.syncher.EntityDataSerializers.COMPONENT);
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.vehicle.AbstractMinecart.LAYOUT, DATA_ID_COMMAND_NAME, DATA_ID_LAST_OUTPUT);
         }
 
@@ -1734,7 +1765,7 @@ public final class GeneratedMetadata {
             }
 
             // NMS: net.minecraft.world.entity.vehicle.MinecartFurnace
-            public static final MetadataKey<java.lang.Boolean> DATA_ID_FUEL = new MetadataKey<>(14, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+            public static final MetadataKey<java.lang.Boolean> DATA_ID_FUEL = new MetadataKey<>(13, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
             public static final MetadataLayout LAYOUT = new MetadataLayout(GeneratedMetadata.vehicle.AbstractMinecart.LAYOUT, DATA_ID_FUEL);
         }
 

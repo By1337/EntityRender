@@ -14,9 +14,4 @@ public interface VirtualDolphin extends dev.by1337.entityrender.api.entity.anima
     int getMoistnessLevel();
 
     void setMoistnessLevel(int value);
-
-    /** NMS TREASURE_POS; BLOCK_POS. */
-    org.bukkit.util.BlockVector getTreasurePos();
-
-    void setTreasurePos(org.bukkit.util.BlockVector value);
 }

@@ -9,7 +9,7 @@ public interface VirtualTamableAnimal extends dev.by1337.entityrender.api.entity
 
     void setTamableAnimalFlags(byte value);
 
-    /** NMS DATA_OWNERUUID_ID; OPTIONAL_UUID. */
+    /** NMS DATA_OWNERUUID_ID; OPTIONAL_LIVING_ENTITY_REFERENCE. */
     java.util.UUID getOwneruuid();
 
     void setOwneruuid(java.util.UUID value);

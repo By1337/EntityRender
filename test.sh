@@ -5,6 +5,7 @@ if [ "$#" -lt 1 ]; then
   echo 'Usage: sh test.sh <remapped-1.21.4.jar> [--bundle original.jar | --libraries directory] [--java java]'
   exit 1
 fi
+target_version="$(sed -n 's:.*<minecraft.version>\([^<]*\)</minecraft.version>.*:\1:p' pom.xml)"
 minecraft="$1"
 shift
 sh build.sh
@@ -14,7 +15,7 @@ javac_bin="${JAVA_HOME:+$JAVA_HOME/bin/}javac"
 "$java_bin" -jar dumper/target/entity-dumper.jar dump --minecraft "$minecraft" --out "$test_dir/first" "$@"
 "$java_bin" -jar dumper/target/entity-dumper.jar dump --minecraft "$minecraft" --out "$test_dir/second" "$@"
 "$java_bin" -jar dumper/target/entity-dumper.jar verify --expected "$test_dir/first" --actual "$test_dir/second"
-"$java_bin" -jar dumper/target/entity-dumper.jar verify --expected dumper/src/test/resources/golden/1.21.4 --actual "$test_dir/first"
+"$java_bin" -jar dumper/target/entity-dumper.jar verify --expected "dumper/src/test/resources/golden/$target_version" --actual "$test_dir/first"
 "$java_bin" -jar dumper/target/entity-dumper.jar generate --schema "$test_dir/first" --out "$test_dir/generated"
 # Structural API/core skeletons are JDK-only; typed GeneratedMetadata is compiled
 # with NMS and the metadata runtime by build-runtime.sh / Maven.
