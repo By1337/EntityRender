@@ -20,6 +20,7 @@ find api/src/main/java -name '*.java' | LC_ALL=C sort > api/target/sources.txt
 find core/src/main/java -name '*.java' | LC_ALL=C sort > core/target/sources.txt
 "${JAVA_HOME:+$JAVA_HOME/bin/}javac" --release "$java_release" -encoding UTF-8 -cp "$classpath" -d api/target/classes @api/target/sources.txt
 "${JAVA_HOME:+$JAVA_HOME/bin/}javac" --release "$java_release" -encoding UTF-8 -cp "api/target/classes:$classpath" -d core/target/classes @core/target/sources.txt
+if [ -d core/src/main/resources ]; then cp -R core/src/main/resources/. core/target/classes/; fi
 "${JAVA_HOME:+$JAVA_HOME/bin/}jar" --create --file api/target/entity-render-api.jar -C api/target/classes .
 printf 'Manifest-Version: 1.0\npaperweight-mappings-namespace: mojang\nEntityRender-Minecraft-Version: %s\n\n' "$target_version" > core/target/MANIFEST.MF
 "${JAVA_HOME:+$JAVA_HOME/bin/}jar" --create --file core/target/entity-render-core.jar --manifest core/target/MANIFEST.MF -C core/target/classes .

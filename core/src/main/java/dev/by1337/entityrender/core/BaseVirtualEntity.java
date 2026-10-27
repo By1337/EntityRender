@@ -45,7 +45,7 @@ public abstract class BaseVirtualEntity implements VirtualEntity {
         world = location.getWorld();
         position = new java.util.concurrent.atomic.AtomicReference<>(new PublishedEntity.Position(location.getX(), location.getY(), location.getZ(), location.getYaw(), Math.clamp(location.getPitch(), -90f, 90f), false));
         registryAccess = owner.registries(world);
-        metadata = new MetadataState(layout);
+        metadata = new MetadataState(owner.template(type, world, nmsType, layout));
     }
 
     static void validateLocation(Location location) {

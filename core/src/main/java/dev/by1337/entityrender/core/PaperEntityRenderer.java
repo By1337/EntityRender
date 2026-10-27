@@ -84,7 +84,7 @@ public final class PaperEntityRenderer implements EntityRenderer {
     }
 
     private WorldResources resources(World world) {
-        return service == null ? testWorlds.computeIfAbsent(world, key -> new WorldResources(null, key)) : service.world(world);
+        return service == null ? testWorlds.computeIfAbsent(world, WorldResources::new) : service.world(world);
     }
 
     net.minecraft.core.RegistryAccess registries(World world) {

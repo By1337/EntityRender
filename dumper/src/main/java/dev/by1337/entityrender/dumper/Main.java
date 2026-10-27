@@ -13,6 +13,7 @@ public final class Main {
             var options = options(args);
             switch (args[0]) {
                 case "dump" -> Launcher.run(options);
+                case "capture" -> CaptureLauncher.run(options);
                 case "generate" -> Generator.run(path(options, "schema"), path(options, "out"), options.containsKey("defaults") ? path(options, "defaults") : null);
                 case "runtime" -> RuntimeGenerator.run(path(options, "schema"), path(options, "out"));
                 case "diff" -> Schema.diff(path(options, "old"), path(options, "new"));
@@ -30,6 +31,7 @@ public final class Main {
 
     private static Map<String, String> options(String[] args) {
         Set<String> allowed = switch (args[0]) {
+            case "capture" -> Set.of("server", "out", "java");
             case "dump" -> Set.of("minecraft", "bundle", "libraries", "java", "out", "cache");
             case "generate" -> Set.of("schema", "out", "defaults");
             case "runtime" -> Set.of("schema", "out");
@@ -64,6 +66,7 @@ public final class Main {
                 dump --minecraft <Mojang-named.jar> --out <schema-dir>
                      [--bundle <original-server-bundler.jar>] [--libraries <directory>]
                      [--java <java-executable>] [--cache <directory>]
+                capture --server <prepared-Paper-directory> --out <new-defaults-directory> [--java <java-executable>]
                 generate --schema <schema-dir> --out <new-directory> [--defaults <reviewed-defaults.tsv>]
                 diff --old <schema-dir> --new <schema-dir>
                 verify --expected <schema-dir> --actual <schema-dir>
@@ -71,6 +74,7 @@ public final class Main {
                 No downloads or remapping. Minecraft dependencies come from a local bundle
                 or directory. A sibling minecraft_server_<version>.jar is detected automatically.
                 Each dump bootstraps Minecraft in a separate JVM; no game server is started.
+                Capture starts a disposable Paper server in a temporary directory to load all registries and defaults.
                 """);
     }
 }

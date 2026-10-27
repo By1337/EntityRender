@@ -56,7 +56,7 @@ final class Launcher {
         if (exit != 0) throw new IOException("Minecraft worker exited with code " + exit + "; check --java (Minecraft requires Java " + javaVersion + "). Work directory: " + work);
     }
 
-    private static List<Path> extractLibraries(Path bundle, Path cache, Path libraries) throws Exception {
+    static List<Path> extractLibraries(Path bundle, Path cache, Path libraries) throws Exception {
         var result = new ArrayList<Path>();
         try (var jar = new ZipFile(bundle.toFile())) {
             var list = jar.getEntry("META-INF/libraries.list");

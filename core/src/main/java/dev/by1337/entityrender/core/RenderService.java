@@ -48,7 +48,7 @@ final class RenderService implements Listener {
             return thread;
         });
         ids = new EntityIdPool(this);
-        for (var world : Bukkit.getWorlds()) worlds.put(world, new WorldResources(this, world));
+        for (var world : Bukkit.getWorlds()) worlds.put(world, new WorldResources(world));
         interactions = new InteractionHooks(this, task -> {
             onMain(() -> {
                 task.run();
@@ -275,7 +275,7 @@ final class RenderService implements Listener {
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-        worlds.put(event.getWorld(), new WorldResources(this, event.getWorld()));
+        worlds.put(event.getWorld(), new WorldResources(event.getWorld()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

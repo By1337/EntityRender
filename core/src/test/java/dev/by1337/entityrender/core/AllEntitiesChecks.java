@@ -34,6 +34,7 @@ final class AllEntitiesChecks {
                     int after = Bukkit.getUnsafe().nextEntityId(world);
                     if (after - marker != (type == EntityType.ENDER_DRAGON ? 10 : 2)) throw new AssertionError("Repeated creation allocated a real NMS entity: " + type);
                     byte[] expected = metadata(entity, world);
+                    compareCapturedDefaults(type, world, entity.getId(), expected);
                     for (Class<?> c = entity.getClass(); c != null && c.getSimpleName().startsWith("Generated_"); c = c.getSuperclass()) {
                         for (Method setter : c.getDeclaredMethods()) {
                             if (!setter.getName().startsWith("set") || setter.getParameterCount() != 1) continue;
@@ -90,6 +91,25 @@ final class AllEntitiesChecks {
             if (!(packets.getFirst() instanceof ClientboundAddEntityPacket)) throw new AssertionError("Missing native orb spawn packet");
         }
         Bukkit.getLogger().info("ENTITY_RENDER_COVERAGE types=" + types + " properties=" + properties);
+    }
+
+    private static void compareCapturedDefaults(EntityType type, World world, int virtualId, byte[] captured) {
+        var level = ((org.bukkit.craftbukkit.CraftWorld) world).getHandle();
+        var nativeType = org.bukkit.craftbukkit.entity.CraftEntityType.bukkitToMinecraft(type);
+        var nativeEntity = Objects.requireNonNull(nativeType.create(level,
+                new net.minecraft.world.entity.EntitySpawnRequest(net.minecraft.world.entity.EntitySpawnReason.COMMAND, true)));
+        if (nativeEntity instanceof net.minecraft.world.entity.monster.zombie.ZombieVillager zombie) {
+            zombie.setVillagerData(zombie.getVillagerData().withProfession(level.registryAccess(), net.minecraft.world.entity.npc.villager.VillagerProfession.NONE));
+        }
+        var buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), level.registryAccess());
+        try {
+            ClientboundSetEntityDataPacket.STREAM_CODEC.encode(buffer, new ClientboundSetEntityDataPacket(virtualId, nativeEntity.getEntityData().packAll()));
+            byte[] expected = new byte[buffer.readableBytes()];
+            buffer.getBytes(0, expected);
+            if (!Arrays.equals(expected, captured)) throw new AssertionError("Captured defaults differ from NMS serializer bytes: " + type);
+        } finally {
+            buffer.release();
+        }
     }
 
     private static byte[] metadata(BaseVirtualEntity entity, World world) {

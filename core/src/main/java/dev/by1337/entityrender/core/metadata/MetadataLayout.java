@@ -42,7 +42,7 @@ public final class MetadataLayout {
         return Arrays.stream(defaults).noneMatch(value -> value == UNKNOWN);
     }
 
-    /** Cold-path initialization from a real entity, with strict schema validation. */
+    /** Initialization from captured metadata values, with strict schema validation. */
     public MetadataLayout withSnapshot(List<net.minecraft.network.syncher.SynchedEntityData.DataValue<?>> snapshot) {
         if (snapshot.size() != keys.length) throw new IllegalArgumentException("Native metadata size differs from generated layout");
         Object[] captured = new Object[keys.length];

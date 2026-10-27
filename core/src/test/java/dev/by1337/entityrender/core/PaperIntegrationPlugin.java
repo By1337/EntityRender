@@ -17,7 +17,7 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
         getServer().getScheduler().runTask(this, () -> {
             try {
                 RuntimeChecks.main(new String[0]);
-                peacefulPrototypes();
+                capturedDefaultsOnly();
                 live();
                 AsyncChecks.run(this).whenComplete((ignored, error) -> {
                     getServer().getScheduler().runTask(this, () -> finish(error));
@@ -48,21 +48,32 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
         if (!condition) throw new AssertionError(message);
     }
 
-    private void peacefulPrototypes() throws Exception {
+    private void capturedDefaultsOnly() throws Exception {
         var world = getServer().getWorlds().getFirst();
         var difficulty = world.getDifficulty();
         int before = world.getEntities().size();
         world.setDifficulty(Difficulty.PEACEFUL);
         try (var renderer = EntityRender.createManual(this)) {
+            var allocationField = net.minecraft.server.level.ServerLevel.class.getDeclaredField("ENTITY_COUNTER");
+            allocationField.setAccessible(true);
+            var allocationCounter = (java.util.concurrent.atomic.AtomicInteger) allocationField.get(null);
+            int allocationsBefore = allocationCounter.get();
             var position = new Location(world, 0, 64, 0);
             var creeper = renderer.createCreeper(position);
             creeper.setPowered(true);
             require(creeper.isPowered(), "Peaceful creeper metadata failed");
             renderer.createZombie(position);
             renderer.createSkeleton(position);
+            for (var type : org.bukkit.entity.EntityType.values()) {
+                if (type == org.bukkit.entity.EntityType.UNKNOWN || type == org.bukkit.entity.EntityType.PLAYER || type == org.bukkit.entity.EntityType.MARKER || type == org.bukkit.entity.EntityType.FISHING_BOBBER) continue;
+                var entity = renderer.create(type, position);
+                require(!entity.isClosed(), "Captured defaults failed for " + type);
+                entity.close();
+            }
             renderer.flush();
+            require(allocationCounter.get() == allocationsBefore, "Runtime constructed native Entity prototypes instead of reading captured defaults");
             require(world.getDifficulty() == Difficulty.PEACEFUL, "Renderer changed world difficulty");
-            require(world.getEntities().size() == before, "Prototypes registered real world entities");
+            require(world.getEntities().size() == before, "Captured defaults registered real world entities");
         } finally {
             world.setDifficulty(difficulty);
         }
