@@ -196,6 +196,9 @@ public final class PaperEntityRenderer implements EntityRenderer {
         publication.lock();
         try {
             checkOpen();
+            // Membership must be captured before entity state. An add racing this flush
+            // is either deferred, or its preceding initialization is included below.
+            var scenes = trackers.stream().map(SceneTracker::snapshot).toList();
             var frames = new ArrayList<PublishedEntity>();
             int count = pending.size();
             for (int i = 0; i < count; i++) {
@@ -204,7 +207,6 @@ public final class PaperEntityRenderer implements EntityRenderer {
                 entity.queued.set(false);
                 frames.add(entity.publish());
             }
-            var scenes = trackers.stream().map(SceneTracker::snapshot).toList();
             if (service != null) completion = service.publish(this, List.copyOf(frames), scenes);
             else {
                 // Deterministic injection seam for native packet tests; production never samples here.

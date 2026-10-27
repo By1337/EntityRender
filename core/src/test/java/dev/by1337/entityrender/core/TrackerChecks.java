@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 final class TrackerChecks {
-    static void run(World world) {
+    static void run(World world) throws Exception {
         var position = new AtomicReference<>(new Location(world, 1, 64, 0));
         Player viewer = (Player) Proxy.newProxyInstance(Player.class.getClassLoader(), new Class<?>[]{ Player.class }, (proxy, method, args) -> switch (method.getName()) {
             case "getLocation" -> position.get().clone();
@@ -105,8 +105,53 @@ final class TrackerChecks {
             renderer.flush();
             require(second.getViewers().isEmpty(), "Transferred entity retained the previous scene audience");
             audienceSnapshots(renderer, world, viewer);
+            initializationBeforeAdmission(renderer, world, packets);
         }
         Bukkit.getLogger().info("ENTITY_RENDER_TRACKERS_PASS");
+    }
+
+    private static void initializationBeforeAdmission(PaperEntityRenderer renderer, World world, List<Packet<?>> packets) throws Exception {
+        var tracker = (SceneTracker) renderer.createTracker(new Location(world, 0, 64, 0), 32);
+        var item = renderer.createItem(new Location(world, 0, 64, 0));
+        renderer.flush(); // Publish the empty, invisible item first.
+        packets.clear();
+        item.setSilent(true); // Ensure a frame is pending before the racing flush starts.
+        var failure = new AtomicReference<Throwable>();
+        Thread flushing;
+        synchronized (tracker) {
+            flushing = Thread.ofPlatform().start(() -> {
+                try {
+                    renderer.flush();
+                } catch (Throwable error) {
+                    failure.set(error);
+                }
+            });
+            // Hold membership capture while initialization races the flush. This used
+            // to publish an old empty item frame with newly attached membership.
+            long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(5);
+            var threads = java.lang.management.ManagementFactory.getThreadMXBean();
+            while (true) {
+                var info = threads.getThreadInfo(flushing.threadId());
+                if (info != null && info.getThreadState() == Thread.State.BLOCKED && info.getLockInfo() != null
+                        && info.getLockInfo().getIdentityHashCode() == System.identityHashCode(tracker))
+                    break;
+                require(flushing.isAlive() && System.nanoTime() < deadline, "Flush did not reach membership capture");
+                Thread.sleep(1);
+            }
+            item.setItem(org.bukkit.inventory.ItemStack.of(Material.GUNPOWDER));
+            item.setGravity(false);
+            tracker.add(item);
+        }
+        flushing.join(5000);
+        require(!flushing.isAlive() && failure.get() == null, "Racing flush failed: " + failure.get());
+        var data = packets.stream().filter(packet -> packet instanceof net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket)
+                .map(packet -> (net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket) packet)
+                .filter(packet -> packet.id() == item.getId()).findFirst().orElseThrow();
+        var key = dev.by1337.entityrender.core.metadata.GeneratedMetadata.item.ItemEntity.DATA_ITEM;
+        var value = data.packedItems().stream().filter(entry -> entry.id() == key.index()).findFirst().orElseThrow().value();
+        require(value instanceof net.minecraft.world.item.ItemStack stack && stack.is(net.minecraft.world.item.Items.GUNPOWDER), "First admitted frame contains an empty item");
+        item.close();
+        tracker.close();
     }
 
     private static void audienceSnapshots(PaperEntityRenderer renderer, World world, Player first) {

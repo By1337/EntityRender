@@ -52,6 +52,15 @@ final class AllEntitiesChecks {
                     entity.show(viewer);
                     renderer.flush();
                     if (packets.size() < 2 || !(packets.get(1) instanceof ClientboundSetEntityDataPacket)) throw new AssertionError("Missing entity snapshot: " + type);
+                    if (type == EntityType.ITEM) {
+                        if (!(packets.get(2) instanceof ClientboundSetEntityMotionPacket motion) || !motion.movement().equals(net.minecraft.world.phys.Vec3.ZERO))
+                            throw new AssertionError("Item client constructor motion was not reset");
+                        packets.clear();
+                        entity.respawn();
+                        renderer.flush();
+                        if (packets.stream().noneMatch(packet -> packet instanceof ClientboundSetEntityMotionPacket respawnMotion && respawnMotion.movement().equals(net.minecraft.world.phys.Vec3.ZERO)))
+                            throw new AssertionError("Respawn retained Item client constructor motion");
+                    }
                     packets.clear();
                     entity.setRotation(90, 20);
                     renderer.flush();

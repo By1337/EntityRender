@@ -118,6 +118,9 @@ final class RenderState {
         try {
             owner.send(view.sample.player(), owner.spawnPackets.create(frame.type(), frame.nativeType(), frame.id(), frame.uuid(), p.x(), p.y(), p.z(), p.pitch(), p.yaw(), frame.spawnData()));
             owner.send(view.sample.player(), new ClientboundSetEntityDataPacket(frame.id(), frame.metadata()));
+            // Item's client constructor assigns random motion. The zero vector in the
+            // spawn packet alone does not reliably clear it; explicitly reset motion.
+            if (frame.type() == org.bukkit.entity.EntityType.ITEM) owner.send(view.sample.player(), new ClientboundSetEntityMotionPacket(frame.id(), Vec3.ZERO));
             if (!frame.equipment().isEmpty()) owner.send(view.sample.player(), new ClientboundSetEquipmentPacket(frame.id(), frame.equipment()));
         } catch (RuntimeException failure) {
             try {
