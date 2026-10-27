@@ -42,7 +42,9 @@ final class WorldResources {
             try {
                 if (!valid) throw new IllegalStateException("World was unloaded");
                 var nativeType = CraftEntityType.bukkitToMinecraft(type);
-                var prototype = nativeType.create(level, EntitySpawnReason.COMMAND);
+                // This detached prototype only supplies packet/metadata defaults. World spawn
+                // restrictions (notably peaceful difficulty) must not reject virtual mobs.
+                var prototype = nativeType.create(level, new EntitySpawnRequest(EntitySpawnReason.COMMAND, true));
                 if (prototype == null) throw new IllegalArgumentException("Entity requires additional construction context: " + type);
                 var tracker = new ServerEntity(level, prototype, UpdateInterval.periodic(1), false, new ServerEntity.Synchronizer() {
                     public void sendToTrackingPlayers(net.minecraft.network.protocol.Packet<? super net.minecraft.network.protocol.game.ClientGamePacketListener> packet) {

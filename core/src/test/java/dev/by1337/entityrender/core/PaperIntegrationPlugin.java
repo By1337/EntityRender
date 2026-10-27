@@ -17,6 +17,7 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
         getServer().getScheduler().runTask(this, () -> {
             try {
                 RuntimeChecks.main(new String[0]);
+                peacefulPrototypes();
                 live();
                 AsyncChecks.run(this).whenComplete((ignored, error) -> {
                     getServer().getScheduler().runTask(this, () -> finish(error));
@@ -45,6 +46,26 @@ public final class PaperIntegrationPlugin extends JavaPlugin {
 
     private static void require(boolean condition, String message) {
         if (!condition) throw new AssertionError(message);
+    }
+
+    private void peacefulPrototypes() throws Exception {
+        var world = getServer().getWorlds().getFirst();
+        var difficulty = world.getDifficulty();
+        int before = world.getEntities().size();
+        world.setDifficulty(Difficulty.PEACEFUL);
+        try (var renderer = EntityRender.createManual(this)) {
+            var position = new Location(world, 0, 64, 0);
+            var creeper = renderer.createCreeper(position);
+            creeper.setPowered(true);
+            require(creeper.isPowered(), "Peaceful creeper metadata failed");
+            renderer.createZombie(position);
+            renderer.createSkeleton(position);
+            renderer.flush();
+            require(world.getDifficulty() == Difficulty.PEACEFUL, "Renderer changed world difficulty");
+            require(world.getEntities().size() == before, "Prototypes registered real world entities");
+        } finally {
+            world.setDifficulty(difficulty);
+        }
     }
 
     private void live() throws Exception {
