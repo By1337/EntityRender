@@ -27,4 +27,5 @@ find dumper/src/test/java -name '*.java' | LC_ALL=C sort > dumper/target/test-so
 "$javac_bin" --release 21 -cp dumper/target/classes -d dumper/target/test-classes @dumper/target/test-sources.txt
 "$java_bin" -cp dumper/target/classes:dumper/target/test-classes dev.by1337.entityrender.dumper.DumperChecks "$test_dir/first"
 "$java_bin" -cp dumper/target/classes:dumper/target/test-classes dev.by1337.entityrender.dumper.GeneratorChecks
+"$java_bin" -cp dumper/target/classes:dumper/target/test-classes dev.by1337.entityrender.dumper.CaptureLauncherChecks
 echo "Integration checks passed; artifacts: $test_dir"

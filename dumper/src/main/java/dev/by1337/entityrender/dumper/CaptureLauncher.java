@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipException;
 
 /** Compiles a build-time probe against the supplied core and runs it in an isolated child JVM. */
 final class CaptureLauncher {
@@ -31,16 +33,7 @@ final class CaptureLauncher {
         }
         var classpath = new ArrayList<Path>();
         classpath.add(minecraft);
-        Path bundle = null;
-        try (var files = Files.list(server)) {
-            for (var path : files.filter(p -> p.toString().endsWith(".jar")).toList()) try (var jar = new ZipFile(path.toFile())) {
-                if (jar.getEntry("META-INF/libraries.list") != null) {
-                    if (bundle != null) throw new IOException("Ambiguous server bundle");
-                    bundle = path;
-                }
-            }
-        }
-        if (bundle == null) throw new IOException("No local Paper bundle");
+        Path bundle = selectBundle(server);
         classpath.addAll(Launcher.extractLibraries(bundle, server, server.resolve("libraries")));
         Path work = Files.createTempDirectory("entityrender-capture-");
         Files.createDirectories(work.resolve("plugins"));
@@ -79,6 +72,24 @@ final class CaptureLauncher {
             if (process.isAlive()) process.destroyForcibly().waitFor();
         }
         System.out.println("Captured defaults: " + out);
+    }
+
+    static Path selectBundle(Path server) throws IOException {
+        try (var files = Files.list(server)) {
+            var candidates = files.filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().startsWith("paper") && path.toString().endsWith(".jar"))
+                    .sorted(Comparator.comparing((Path path) -> !path.getFileName().toString().equals("paper.jar"))
+                            .thenComparing(path -> path.getFileName().toString()))
+                    .toList();
+            for (var path : candidates) {
+                try (var jar = new ZipFile(path.toFile())) {
+                    if (jar.getEntry("META-INF/libraries.list") != null) return path;
+                } catch (ZipException incompleteDownload) {
+                    // A leftover partial download must not hide a valid prepared bundle.
+                }
+            }
+        }
+        throw new IOException("No valid local Paper bundle in " + server);
     }
 
     private static String quote(String value) {
