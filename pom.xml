@@ -6,7 +6,8 @@
   <packaging>pom</packaging>
   <modules><module>dumper</module><module>api</module><module>core</module></modules>
   <properties>
-    <maven.compiler.release>25</maven.compiler.release>
+    <maven.compiler.release>21</maven.compiler.release>
+    <minecraft.java.version>25</minecraft.java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <paper.version>26.3.build.42-alpha</paper.version>
     <minecraft.version>26.3</minecraft.version>

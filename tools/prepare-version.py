@@ -81,7 +81,8 @@ def main():
     for file in ['pom.xml', 'api/pom.xml', 'core/pom.xml', 'dumper/pom.xml']:
         text = (ROOT / file).read_text()
         text = re.sub(r'2\.0\.0(?:\+[^<]+)?-SNAPSHOT', '2.0.0+'+args.version+'-SNAPSHOT', text)
-        text = property_value(text, 'maven.compiler.release', 21 if file == 'dumper/pom.xml' else release)
+        text = property_value(text, 'maven.compiler.release', 21)
+        text = property_value(text, 'minecraft.java.version', release)
         if file == 'pom.xml':
             for key, value in {'paper.version': api_version, 'paper.nms.version': sdk_dir.name,
                                'minecraft.version': args.version, 'minecraft.protocol': version['protocol'],
