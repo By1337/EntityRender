@@ -32,7 +32,7 @@
 - Различия native конструкторов, пакетных протоколов, registry-конвертеров и пакетов
   взаимодействий остаются в соответствующих версиях core; API не зависит от BLib.
 
-## Async-прототип в main (26.3)
+## Async-рендер
 
 - API создания/изменения/видимости доступен из async/virtual threads; инициализация сервиса — main.
 - Atomic metadata words, CAS packed helpers, публикация owned-снимков и отдельный transport state.
@@ -41,7 +41,7 @@
 - Main-thread ID reservation по 4096, асинхронная выдача и непрерывные девять ID для дракона.
 - Проверки: 6000 concurrent create/close, dirty-drain races, packed helpers, close/publication,
   персональные snapshots, chunks/respawn и legacy automatic flush. Клиентская картинка и benchmarks — далее.
-- Старые ветки пока сохраняют прежнюю потоковую модель. Портировать после оценки main.
+- Async-рендер, общие аудитории, offline defaults и сброс клиентской скорости Item перенесены во все версионные ветки.
 
 ## Дальше
 
