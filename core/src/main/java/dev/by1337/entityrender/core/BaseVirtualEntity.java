@@ -33,6 +33,7 @@ public abstract class BaseVirtualEntity implements VirtualEntity {
     private List<net.minecraft.network.syncher.SynchedEntityData.DataValue<?>> publishedMetadata;
     private List<com.mojang.datafixers.util.Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> publishedEquipment = List.of();
     private PublishedEntity.Position publishedPosition;
+    private volatile java.util.Queue<PublishedEntity.Signal> signals;
 
     protected BaseVirtualEntity(PaperEntityRenderer owner, int id, Location location, EntityType type,
         net.minecraft.world.entity.EntityType<?> nmsType, MetadataLayout layout) {
@@ -327,6 +328,32 @@ public abstract class BaseVirtualEntity implements VirtualEntity {
         return closed.get();
     }
 
+    @Override
+    public void playEffect(org.bukkit.EntityEffect effect) {
+        checkOpen();
+        signal(new PublishedEntity.Signal(false, Objects.requireNonNull(effect).getData()));
+    }
+
+    public void swingArm(org.bukkit.inventory.EquipmentSlot hand) {
+        checkOpen();
+        byte action = switch (Objects.requireNonNull(hand)) {
+            case HAND -> 0;
+            case OFF_HAND -> 3;
+            default -> throw new IllegalArgumentException("Only hand equipment slots can swing");
+        };
+        signal(new PublishedEntity.Signal(true, action));
+    }
+
+    private void signal(PublishedEntity.Signal signal) {
+        var queue = signals;
+        if (queue == null) synchronized (this) {
+            queue = signals;
+            if (queue == null) signals = queue = new java.util.concurrent.ConcurrentLinkedQueue<>();
+        }
+        queue.add(signal);
+        owner.enqueue(this);
+    }
+
     PublishedEntity publish() {
         var changed = metadata.drainOwned();
         if (publishedMetadata == null) publishedMetadata = metadata.fullOwnedSnapshot();
@@ -341,8 +368,15 @@ public abstract class BaseVirtualEntity implements VirtualEntity {
         var p = position.get();
         boolean headChanged = living && publishedPosition != null && p.yaw() != publishedPosition.yaw();
         publishedPosition = p;
+        List<PublishedEntity.Signal> emitted = List.of();
+        var queue = signals;
+        if (queue != null && !queue.isEmpty()) {
+            var batch = new ArrayList<PublishedEntity.Signal>();
+            for (PublishedEntity.Signal signal; (signal = queue.poll()) != null;) batch.add(signal);
+            emitted = List.copyOf(batch);
+        }
         return new PublishedEntity(this, id, uuid, world, type, nmsType, p, spawnData, respawn.get(), headChanged,
-                publishedMetadata, changed, publishedEquipment, equipmentChanged, Map.copyOf(requested), closed.get());
+                publishedMetadata, changed, publishedEquipment, equipmentChanged, Map.copyOf(requested), emitted, closed.get());
     }
 
     public org.bukkit.inventory.ItemStack getEquipment(org.bukkit.inventory.EquipmentSlot slot) {

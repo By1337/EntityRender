@@ -4,6 +4,9 @@ import org.bukkit.inventory.*;
 import org.bukkit.util.EulerAngle;
 
 public interface VirtualArmorStand extends VirtualEntity {
+    /** Queues a client arm swing; only HAND and OFF_HAND are accepted. */
+    void swingArm(EquipmentSlot hand);
+
     boolean isSmall();
 
     void setSmall(boolean small);

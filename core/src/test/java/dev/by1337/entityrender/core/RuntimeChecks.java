@@ -30,6 +30,7 @@ public final class RuntimeChecks {
         Bootstrap.bootStrap();
         metadata();
         lifecycle();
+        effects();
         Bootstrap.STDOUT.println("EntityRender runtime checks passed: metadata schema, dirty batching, snapshots, retry, ownership, copies, lifecycle, native packet codecs");
     }
 
@@ -119,6 +120,36 @@ public final class RuntimeChecks {
             require(Arrays.equals(before, after), "Native metadata bytes changed on roundtrip");
         } finally {
             raw.release();
+        }
+    }
+
+    private static void effects() {
+        World world = fake(World.class, UUID.randomUUID(), null);
+        Player first = fake(Player.class, UUID.randomUUID(), world), late = fake(Player.class, UUID.randomUUID(), world);
+        var sent = new ArrayList<Sent>();
+        try (var renderer = new PaperEntityRenderer((player, packet) -> sent.add(new Sent(player.getUniqueId(), packet)), ignored -> 900)) {
+            var stand = renderer.createArmorStand(new Location(world, 0, 70, 0));
+            stand.show(first);
+            stand.playEffect(EntityEffect.WARDEN_SONIC_ATTACK);
+            stand.swingArm(org.bukkit.inventory.EquipmentSlot.OFF_HAND);
+            require(sent.isEmpty(), "Effects bypassed publication");
+            renderer.flush();
+            require(sent.size() == 4 && sent.get(0).packet() instanceof ClientboundAddEntityPacket && sent.get(1).packet() instanceof ClientboundSetEntityDataPacket,
+                    "Effects were sent before spawn/metadata");
+            require(sent.get(2).packet() instanceof ClientboundEntityEventPacket event && event.getEventId() == EntityEffect.WARDEN_SONIC_ATTACK.getData(), "Wrong Bukkit effect ID");
+            require(sent.get(3).packet() instanceof ClientboundSwingAnimationPacket swing && swing.entityId() == stand.getId() && swing.hand() == net.minecraft.world.InteractionHand.OFF_HAND,
+                    "Wrong native swing packet/hand");
+            sent.clear();
+            renderer.flush();
+            require(sent.isEmpty(), "One-shot effects replayed");
+            stand.show(late);
+            renderer.flush();
+            require(sent.size() == 2, "Late viewer replayed an old effect");
+            sent.clear();
+            stand.playEffect(EntityEffect.WARDEN_TENDRIL_SHAKE);
+            stand.close();
+            renderer.flush();
+            require(sent.stream().noneMatch(packet -> packet.packet() instanceof ClientboundEntityEventPacket), "Closed entity emitted stale effect");
         }
     }
 

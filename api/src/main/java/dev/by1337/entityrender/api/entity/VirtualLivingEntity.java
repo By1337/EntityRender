@@ -39,6 +39,9 @@ public interface VirtualLivingEntity extends dev.by1337.entityrender.api.entity.
 
     void setSleepingPos(org.bukkit.util.BlockVector value);
 
+    /** Queues a client arm swing for the next publication. Only HAND and OFF_HAND are accepted. */
+    void swingArm(org.bukkit.inventory.EquipmentSlot hand);
+
     org.bukkit.inventory.ItemStack getEquipment(org.bukkit.inventory.EquipmentSlot slot);
 
     void setEquipment(org.bukkit.inventory.EquipmentSlot slot, org.bukkit.inventory.ItemStack item);

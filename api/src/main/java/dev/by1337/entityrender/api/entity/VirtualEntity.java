@@ -76,6 +76,9 @@ public interface VirtualEntity extends AutoCloseable {
     /** Removes the manual visibility intent; applied on publication. */
     void hide(Player player);
 
+    /** Queues a one-shot client effect for the next publication; late viewers do not replay it. */
+    void playEffect(org.bukkit.EntityEffect effect);
+
     /** Recreates the client representation using the current complete state. */
     void respawn();
 

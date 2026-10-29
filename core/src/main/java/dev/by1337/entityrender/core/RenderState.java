@@ -99,6 +99,12 @@ final class RenderState {
                         } else for (var packet : updates) owner.send(view.sample.player(), packet);
                     }
                 }
+                if (entry.changed && !frame.closed() && !frame.signals().isEmpty()) {
+                    for (var signal : frame.signals()) {
+                        var packet = owner.spawnPackets.signal(frame.id(), signal);
+                        for (var id : entry.viewers.keySet()) owner.send(directory.get(id).sample.player(), packet);
+                    }
+                }
                 entry.changed = false;
                 entry.repair = false;
                 if (frame.closed()) iterator.remove();

@@ -13,7 +13,10 @@ record PublishedEntity(BaseVirtualEntity handle, int id, UUID uuid, World world,
     Position position, int spawnData, long respawn, boolean headChanged,
     List<SynchedEntityData.DataValue<?>> metadata, List<SynchedEntityData.DataValue<?>> changed,
     List<Pair<net.minecraft.world.entity.EquipmentSlot, ItemStack>> equipment, boolean equipmentChanged,
-    Map<UUID, Player> requested, boolean closed) {
+    Map<UUID, Player> requested, List<Signal> signals, boolean closed) {
+    record Signal(boolean animation, byte data) {
+    }
+
     record Position(double x, double y, double z, float yaw, float pitch, boolean onGround) {
     }
 }

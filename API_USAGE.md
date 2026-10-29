@@ -215,3 +215,9 @@ Main не должен ждать завершения такого виртуа
 `Location`, `Vector`, `ItemStack`, `BlockData` и `Transformation` возвращаются копиями:
 после изменения результата геттера передай его обратно в setter. Между мирами сущность
 не телепортируется — создай другую. Углы поз ArmorStand (`EulerAngle`) задаются в радианах.
+
+Клиентские эффекты передаются через `entity.playEffect(EntityEffect.WARDEN_SONIC_ATTACK)`.
+Живые сущности и ArmorStand поддерживают `swingArm(EquipmentSlot.HAND)` / `OFF_HAND`.
+Вызовы можно делать из потока анимации: они попадут в следующую публикацию после
+spawn/metadata. Поздние зрители старые эффекты не воспроизводят. Для 26.3 взмах
+использует отдельный `ClientboundSwingAnimationPacket`, без создания NMS-сущностей.
