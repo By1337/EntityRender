@@ -40,7 +40,7 @@ public final class HurtAnimationChecks {
             renderer.flush();
             require(sent.size() == 2, "Late viewer replayed animation");
             sent.clear();
-            entity.hurtAnimation(0);
+            entity.hurtAnimation();
             renderer.flush();
             require(sent.size() == 2, "Animation not sent to both viewers");
             for (var packet : sent) assertHurt(packet, entity.getId(), 0);
@@ -62,7 +62,7 @@ public final class HurtAnimationChecks {
             require(sent.stream().noneMatch(ClientboundHurtAnimationPacket.class::isInstance), "Closed entity emitted animation");
             boolean rejected = false;
             try {
-                entity.hurtAnimation(0);
+                entity.hurtAnimation();
             } catch (IllegalStateException expected) {
                 rejected = true;
             }

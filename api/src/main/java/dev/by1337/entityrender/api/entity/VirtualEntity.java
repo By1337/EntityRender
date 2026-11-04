@@ -87,6 +87,11 @@ public interface VirtualEntity extends AutoCloseable {
      */
     void hurtAnimation(float yaw);
 
+    /** Queues a hurt animation with the default damage direction (zero degrees). */
+    default void hurtAnimation() {
+        hurtAnimation(0.0F);
+    }
+
     /** Recreates the client representation using the current complete state. */
     void respawn();
 
