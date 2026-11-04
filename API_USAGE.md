@@ -1,27 +1,36 @@
 # EntityRender: быстрый старт
 
 Примеры — для `main` (**Paper 26.3 / Java 25**). Для другого сервера бери
-соответствующую [версионную ветку](VERSIONS.md) и её пару `api` + `core`.
+соответствующую версионную ветку и её пару `api` + `core`.
 
 ## Подключение
 
-Это библиотека внутри твоего плагина. Включи **оба JAR** (`entity-render-api`
-и `entity-render-core`) через shading либо свой загрузчик. `dumper` на сервере
-не нужен; отдельного плагина EntityRender и `depend: [EntityRender]` нет.
+Установи `EntityRender-2.0.0.jar` и BLib **1.10.8+** в `plugins/`.
+EntityRender распакует API и core именно для версии сервера (Paper 1.21.4–26.3,
+см. [список в README](README.md)). В `plugin.yml` потребителя добавь `depend: [EntityRender]`.
 
-Если используешь Maven, установи артефакты нужной ветки через `mvn install`
-из корня EntityRender и добавь зависимость:
+Maven-зависимость для компиляции выбирай под целевой сервер:
 
 ```xml
-<dependency>
-    <groupId>dev.by1337.entityrender</groupId>
-    <artifactId>entity-render-core</artifactId>
-    <version>2.0.0+26.3-SNAPSHOT</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>bdev-repo</id>
+        <url>https://repo.by1337.space/releases</url>
+    </repository>
+</repositories>
+<dependencies>
+    <dependency>
+        <groupId>dev.by1337.entityrender</groupId>
+        <artifactId>entity-render-core</artifactId>
+        <version>2.0.0+26.3</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
 ```
 
-`core` подтянет `api` транзитивно. В итоговый плагин включай их оба;
-Paper API, NMS и серверные библиотеки остаются `provided`.
+`core` подтянет `api` транзитивно. Плагин EntityRender предоставляет их во время
+работы. API разных версий различается; компилируй потребителя для нужной версии.
+Можно также по-прежнему встроить оба модуля в свой плагин без установки EntityRender.
 
 ## Создать и показать
 

@@ -2,7 +2,7 @@
 set -eu
 cd "$(dirname "$0")"
 if [ "$#" -lt 1 ]; then
-  echo 'Usage: sh test.sh <remapped-1.21.4.jar> [--bundle original.jar | --libraries directory] [--java java]'
+  echo 'Usage: sh test.sh <mojang-named-server.jar> [--bundle original.jar | --libraries directory] [--java java]'
   exit 1
 fi
 target_version="$(sed -n 's:.*<minecraft.version>\([^<]*\)</minecraft.version>.*:\1:p' pom.xml)"
@@ -18,7 +18,7 @@ javac_bin="${JAVA_HOME:+$JAVA_HOME/bin/}javac"
 "$java_bin" -jar dumper/target/entity-dumper.jar verify --expected "dumper/src/test/resources/golden/$target_version" --actual "$test_dir/first"
 "$java_bin" -jar dumper/target/entity-dumper.jar generate --schema "$test_dir/first" --out "$test_dir/generated"
 # Structural API/core skeletons are JDK-only; typed GeneratedMetadata is compiled
-# with NMS and the metadata runtime by build-runtime.sh / Maven.
+# with NMS and the metadata runtime by Maven.
 find "$test_dir/generated" -name '*.java' ! -name GeneratedMetadata.java | LC_ALL=C sort > "$test_dir/generated-sources.txt"
 "$javac_bin" --release 21 -d "$test_dir/generated-classes" @"$test_dir/generated-sources.txt"
 mkdir -p dumper/target/test-classes

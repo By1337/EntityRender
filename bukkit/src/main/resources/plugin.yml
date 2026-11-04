@@ -1,0 +1,7 @@
+name: EntityRender
+version: '${project.version}'
+main: dev.by1337.entityrender.bukkit.EntityRenderPlugin
+api-version: '1.21.4'
+author: by1337
+depend: [BLib]
+load: STARTUP

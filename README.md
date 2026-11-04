@@ -1,317 +1,165 @@
 # EntityRender
 
-Библиотека виртуальных сущностей и инструменты дампа / генерации.
-Runtime текущей ветки предназначен для **Paper 26.3 / Java 25**.
-API и core компилируются с `--release 21` (class major 65); сборка и запуск ядра 26.x требуют JDK 25.
-Предыдущие версии фиксируются отдельными ветками; `main` обновляется вперёд.
-Проверенные сборки и результаты интеграционных проверок перечислены в [VERSIONS.md](VERSIONS.md).
+Библиотека виртуальных сущностей для Paper и дампер metadata Minecraft.
+[Гайд по API](API_USAGE.md): создание сущностей, свойства, зрители, клики и сцены.
 
-[Краткий гайд по использованию API](API_USAGE.md): подключение, сущности, клики и сцены.
+## Модули
 
-## Runtime
+- `api` — публичные интерфейсы без NMS.
+- `core` — реализация для версии Paper текущей ветки.
+- `bukkit` — плагин, загружающий подходящие API/core из встроенных BPatch-архивов.
+- `dumper` — самостоятельный инструмент дампа, захвата defaults и генерации Java-кода.
 
-Модули `api` и `core` не зависят от BLib и не встраивают сторонние библиотеки.
-Paper API и NMS предоставляются сервером (`provided`). `dumper` работает на чистом JDK.
-EntityRender — библиотека для плагина-потребителя, отдельный Bukkit-плагин не требуется.
+`main` содержит core для **Paper 26.3 / Java 25** и модуль `bukkit`.
+Предыдущие реализации хранятся в ветках с именами версий Minecraft.
+API, core и Bukkit-загрузчик компилируются с `--release 21`;
+для сборки core 26.x и запуска соответствующего сервера нужен JDK 25.
 
-Реализована вся иерархия зарегистрированных клиентских типов: типизированные интерфейсы,
-свойства metadata и фабрики (`createCreeper`, `createWolf` и т. д.). ArmorStand и Display
-сохраняют специально написанный API. В публичных сигнатурах используются Bukkit / Adventure / JOML
-типы, без NMS, Mojang Codec и собственного набора enum-копий.
+## Bukkit-плагин
 
-```java
-// Вызывать из onEnable / серверного потока.
-EntityRenderer renderer = EntityRender.create(this);
-VirtualArmorStand stand = renderer.createArmorStand(location);
-stand.setInvisible(true);
-stand.setGravity(false);
-stand.setSmall(true);
-stand.setCustomName(Component.text("Приз"));
-stand.setCustomNameVisible(true);
-stand.setEquipment(EquipmentSlot.HEAD, new ItemStack(Material.DIAMOND));
-stand.show(player);
+Установи `EntityRender-2.0.0.jar` и **BLib 1.10.8+** в `plugins/`.
+В `plugin.yml` потребителя добавь `depend: [EntityRender]`,
+Maven-зависимости на EntityRender объявляй как `provided`.
+API и core также можно встроить непосредственно в плагин-потребитель.
 
-VirtualTextDisplay text = renderer.createTextDisplay(location.clone().add(0, 1, 0));
-text.setText(Component.text("Награда"));
-text.setBillboard(Display.Billboard.CENTER);
-text.show(player);
+Поддерживаются точные версии Paper:
+**1.21.4, 1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11,
+26.1.2, 26.2, 26.3**. Для каждой загружается собственная пара API/core.
+API между версиями различается: компилируй потребителя под целевой сервер.
+Неизвестная версия сервера отклоняется. Folia пока не поддерживается.
 
-// Удаление одной сущности; renderer автоматически закрывается при disable владельца.
-stand.close();
-```
+Загрузчик использует `bpatch-maven-plugin`, `PatchArchive` и BLib `ClasspathUtil`.
+Распакованные JAR и `.fixed` хранятся в `plugins/EntityRender/.runtime`.
+При повторном запуске распаковываются только отсутствующие модули. Смена версии
+загрузчика, времени изменения его JAR или версии сервера очищает весь этот кеш.
+Модули `api` и `core` сами по себе не зависят от BLib;
+Paper API, NMS и серверные библиотеки имеют scope `provided`.
 
-Точка входа: `dev.by1337.entityrender.EntityRender`, интерфейс сервиса:
-`dev.by1337.entityrender.api.EntityRenderer`. Нужны оба JAR: api и core.
-`create` публикует изменения автоматически раз в серверный тик; `createManual` позволяет
-самому вызывать `renderer.flush()`. Инициализация renderer выполняется на main.
-Создание сущностей, getters/setters, сцены, `show/hide/close` и `flush` доступны из
-async/virtual threads. Публикация передаёт снимки общему transport worker и не ждёт
-доставки пакетов. Несколько одновременных изменений могут попасть в соседние кадры.
+## Сборка и публикация
 
-Один сервис на plugin owner обслуживает все его renderer: один main-thread sampler
-игроков, один пространственный индекс и один transport worker. Tracker читает только
-опубликованные сущности. Ручной `show(player)` хранит намерение показа; фактическая
-видимость учитывает подключение, мир и отправленные игроку чанки. Chunk-события
-передаются изменениями и обрабатываются пакетно раз в тик. При смене мира и respawn
-сессия инвалидируется; старые отложенные клики и сетевые задачи отбрасываются.
-
-Metadata хранится в массиве атомарных ссылок; dirty-маска — атомарные 64-битные слова
-(для обычной сущности одно слово). Drain маски выполняется до чтения значений, поэтому
-изменения во время публикации не теряются. Packed helpers используют CAS. Рабочие
-координаты — единый immutable-снимок. Транспорт хранит своё последнее полное состояние
-для новых зрителей, пока анимация спит. Ошибки отправки восстанавливаются полным снимком.
-
-ID резервируются на main диапазонами по 4096 из настоящего NMS AtomicInteger с проверкой
-занятых ID. Из готового пула async-потоки получают ID без обращения к миру; для дракона
-выделяется непрерывный блок из девяти. Кеши defaults и пул общие для renderer владельца
-и живут до его disable. Defaults декодируются без перехода на main. При исчерпании
-пула выделение ID может ждать main; не блокируйте main через join такого потока. Reuse ID и переход через переполнение пока
-не реализованы: allocator завершится ошибкой вместо небезопасного оборота счётчика.
-
-Входные ItemStack отделяются при установке; подготовленные native-значения дальше
-не мутируются и не клонируются повторно на каждом этапе публикации. Возвращаемые
-Vector, Location, Transformation, BlockData и ItemStack остаются независимыми значениями.
-Pose ArmorStand задаётся Bukkit EulerAngle в радианах. Folia пока не поддерживается.
-
-Для редких составных значений доступны SNBT-свойства с суффиксом `Snbt`; packed-поля
-остаются доступны наряду с helpers. Своих NMS enum-копий в API нет.
-
-Начальные metadata и spawn data снимаются заранее инструментом `capture` с полностью
-загруженного ядра. В runtime нет создания NMS Entity или ServerEntity: готовые значения
-декодируются и кешируются по типу и миру с проверкой сгенерированной схемы. Ссылки на
-реестры хранятся по именам и разрешаются через реестры текущего мира.
-Игроки и FishingHook требуют отдельного контекста; Marker является серверным типом.
-Эти три типа намеренно не входят в общую фабрику.
-
-Зрители управляются через show/hide либо `renderer.createTracker(center, range)`.
-Один tracker обслуживает сцену из нескольких сущностей; сущность может принадлежать
-только одному tracker. Настройки и membership публикуются вместе с renderer. Закрытие
-tracker не удаляет сущности. Для персональной голограммы создавайте отдельную сущность
-на зрителя и управляйте `show/hide` вручную.
-
-`entity.setInteractionHandler(handler)` получает ATTACK / INTERACT / INTERACT_AT на
-main. В 26.x attack — отдельный пакет; его sneaking берётся из состояния игрока на main.
-Сетевой хук общий для renderer владельца и проверяет сессию перед доставкой callback.
-EntityRender не запускает AI/физику, не добавляет сущности в мир и не начисляет урон.
-
-Сборка без скачивания зависимостей из уже подготовленного Paper-сервера:
+Все артефакты EntityRender публикуются без `-SNAPSHOT` в
+`https://repo.by1337.space/releases`, Maven server id — `bdev-repo`.
+Учётные данные должны находиться в пользовательском `~/.m2/settings.xml`.
 
 ```sh
-sh build-runtime.sh /path/to/prepared-paper-server
+# Собрать и установить все версии, затем Bukkit-плагин:
+python3 tools/release.py install
+
+# Собрать и опубликовать все версии:
+python3 tools/release.py deploy
+
+# Опубликовать уже собранные локальные релизы:
+python3 tools/release.py deploy --use-installed
 ```
 
-Для runtime выберите JDK целевой версии в `JAVA_HOME` (21 для 1.21.x, 25 для 26.x).
-Либо весь Maven reactor: `mvn clean package`.
-Maven собирает артефакты; интеграционные проверки запускаются явными скриптами ниже,
-без JUnit и других тестовых библиотек.
+Скрипт требует JDK 25 и берёт предыдущие реализации из Git-веток во временные
+каталоги. Текущую версию и `bukkit` собирает из рабочего дерева.
+Результаты сохраняются в `dist/releases/`, плагин — `EntityRender-2.0.0.jar`.
+После установки всех версий для обычной сборки достаточно `mvn clean package`.
 
-### Проверка runtime
+Координаты Maven:
 
-```sh
-# Полный прогон: чистая Maven-сборка, два дампа, hex, генератор и живой Paper:
-sh tools/verify-version.sh /path/to/prepared-paper-server
+- `dev.by1337.entityrender:entity-render-api:2.0.0+<версия Minecraft>`;
+- `dev.by1337.entityrender:entity-render-core:2.0.0+<версия Minecraft>`;
+- `dev.by1337.entityrender:bukkit:2.0.0`.
 
-# Только живой Paper-тест в отдельном временном каталоге:
-sh test-paper.sh /path/to/prepared-paper-server
-```
+## Дампер
 
-Проверяются native metadata indices/serializers, полные packet roundtrip, dirty batching,
-общий пакет для нескольких зрителей, повторная отправка после сбоя, сброс в default,
-защита от aliasing, конкурентная публикация, lifecycle и неизменившиеся значения.
-Живой Paper-тест дополнительно проверяет Adventure/предметы/BlockData, выделение ID
-через сервер, отсутствие сущностей в мире и все defaults четырёх типов против
-реальных инициализированных NMS-объектов. Реальный клиент и картинка пока не проверялись.
-Дополнительно создание всех 158 поддерживаемых типов на peaceful проверяется без
-изменения нативного счётчика entity ID. Весь реестр проходит повторное создание,
-getter/setter roundtrip всех генерируемых свойств и точное сравнение native metadata
-байтов. Проверяются spawn-only состояния FallingBlock/опыта, channel hooks и trackers.
-
-## Сборка
-
-Нужен JDK 21+. Ни BLib, ни ASM, ни JSON-библиотек, ни других сторонних зависимостей
-у инструмента нет. Minecraft запускается со своими оригинальными зависимостями.
+Дампер работает на JDK 21+ без сторонних библиотек. Он использует локальные
+JAR Minecraft/Paper, ничего не скачивает и не ремапит.
 
 ```sh
 sh build.sh
 java -jar dumper/target/entity-dumper.jar --help
+
+# Или собрать только дампер через Maven:
+mvn -pl dumper -am package
 ```
 
-Также предусмотрена Maven-сборка `mvn package`.
-
-## Дамп локального Minecraft
+`dump` запускает отдельную JVM, выполняет bootstrap Minecraft, снимает схему
+metadata и hex-образцы сериализации. Полноценный сервер и мир не создаются.
+Нужен JAR с классами под Mojang-именами, а не внешний bundler.
 
 ```sh
 java -jar dumper/target/entity-dumper.jar dump \
-  --minecraft /path/to/remapped_server_1.21.4.jar \
-  --bundle /path/to/minecraft_server_1.21.4.jar \
-  --java /path/to/jdk-21/bin/java \
-  --out dumps/1.21.4
+  --minecraft /path/to/mojang-named-server.jar \
+  --bundle /path/to/original-server-bundler.jar \
+  --java /path/to/target-jdk/bin/java \
+  --out dumps/26.3
 ```
 
-`--minecraft` — JAR с классами Minecraft под Mojang-именами, не внешний bundler.
-Инструмент ничего не скачивает и не ремапит. Для необфусцированных сборок нужен
-такой же JAR с непосредственно доступными классами.
+`--java` выбирает JVM целевой версии Minecraft. Зависимости извлекаются из
+`META-INF/libraries.list` bundler в `.entityrender/cache` с проверкой SHA-256.
+Вместо `--bundle` можно передать `--libraries /path/to/libraries`.
+Если в каталоге несколько версий зависимостей, передай оба параметра:
+список bundler определит точные файлы и их контрольные суммы.
 
-`--bundle` — оригинальный server bundler с `META-INF/libraries.list`. Если рядом с
-Minecraft JAR лежит `minecraft_server_<version>.jar`, он обнаруживается автоматически.
-Зависимости извлекаются в `.entityrender/cache/libraries`, проверяются по SHA-256.
-Вместо bundler можно указать `--libraries <directory>` с готовым classpath-зависимостями
-именно этой версии. Если в папке лежит несколько версий зависимостей Paper,
-передайте одновременно `--bundle` и `--libraries`: зависимости выбираются строго
-по списку bundler и проверяются по SHA-256.
-
-Launcher запускает отдельную JVM с изолированным рабочим каталогом. Worker выполняет
-Minecraft bootstrap, читает metadata, записывает схему и завершается. Мир, сетевой
-порт и полноценный игровой сервер не создаются. Нужную JVM выбирает вызывающий
-через `--java`; автоматически Java не устанавливается.
-
-### Полные начальные значения для runtime
-
-```sh
-java -jar dumper/target/entity-dumper.jar capture \
-  --server /path/to/prepared-paper-server \
-  --out /tmp/defaults-26.3
-```
-
-В отличие от `dump`, команда `capture` запускает полноценный Paper в отдельной JVM:
-проба компилируется против локального ядра, ждёт загрузки мира и реестров, снимает
-значения и останавливает дочерний сервер. Ядро и его библиотеки только читаются;
-мир, логи и временный плагин находятся в отдельном каталоге `/tmp/entityrender-capture-*`.
-В этом каталоге сохраняется `console.log`. Сеть слушает localhost на случайном порту.
-Ничего не скачивается; нужен уже подготовленный каталог Paper с `versions/` и `libraries/`.
-Проба текущей ветки предназначена для 26.3; при переносе на другую ветку обновляется вместе с NMS-кодом.
-
-Результат: `capture-version.tsv`, `metadata-defaults.tsv`, `spawn-defaults.tsv`.
-После проверки diff положите их в `core/src/main/resources/dev/by1337/entityrender/defaults/`
-и пересоберите библиотеку. Формат фиксирует версию ядра; runtime отклоняет несовместимый дамп.
-Сложные значения кодируются SNBT, реестровые ссылки — именами, остальные значения —
-байтами NMS-сериализаторов. Payload записывается в Base64, чтобы сохранить TSV.
-Случайная профессия ZombieVillager нормализуется в `none`; остальные значения берутся из ядра.
-Player, Marker и FishingHook помечаются неподдерживаемыми общей фабрикой.
-
-Результаты проверок версий перечислены в [VERSIONS.md](VERSIONS.md).
-При изменениях NMS обновляем reflection-адаптер worker и набор образцов. Общее имя
-Mojang-класса не гарантирует одинаковые методы/конструкторы между версиями.
-
-## Формат схемы v1
-
-UTF-8 TSV с заголовками, стабильным порядком и без времени генерации:
+Схема — UTF-8 TSV со стабильным порядком строк:
 
 | Файл | Содержание |
 | --- | --- |
 | `version.tsv` | Версия формата, Minecraft и protocol |
-| `entities.tsv` | Полное имя класса, родитель, abstract, registry keys сущностей |
-| `fields.tsv` | Владелец поля, имя, metadata index, serializer, NMS generic type |
-| `serializers.tsv` | Имя serializer, его network ID и NMS generic type |
-| `hex.tsv` | Serializer, образец, вход, статус, raw payload hex, примечание |
+| `entities.tsv` | Классы, наследование и registry keys сущностей |
+| `fields.tsv` | Metadata indices, serializers и NMS-типы |
+| `serializers.tsv` | Имена и сетевые ID serializers |
+| `hex.tsv` | Образцы сериализации, payload hex и результаты проверки |
 
-Унаследованные поля не дублируются у потомков. Проверяются неизвестные serializers,
-невалидные и повторяющиеся metadata indices в иерархии.
+Hex содержит только payload значения. Векторы проверяются через NMS
+encode → decode → encode. Неподдержанные образцы явно отмечаются в отчёте.
+Начальные значения сущностей снимаются отдельно командой `capture`.
 
-Defaults пока **не снимаются**: `defaultStatus=NOT_CAPTURED`. По наличию статического
-accessor нельзя достоверно восстановить начальное значение экземпляра.
+## Захват defaults
 
-## Hex-векторы
-
-Каждый `PASS` получен настоящим NMS `EntityDataSerializer.codec()`, через
-`RegistryFriendlyByteBuf`, с проверкой encode → decode → encode и полного чтения
-буфера. Hex содержит **только payload значения**, без metadata index, serializer ID
-и завершающего байта metadata-пакета. Сетевой ID serializer хранится отдельно.
-
-На 1.21.4: **117 векторов для 27 из 31 serializers**. Проверяются границы VarInt/VarLong,
-float bits, UTF-8, позиции блоков, optional, enum, компоненты, NBT, блоки, предметы,
-частицы, rotations, vector, quaternion и villager data. Это набор образцов, а не
-исчерпывающая проверка всех допустимых значений каждого serializer.
-
-На 26.3: **139 успешных векторов**, 15 serializers без адаптеров и один явно
-пропущенный образец непустого ItemStack (нужны загруженные item components).
-Пустой ItemStack проверяется. Статусы сохраняются для каждого образца.
-
-`CAT_VARIANT`, `FROG_VARIANT`, `WOLF_VARIANT`, `PAINTING_VARIANT` на 1.21.4 пока имеют статус
-`UNSUPPORTED`: нужны образцы и корректно загруженные динамические реестры. Они
-явно записаны в отчёт и не засчитываются как пройденные тесты. Неизвестные новые
-serializers также получают `UNSUPPORTED`; ошибка уже поддержанного образца
-прерывает дамп, а не маскируется как пропуск.
-
-Для проверки собственной реализации в тестах доступен мост:
-
-```java
-int checked = HexVerifier.verify(schemaPath, (serializer, sample, input) -> {
-    // Собрать описанное значение и записать payload вашим encoder.
-    // Вернуть реальные байты. Все PASS-образцы должны быть обработаны.
-    return encodeWithYourImplementation(serializer, sample, input);
-});
+```sh
+java -jar dumper/target/entity-dumper.jar capture \
+  --server /path/to/prepared-paper-server \
+  --java /path/to/target-jdk/bin/java \
+  --out /tmp/defaults-26.3
 ```
 
-Для чисел `input` содержит десятичное значение, для FLOAT — `float-bits:<8 hex>`.
-Составные значения описаны префиксами (`block-pos:`, `literal:`, `nbt:`, `item:`,
-`villager:`); остальные именованные образцы определены в `HexFixtures.java`.
-`UNSUPPORTED` не передаются вашему encoder. Класс `HexVerifier` нужен только тестам,
-runtime EntityRender не обязан зависеть от dumper.
+Нужен подготовленный Paper с каталогами `versions/` и `libraries/`.
+Команда запускает временный сервер на localhost, загружает мир и реестры,
+снимает значения и останавливает процесс. Исходный сервер только читается;
+мир, плагин-проба и `console.log` остаются в `/tmp/entityrender-capture-*`.
+Проба текущей ветки предназначена для Paper 26.3.
+
+Результат: `capture-version.tsv`, `metadata-defaults.tsv`, `spawn-defaults.tsv`.
+После проверки помести файлы в
+`core/src/main/resources/dev/by1337/entityrender/defaults/` и пересобери core.
+Runtime проверяет совместимость версии дампа.
 
 ## Генерация и сравнение
 
-`GeneratedMetadata` теперь содержит **типизированные MetadataKey и MetadataLayout**,
-а не только индексы. Namespace повторяет NMS-пакеты и вложенные классы:
+```sh
+# Черновики API/core и типизированный GeneratedMetadata:
+java -jar dumper/target/entity-dumper.jar generate \
+  --schema dumps/26.3 --out generated/26.3 \
+  --defaults core/src/main/metadata/defaults.tsv
 
-```java
-GeneratedMetadata.Entity.DATA_SHARED_FLAGS_ID;
-GeneratedMetadata.decoration.ArmorStand.DATA_HEAD_POSE;
-GeneratedMetadata.decoration.ArmorStand.LAYOUT;
-GeneratedMetadata.Display.TextDisplay.DATA_TEXT_ID;
-GeneratedMetadata.Display.TextDisplay.LAYOUT;
+# Обновить поддерживаемые metadata и API/core в исходниках:
+sh generate-metadata.sh dumps/26.3
+sh generate-runtime.sh dumps/26.3
+
+# Сравнить схемы или потребовать точного совпадения:
+java -jar dumper/target/entity-dumper.jar diff --old dumps/26.2 --new dumps/26.3
+java -jar dumper/target/entity-dumper.jar verify --expected dumps/26.3 --actual /tmp/new-dump
 ```
 
-Поля сохраняют оригинальные NMS-имена. Одинаковые простые имена классов в разных
-пакетах не сталкиваются. Общего ручного `Layouts` больше нет. Наследование полей и
-соответствие `EntityDataSerializers` генерируются из дампа; сериализация остаётся NMS.
+`generate-metadata.sh` обновляет `GeneratedMetadata.java` с проверенными правилами
+из `core/src/main/metadata/defaults.tsv`. `generate-runtime.sh` обновляет
+генерируемые интерфейсы и реализации, удаляя устаревшие файлы по списку
+`.generated-runtime-files`. Оба скрипта используют `java-format`.
+Генерация не заменяет проверку NMS-контрактов при поддержке новой версии.
 
-Проверенные defaults хранятся в `core/src/main/metadata/defaults.tsv`: целевая сущность,
-владелец поля, имя поля, Java-выражение. Это входные правила генерации, а не runtime-конфиг.
-Они учитывают изменения в конструкторе (например, здоровье ArmorStand = 20).
-Генератор отклоняет устаревшие имена и defaults чужих сущностей. Layout без известных
-defaults генерируется, но создать `MetadataState` из него нельзя — отсутствующие
-значения не заменяются на нули или null. Копирование mutable JOML-значений генерируется
-в ключах отдельно от NMS serializer, чтобы сохранить защиту от aliasing.
-
-Обновление поддерживаемого runtime-файла и его форматирование:
+## Проверка дампера
 
 ```sh
-sh generate-metadata.sh dumper/src/test/resources/golden/1.21.4
+sh test.sh /path/to/mojang-named-server.jar \
+  --bundle /path/to/original-server-bundler.jar \
+  --java /path/to/target-jdk/bin/java
 ```
 
-Скрипт вызывает `java-format` только для `GeneratedMetadata.java`. Генерируемый Java
-файл хранится в Git и показывает изменения по сущностям; архив прошлой генерации для
-сравнения не нужен. Полные черновики API/core создаются отдельной командой:
-
-```sh
-java -jar dumper/target/entity-dumper.jar generate --schema dumps/1.21.4 --out generated/1.21.4
-java -jar dumper/target/entity-dumper.jar diff --old dumps/1.21.4 --new dumps/1.21.5
-java -jar dumper/target/entity-dumper.jar verify --expected dumps/1.21.4 --actual /tmp/new-dump
-```
-
-`generate` создаёт компилируемые интерфейсы и абстрактные core-скелеты с наследованием,
-индексами и комментариями о NMS-типах, а также типизированный `GeneratedMetadata.java`.
-Для defaults передайте `--defaults core/src/main/metadata/defaults.tsv`; без этого
-все layouts будут иметь неизвестные defaults. Типизированный файл компилируется с
-NMS и runtime metadata-модулем; структурные API/core-скелеты компилируются отдельно.
-Это черновики: семантические имена методов,
-битовые флаги и Bukkit-преобразования дорабатываются отдельно. Для неизвестных
-публичных типов используется `Object` с TODO; NMS-типы не попадают в сигнатуры API.
-Генерация не перезаписывает существующий каталог.
-
-`diff` сравнивает строки по стабильным ключам; изменение ID поля выводится как
-изменение поля, а не новой сущности. `verify` требует побайтового совпадения всех
-пяти файлов и возвращает ненулевой exit code при расхождении.
-
-## Интеграционная проверка
-
-```sh
-sh test.sh /path/to/remapped_server_1.21.4.jar --bundle /path/to/original-bundle.jar --java /path/to/java
-```
-
-Два независимых bootstrap-процесса должны дать одинаковые схемы и hex, совпадающие
-с сохранённым эталоном `dumper/src/test/resources/golden/<версия текущей ветки>`. Затем
-генерируются и компилируются все скелеты, проверяются известные сетевые байты
-и отклонение неправильного encoder. Артефакты остаются в напечатанном временном
-каталоге для просмотра.
+Скрипт сравнивает два независимых дампа и эталон текущей версии из
+`dumper/src/test/resources/golden/`, компилирует генерируемые скелеты и проверяет
+hex-векторы, генератор и выбор Paper-bundler. Для запуска самого скрипта выбери
+подходящий JDK через `JAVA_HOME`.
