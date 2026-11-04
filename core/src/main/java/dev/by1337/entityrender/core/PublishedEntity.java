@@ -14,7 +14,15 @@ record PublishedEntity(BaseVirtualEntity handle, int id, UUID uuid, World world,
     List<SynchedEntityData.DataValue<?>> metadata, List<SynchedEntityData.DataValue<?>> changed,
     List<Pair<net.minecraft.world.entity.EquipmentSlot, ItemStack>> equipment, boolean equipmentChanged,
     Map<UUID, Player> requested, List<Signal> signals, boolean closed) {
-    record Signal(boolean animation, byte data) {
+    sealed interface Signal {
+        record Effect(byte data) implements Signal {
+        }
+
+        record Swing(byte data) implements Signal {
+        }
+
+        record Hurt(float yaw) implements Signal {
+        }
     }
 
     record Position(double x, double y, double z, float yaw, float pitch, boolean onGround) {

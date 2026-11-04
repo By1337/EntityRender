@@ -25,15 +25,18 @@ final class SpawnPackets implements AutoCloseable {
     }
 
     Packet<?> signal(int id, PublishedEntity.Signal signal) {
-        var buffer = buffer();
-        if (signal.animation()) {
-            return new ClientboundSwingAnimationPacket(id,
-                    signal.data() == 0 ? net.minecraft.world.InteractionHand.MAIN_HAND : net.minecraft.world.InteractionHand.OFF_HAND,
+        return switch (signal) {
+            case PublishedEntity.Signal.Hurt hurt -> new ClientboundHurtAnimationPacket(id, hurt.yaw());
+            case PublishedEntity.Signal.Swing swing -> new ClientboundSwingAnimationPacket(id,
+                    swing.data() == 0 ? net.minecraft.world.InteractionHand.MAIN_HAND : net.minecraft.world.InteractionHand.OFF_HAND,
                     net.minecraft.world.item.component.SwingAnimation.DEFAULT);
-        }
-        buffer.writeInt(id);
-        buffer.writeByte(signal.data());
-        return ClientboundEntityEventPacket.STREAM_CODEC.decode(buffer);
+            case PublishedEntity.Signal.Effect effect -> {
+                var buffer = buffer();
+                buffer.writeInt(id);
+                buffer.writeByte(effect.data());
+                yield ClientboundEntityEventPacket.STREAM_CODEC.decode(buffer);
+            }
+        };
     }
 
     @Override

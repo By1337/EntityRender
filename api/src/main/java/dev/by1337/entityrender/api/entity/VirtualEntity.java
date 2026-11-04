@@ -79,6 +79,14 @@ public interface VirtualEntity extends AutoCloseable {
     /** Queues a one-shot client effect for the next publication; late viewers do not replay it. */
     void playEffect(org.bukkit.EntityEffect effect);
 
+    /**
+     * Queues a one-shot hurt animation for the next publication on every supported version.
+     * The damage direction yaw is in degrees and must be finite. Does not change health,
+     * velocity or play a hurt sound. The client decides how this entity type renders it.
+     * Late viewers do not replay the animation.
+     */
+    void hurtAnimation(float yaw);
+
     /** Recreates the client representation using the current complete state. */
     void respawn();
 

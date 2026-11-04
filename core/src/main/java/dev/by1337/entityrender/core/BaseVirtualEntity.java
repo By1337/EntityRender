@@ -331,7 +331,14 @@ public abstract class BaseVirtualEntity implements VirtualEntity {
     @Override
     public void playEffect(org.bukkit.EntityEffect effect) {
         checkOpen();
-        signal(new PublishedEntity.Signal(false, Objects.requireNonNull(effect).getData()));
+        signal(new PublishedEntity.Signal.Effect(Objects.requireNonNull(effect).getData()));
+    }
+
+    @Override
+    public void hurtAnimation(float yaw) {
+        checkOpen();
+        finite(yaw);
+        signal(new PublishedEntity.Signal.Hurt(yaw));
     }
 
     public void swingArm(org.bukkit.inventory.EquipmentSlot hand) {
@@ -341,7 +348,7 @@ public abstract class BaseVirtualEntity implements VirtualEntity {
             case OFF_HAND -> 3;
             default -> throw new IllegalArgumentException("Only hand equipment slots can swing");
         };
-        signal(new PublishedEntity.Signal(true, action));
+        signal(new PublishedEntity.Signal.Swing(action));
     }
 
     private void signal(PublishedEntity.Signal signal) {
